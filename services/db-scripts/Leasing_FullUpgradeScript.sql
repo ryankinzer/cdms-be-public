@@ -761,4 +761,4 @@ update dbo.users set Roles = '["Leasing","LeasingEditor"]' where Username = 'can
 
 -- Add the following user.
 insert into dbo.Users (OrganizationId, Username, [Description], LastLogin, DepartmentId, Fullname, Roles)
-values (1, 'amandas', CONVERT(VARCHAR(23), GETDATE(), 121), 1, 'amandas', '["Leasing","LeaseCropAdmin","LeasingEditor"]')
+values (1, 'amandas', null, CONVERT(VARCHAR(23), GETDATE(), 121), 1, 'amandas', '["Leasing","LeaseCropAdmin","LeasingEditor"]')
