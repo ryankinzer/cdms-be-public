@@ -21,5 +21,7 @@ namespace services.Models.Data
         public int? NewRedds { get; set; }
         public string HeaderComments { get; set; }
         public string FieldsheetLink { get; set; }
+        public string StrandingIssues { get; set; }
+        public string StrandingComments { get; set; }
     }
 }
