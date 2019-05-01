@@ -5,7 +5,7 @@ using System.Web;
 
 namespace services.Models.Data
 {
-    public abstract class DatasetData
+    public abstract class DataEntity
     {
     }
 }

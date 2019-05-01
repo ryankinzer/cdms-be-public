@@ -10,8 +10,6 @@ namespace services.Resources
     public static class AuthorizationManager
     {
         public const string CURRENT_USERNAME_KEY = "CURRENT_USERNAME";
-        public const string ADMINISTRATOR_ROLE = "Administrator";
-        public const string MANAGER_ROLE = "Manager";
 
         public const int VIEW_PERMISSION = 1;
         public const int EDIT_PERMISSION = 2;
@@ -45,19 +43,12 @@ namespace services.Resources
 
         public static bool IsUsernameAuthorized(string username, int permission, int entity, int targetId)
         {
-
             return IsUserAuthorized(getUserByName(username), permission, entity, targetId);
         }
 
         public static bool IsCurrentUserAuthorized(int permission, int entity, int targetId)
         {
             return IsUsernameAuthorized(HttpContext.Current.User.Identity.Name, permission, entity, targetId);
-
-        }
-
-        public static bool IsUserInRole(User user, string role)
-        {
-            throw new NotImplementedException();
         }
 
         public static User getUserByName(string Username)

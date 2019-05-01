@@ -179,6 +179,7 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\Private\LeaseController.cs" />
     <Compile Include="Controllers\QueryController.cs" />
     <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Controllers\CDMSController.cs" />
@@ -192,9 +193,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201902202259010_reset.cs" />
-    <Compile Include="Migrations\201902202259010_reset.Designer.cs">
-      <DependentUpon>201902202259010_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201903252145334_reset.cs" />
+    <Compile Include="Migrations\201903252145334_reset.Designer.cs">
+      <DependentUpon>201903252145334_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -209,6 +210,16 @@
     <Compile Include="Models\Data\BSample.cs" />
     <Compile Include="Models\Data\BSample_Detail.cs" />
     <Compile Include="Models\Data\BSample_Header.cs" />
+    <Compile Include="Models\Data\DataEntity.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseCropShare.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseRevision.cs" />
+    <Compile Include="Models\Data\Private\Leasing\Lease.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseComplianceAction.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseCropPlan.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseField.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseInspection.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseOperator.cs" />
+    <Compile Include="Models\Data\Private\Leasing\LeaseProduction.cs" />
     <Compile Include="Models\Data\Subproject.cs" />
     <Compile Include="Models\Data\Private\CrppContracts.cs" />
     <Compile Include="Models\Data\Private\CrppContracts_Detail.cs" />
@@ -352,11 +363,14 @@
     <Content Include="db-scripts\full_update_script.sql" />
     <Content Include="db-scripts\full_update_script_ForCdmsPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForPaluut.sql" />
+    <Content Include="db-scripts\Leasing-01.sql" />
+    <Content Include="db-scripts\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\WaterTemp-01.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -393,8 +407,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902202259010_reset.resx">
-      <DependentUpon>201902202259010_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903252145334_reset.resx">
+      <DependentUpon>201903252145334_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

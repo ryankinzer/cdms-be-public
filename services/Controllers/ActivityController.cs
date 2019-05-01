@@ -1044,14 +1044,12 @@ WHERE a.datasetid = " + Id;
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
-
         // POST /api/v1/activity/SaveDatasetActivitiesConnector
         [HttpPost]
         public HttpResponseMessage SaveDatasetActivitiesConnector(JObject jsonData)
         {
             return SaveDatasetActivitiesSQL(jsonData);
         }
-
 
         //sql version of saving - used for connectors inserting new activities
         private HttpResponseMessage SaveDatasetActivitiesSQL(JObject jsonData)
@@ -1112,7 +1110,6 @@ WHERE a.datasetid = " + Id;
 
                         var activity_query = "INSERT INTO Activities (LocationId, ActivityDate, DatasetId, UserId, SourceId, ActivityTypeId, CreateDate, ";
 
-
                         var activity_query_values =
                             activity.LocationId + ",'" +
                             activity.ActivityDate + "'," +
@@ -1122,26 +1119,27 @@ WHERE a.datasetid = " + Id;
                             activity.ActivityTypeId + "," +
                             "'" + activity.CreateDate + "',";
 
-                        if (activity.InstrumentId != null)
-                        {
-                            activity_query += "InstrumentId, ";
-                            activity_query_values += activity.InstrumentId + ",";
-                        }
+                            if(activity.InstrumentId != null)
+                            {
+                                activity_query += "InstrumentId, ";
+                                activity_query_values += activity.InstrumentId + ",";
+                            }
 
-                        if (activity.AccuracyCheckId != null)
-                        {
-                            activity_query += "AccuracyCheckId, ";
-                            activity_query_values += activity.AccuracyCheckId + ",";
-                        }
+                            if (activity.AccuracyCheckId != null)
+                            {
+                                activity_query += "AccuracyCheckId, ";
+                                activity_query_values += activity.AccuracyCheckId + ",";
+                            }
 
-                        if (activity.PostAccuracyCheckId != null)
-                        {
-                            activity_query += "PostAccuracyCheckId, ";
-                            activity_query_values += activity.PostAccuracyCheckId + ",";
-                        }
+                            if (activity.PostAccuracyCheckId != null)
+                            {
+                                activity_query += "PostAccuracyCheckId, ";
+                                activity_query_values += activity.PostAccuracyCheckId + ",";
+                            }
 
-                        activity_query += "Timezone) VALUES(";
-                        activity_query_values += "'" + activity.Timezone + "');";
+                            activity_query += "Timezone) VALUES("; 
+                            activity_query_values += "'" + activity.Timezone + "');";
+
                         activity_query += activity_query_values + "SELECT SCOPE_IDENTITY();";
 
                         logger.Debug(activity_query);
@@ -1165,7 +1163,7 @@ WHERE a.datasetid = " + Id;
                         ActivityQA newQA = new ActivityQA();
                         newQA.ActivityId = newActivityId;
                         newQA.QAStatusId = (activityqastatus != null) ? activityqastatus.QAStatusID : 6; //6=readyforqa
-                        newQA.Comments = (activityqastatus != null) ? activityqastatus.Comments.ToString().Replace("'", "''") : "Initial Import"; //required if you are specifying a activityqastatus
+                        newQA.Comments = (activityqastatus != null) ? activityqastatus.Comments.Replace("'", "''") : "Initial Import";
                         newQA.EffDt = DateTime.Now;
                         newQA.UserId = activity.UserId;
 

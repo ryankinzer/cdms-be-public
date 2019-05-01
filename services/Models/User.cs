@@ -59,7 +59,13 @@ namespace services.Models
             DepartmentId = DEFAULT_DEPARTMENTID;
         }
 
-    public User() { }
+        public User() { }
+
+        //does the user have the role?
+        public bool hasRole(string role)
+        {
+            return this.Roles.Contains("\"" + role + "\"");
+        }
 
     }
 }

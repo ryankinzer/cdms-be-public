@@ -223,5 +223,13 @@ where p.MetadataEntityId = " + EntityTypeId;
             return new HttpResponseMessage(HttpStatusCode.OK);
 
         }
+
+        [HttpGet]
+        public IEnumerable<MetadataProperty> GetPropertiesForEntity(int Id){
+            var db = ServicesContext.Current;
+            return db.MetadataProperty.Where(o => o.MetadataEntityId == Id);
+        }
+
+
     }
 }

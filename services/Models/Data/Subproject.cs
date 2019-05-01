@@ -9,7 +9,7 @@ using System.Web;
 
 namespace services.Models.Data
 {
-    public class Subproject
+    public abstract class Subproject
     {
         public int Id { get; set; }
         public int ByUserId { get; set; }
