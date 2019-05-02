@@ -197,10 +197,6 @@
     <Compile Include="Migrations\201905011823078_reset.Designer.cs">
       <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905011826136_AddSgsFields.cs" />
-    <Compile Include="Migrations\201905011826136_AddSgsFields.Designer.cs">
-      <DependentUpon>201905011826136_AddSgsFields.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -428,9 +424,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905011823078_reset.resx">
       <DependentUpon>201905011823078_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905011826136_AddSgsFields.resx">
-      <DependentUpon>201905011826136_AddSgsFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
