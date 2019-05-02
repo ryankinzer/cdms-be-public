@@ -377,6 +377,8 @@
     <Content Include="db-scripts\full_update_script_BiomNewDs4ForPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForCdmsPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForPaluut.sql" />
+    <Content Include="db-scripts\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\full_update_script_SgsAddFldsPriv.sql" />
     <Content Include="db-scripts\Leasing-01.sql" />
     <Content Include="db-scripts\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
