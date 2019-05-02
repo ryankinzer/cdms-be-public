@@ -37,6 +37,10 @@ namespace services.Models.Data
         public BiomVisitMetrics_Header Header { get; set; }
         public List<BiomVisitMetrics_Detail> Details { get; set; }
 
+        public BiomVisitMetrics()
+        {
+            Details = new List<BiomVisitMetrics_Detail>();
+        }
 
         // load an existing one
         public BiomVisitMetrics(int ActivityId)
@@ -66,6 +70,8 @@ namespace services.Models.Data
 
             //set the dataset now from the relationship via the activity.
             //if (debugMode) logger.Info("Dataset is next...");
+            Dataset = Header.Activity.Dataset;
+            if (debugMode) logger.Info("Dataset = " + Dataset);
 
             //select detail by activityid (taking effdt into account)
             var details_q = from h in db.BiomVisitMetrics_Detail()
