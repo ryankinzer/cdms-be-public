@@ -37,6 +37,10 @@ namespace services.Models.Data
         public BiomChannelUnitMetrics_Header Header { get; set; }
         public List<BiomChannelUnitMetrics_Detail> Details { get; set; }
 
+        public BiomChannelUnitMetrics()
+        {
+            Details = new List<BiomChannelUnitMetrics_Detail>();
+        }
 
         // load an existing one
         public BiomChannelUnitMetrics(int ActivityId)
@@ -66,6 +70,8 @@ namespace services.Models.Data
 
             //set the dataset now from the relationship via the activity.
             //if (debugMode) logger.Info("Dataset is next...");
+            Dataset = Header.Activity.Dataset;
+            if (debugMode) logger.Info("Dataset = " + Dataset);
 
             //select detail by activityid (taking effdt into account)
             var details_q = from h in db.BiomChannelUnitMetrics_Detail()

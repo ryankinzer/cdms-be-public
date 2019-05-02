@@ -193,13 +193,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201903252145334_reset.cs" />
-    <Compile Include="Migrations\201903252145334_reset.Designer.cs">
-      <DependentUpon>201903252145334_reset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904261702357_AddBiomNewDs.cs" />
-    <Compile Include="Migrations\201904261702357_AddBiomNewDs.Designer.cs">
-      <DependentUpon>201904261702357_AddBiomNewDs.cs</DependentUpon>
+    <Compile Include="Migrations\201905011823078_reset.cs" />
+    <Compile Include="Migrations\201905011823078_reset.Designer.cs">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -377,10 +373,13 @@
     <Content Include="db-scripts\2019-03-08b_ConvertTimeRelatedInCdmsV2.sql" />
     <Content Include="db-scripts\2019-03-08a_UpdatesForDbPriorToRunningConvertTimeRelated.sql" />
     <Content Include="db-scripts\full_update_script.sql" />
+    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForCdmsPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForPaluut.sql" />
     <Content Include="db-scripts\Leasing-01.sql" />
     <Content Include="db-scripts\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
     <Content Include="db-scripts\WaterTemp-01.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -423,11 +422,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903252145334_reset.resx">
-      <DependentUpon>201903252145334_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904261702357_AddBiomNewDs.resx">
-      <DependentUpon>201904261702357_AddBiomNewDs.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905011823078_reset.resx">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
