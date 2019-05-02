@@ -197,8 +197,24 @@
     <Compile Include="Migrations\201903252145334_reset.Designer.cs">
       <DependentUpon>201903252145334_reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904261702357_AddBiomNewDs.cs" />
+    <Compile Include="Migrations\201904261702357_AddBiomNewDs.Designer.cs">
+      <DependentUpon>201904261702357_AddBiomNewDs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics_Header.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics_Header.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics_Header.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -409,6 +425,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903252145334_reset.resx">
       <DependentUpon>201903252145334_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904261702357_AddBiomNewDs.resx">
+      <DependentUpon>201904261702357_AddBiomNewDs.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
