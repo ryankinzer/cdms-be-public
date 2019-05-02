@@ -70,6 +70,9 @@ namespace services.Controllers
         [HttpGet]
         public IEnumerable<Activity> GetDatasetActivities(int Id)
         {
+            logger.Debug("Inside GetDatasetActivities...");
+            logger.Debug("DatasetId = " + Id);
+
             var ndb = ServicesContext.Current;
             return ndb.Activities.Where(o => o.DatasetId == Id).ToList();
         }
@@ -96,6 +99,9 @@ namespace services.Controllers
         [HttpGet]
         public dynamic GetDatasetActivitiesView(int Id)
         {
+            logger.Debug("Inside GetDatasetActivitiesView...");
+            logger.Debug("DatasetId = " + Id);
+
             var db = ServicesContext.Current;
 
             var dataset = db.Datasets.Find(Id);
