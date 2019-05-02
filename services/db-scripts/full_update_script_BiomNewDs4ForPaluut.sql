@@ -453,6 +453,17 @@ INSERT into dbo.LocationTypes([Name], [Description])
 OUTPUT INSERTED.id into #NewLocationTypeIds
 values (@datasetBaseName, @datasetBaseName)
 
+-- Add records to the Datastores
+INSERT INTO dbo.Datastores (Name, Description, TablePrefix, OwnerUserId, LocationTypeId, DefaultConfig) 
+SELECT
+	Name               = @datastoreName, 
+	Description        = NULL, 
+	TablePrefix        = REPLACE(@datastoreName, ' ', ''), -- Strip spaces 
+	OwnerUserId        = 1081,      -- George
+	LocationTypeId     = lt.id,
+	DefaultConfig	   = '{}'
+from #NewLocationTypeIds as lt
+
 
 CREATE TABLE #NewDatasetIds (id int)    -- This will contain a list of ids of all dataset records inserted below
 
@@ -2433,6 +2444,16 @@ INSERT into dbo.LocationTypes([Name], [Description])
 OUTPUT INSERTED.id into #NewLocationTypeIds
 values (@datasetBaseName, @datasetBaseName)
 
+-- Add records to the Datastores
+INSERT INTO dbo.Datastores (Name, Description, TablePrefix, OwnerUserId, LocationTypeId, DefaultConfig) 
+SELECT
+	Name               = @datastoreName, 
+	Description        = NULL, 
+	TablePrefix        = REPLACE(@datastoreName, ' ', ''), -- Strip spaces 
+	OwnerUserId        = 1081,      -- George
+	LocationTypeId     = lt.id,
+	DefaultConfig	   = '{}'
+from #NewLocationTypeIds as lt
 
 CREATE TABLE #NewDatasetIds (id int)    -- This will contain a list of ids of all dataset records inserted below
 
@@ -2876,6 +2897,16 @@ INSERT into dbo.LocationTypes([Name], [Description])
 OUTPUT INSERTED.id into #NewLocationTypeIds
 values (@datasetBaseName, @datasetBaseName)
 
+-- Add records to the Datastores
+INSERT INTO dbo.Datastores (Name, Description, TablePrefix, OwnerUserId, LocationTypeId, DefaultConfig) 
+SELECT
+	Name               = @datastoreName, 
+	Description        = NULL, 
+	TablePrefix        = REPLACE(@datastoreName, ' ', ''), -- Strip spaces 
+	OwnerUserId        = 1081,      -- George
+	LocationTypeId     = lt.id,
+	DefaultConfig	   = '{}'
+from #NewLocationTypeIds as lt
 
 CREATE TABLE #NewDatasetIds (id int)    -- This will contain a list of ids of all dataset records inserted below
 
@@ -3824,6 +3855,16 @@ INSERT into dbo.LocationTypes([Name], [Description])
 OUTPUT INSERTED.id into #NewLocationTypeIds
 values (@datasetBaseName, @datasetBaseName)
 
+-- Add records to the Datastores
+INSERT INTO dbo.Datastores (Name, Description, TablePrefix, OwnerUserId, LocationTypeId, DefaultConfig) 
+SELECT
+	Name               = @datastoreName, 
+	Description        = NULL, 
+	TablePrefix        = REPLACE(@datastoreName, ' ', ''), -- Strip spaces 
+	OwnerUserId        = 1081,      -- George
+	LocationTypeId     = lt.id,
+	DefaultConfig	   = '{}'
+from #NewLocationTypeIds as lt
 
 CREATE TABLE #NewDatasetIds (id int)    -- This will contain a list of ids of all dataset records inserted below
 
@@ -4275,3 +4316,12 @@ values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Activity
 set @FieldId = (select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where [Name] like '%ActivitySystem%') and DbColumnName = 'LocationId'); 
 insert into DatasetFields (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, [Validation], SourceId, InstrumentId, OrderIndex, ControlType) 
 values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Location', 'LocationId', null, 1, null, 5, 'location-select');
+
+
+-- Add the datastores; missed it above.
+--insert into dbo.Datastores ([Name], TablePrefix, OwnerUserId, LocationTypeId, DefaultConfig)
+--values
+--('BiomVisitMetrics', 'BiomVisitMetrics', 1081, (select Id from dbo.LocationTypes where [Name] = 'BiomVisitMetrics'), '{}'),
+--('BiomChannelUnitMetrics', 'BiomChannelUnitMetrics', 1081, (select Id from dbo.LocationTypes where [Name] = 'BiomChannelUnitMetrics'), '{}'),
+--('BiomTier1Metrics', 'BiomTier1Metrics', 1081, (select Id from dbo.LocationTypes where [Name] = 'BiomTier1Metrics'), '{}'),
+--('BiomTier2Metrics', 'BiomTier2Metrics', 1081, (select Id from dbo.LocationTypes where [Name] = 'BiomTier2Metrics'), '{}')
