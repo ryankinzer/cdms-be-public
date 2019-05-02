@@ -193,13 +193,13 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201904261850566_reset.cs" />
-    <Compile Include="Migrations\201904261850566_reset.Designer.cs">
-      <DependentUpon>201904261850566_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201905011823078_reset.cs" />
+    <Compile Include="Migrations\201905011823078_reset.Designer.cs">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201904261855099_AddSgsNewFields.cs" />
-    <Compile Include="Migrations\201904261855099_AddSgsNewFields.Designer.cs">
-      <DependentUpon>201904261855099_AddSgsNewFields.cs</DependentUpon>
+    <Compile Include="Migrations\201905011826136_AddSgsFields.cs" />
+    <Compile Include="Migrations\201905011826136_AddSgsFields.Designer.cs">
+      <DependentUpon>201905011826136_AddSgsFields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -426,11 +426,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201904261850566_reset.resx">
-      <DependentUpon>201904261850566_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905011823078_reset.resx">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904261855099_AddSgsNewFields.resx">
-      <DependentUpon>201904261855099_AddSgsNewFields.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905011826136_AddSgsFields.resx">
+      <DependentUpon>201905011826136_AddSgsFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
