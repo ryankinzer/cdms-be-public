@@ -193,12 +193,24 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201903252145334_reset.cs" />
-    <Compile Include="Migrations\201903252145334_reset.Designer.cs">
-      <DependentUpon>201903252145334_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201905011823078_reset.cs" />
+    <Compile Include="Migrations\201905011823078_reset.Designer.cs">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomChannelUnitMetrics_Header.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomTier1Metrics_Header.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomTier2Metrics_Header.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
+    <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -361,10 +373,15 @@
     <Content Include="db-scripts\2019-03-08b_ConvertTimeRelatedInCdmsV2.sql" />
     <Content Include="db-scripts\2019-03-08a_UpdatesForDbPriorToRunningConvertTimeRelated.sql" />
     <Content Include="db-scripts\full_update_script.sql" />
+    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForCdmsPriv.sql" />
     <Content Include="db-scripts\full_update_script_ForPaluut.sql" />
+    <Content Include="db-scripts\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\full_update_script_SgsAddFldsPriv.sql" />
     <Content Include="db-scripts\Leasing-01.sql" />
     <Content Include="db-scripts\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
     <Content Include="db-scripts\WaterTemp-01.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -407,8 +424,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903252145334_reset.resx">
-      <DependentUpon>201903252145334_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905011823078_reset.resx">
+      <DependentUpon>201905011823078_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
