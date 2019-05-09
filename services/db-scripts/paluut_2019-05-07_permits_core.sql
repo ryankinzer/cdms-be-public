@@ -113,17 +113,26 @@ CREATE TABLE [dbo].[PermitTypes] (
     CONSTRAINT [PK_dbo.PermitTypes] PRIMARY KEY ([Id])
 )
 
+--create the fields
+
 DECLARE @newdsid int = 0;
 DECLARE @newdatasetid int = 0;
+DECLARE @newprojectid int = 0;
 
 INSERT into Datastores (Name, Description, OwnerUserId, DefaultConfig)
 values ('Permits', 'Permit fields', 1, '{}');
 select @newdsid = scope_identity();
 
 
+insert into Projects 
+	(ProjectTypeId, OrganizationId, Name, Description, CreateDateTime) 
+	values 
+	(15, 1,'Permit Project','Permit Project',getdate());
+select @newprojectid = scope_identity();
+
 insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
 values 
-('AllotmentName','Allotment Name','',,'text',@newdsid,1,null,'string',null,null),                                         --'select-number',@newdsid,1,'select Id, Name as Label from locationtypes','int',null,null),
+('AllotmentName','Allotment Name','','text',@newdsid,1,null,'string',null,null),                                         --'select-number',@newdsid,1,'select Id, Name as Label from locationtypes','int',null,null),
 ('ProjectName','Project Name','ProjectName','text',@newdsid,1,null,'string',null,null),
 ('PermitType','Permit Type','PermitType','select-number',@newdsid,1,'select Id, Name as Label from PermitTypes','int',null,null),
 ('ApplicationDate','Application Date','ApplicationDate','datetime',@newdsid,1,null,'datetime',null,null),
@@ -140,18 +149,18 @@ values
 ('PermitConditions','Permit Conditions','PermitConditions','textarea',@newdsid,1,null,'string',null,null),
 ('PermitFile','Permit File','PermitFile','file',@newdsid,1,null,'file',null,null),
 ('Finding','Finding','Finding','select',@newdsid,1,null,'string',null,null),
-('FindingDate','Finding Date','FindingDate','select-number',@newdsid,1,null,'int',null,null),
-('Fee','Fee','Fee','text',@newdsid,1,null,'string',null,null),
-('FeePaymentDate','Fee Payment Date','FeePaymentDate','number',@newdsid,1,null,'int',null,null),
-('FeePaymentAmount','Fee Payment Amount','FeePaymentAmount','text',@newdsid,1,null,'string',null,null),
-('FeePaymentType','Fee Payment Type','FeePaymentType','number',@newdsid,1,null,'int',null,null),
-('FeePaymentMethod','Fee Payment Method','FeePaymentMethod','number',@newdsid,1,null,'int',null,null),
-('FeePaymentReference','Fee Payment Reference','FeePaymentReference','select-number',@newdsid,1,'SELECT Id, Name as Label from Waterbodies','int',null,null),
-('FeePaidBy','Fee Paid By','FeePaidBy','datetime',@newdsid,1,null, 'datetime',null,null),
+('FindingDate','Finding Date','FindingDate','datetime',@newdsid,1,null,'datetime',null,null),
+('Fee','Fee','Fee','number',@newdsid,1,null,'float',null,null),
+('FeePaymentDate','Fee Payment Date','FeePaymentDate','datetime',@newdsid,1,null,'datetime',null,null),
+('FeePaymentAmount','Fee Payment Amount','FeePaymentAmount','number',@newdsid,1,null,'float',null,null),
+('FeePaymentType','Fee Payment Type','FeePaymentType','select',@newdsid,1,null,'string',null,null),
+('FeePaymentMethod','Fee Payment Method','FeePaymentMethod','select',@newdsid,1,null,'string',null,null),
+('FeePaymentReference','Fee Payment Reference','FeePaymentReference','text',@newdsid,1,null,'string',null,null),
+('FeePaidBy','Fee Paid By','FeePaidBy','text',@newdsid,1,null, 'string',null,null),
 ('FeeReceivedBy','Fee Received By','FeeReceivedBy','text',@newdsid,1,null,'string',null,null),
 ('Zoning','Zoning','Zoning','text',@newdsid,1,null,'string',null,null),
-('GISUpdateRequired','GIS Update Required','GISUpdateRequired','text',@newdsid,1,null,'string',null,null),
-('GISUpdateComplete','GIS Update Complete','GISUpdateComplete','text',@newdsid,1,null,'string',null,null),
+('GISUpdateRequired','GIS Update Required','GISUpdateRequired','checkbox',@newdsid,1,null,'boolean',null,null),
+('GISUpdateComplete','GIS Update Complete','GISUpdateComplete','checkbox',@newdsid,1,null,'boolean',null,null),
 ('Comments','Comments','Comments','text',@newdsid,1,null,'string',null,null),
 ('SiteAddress','Site Address','SiteAddress','text',@newdsid,1,null,'string',null,null),
 ('SquareFeet','Square Feet','SquareFeet','text',@newdsid,1,null,'string',null,null),
@@ -166,20 +175,20 @@ values
 ('Valuation','Valuation','Valuation','text',@newdsid,1,null,'string',null,null),
 ('BuildingUse','Building Use','BuildingUse','text',@newdsid,1,null,'string',null,null),
 ('LegalDescription','Legal Description','LegalDescription','text',@newdsid,1,null,'string',null,null),
-('IsVoid','Is Void','IsVoid','text',@newdsid,1,null,'string',null,null),
-('IsFloodHazardOverlay','Is Flood Hazard Overlay','IsFloodHazardOverlay','text',@newdsid,1,null,'string',null,null),
+('IsVoid','Is Void','IsVoid','checkbox',@newdsid,1,null,'boolean',null,null),
+('IsFloodHazardOverlay','Is Flood Hazard Overlay','IsFloodHazardOverlay','checkbox',@newdsid,1,null,'boolean',null,null),
 ('OccupationalGroup','Occupational Group','OccupationalGroup','text',@newdsid,1,null,'string',null,null),
-('ConstructionType','Construction Type','ConstructionType','text',@newdsid,1,null,'string',null,null),
+('ConstructionType','Construction Type','ConstructionType','select',@newdsid,1,null,'string',null,null),
 ('BusinessName','Business Name','BusinessName','text',@newdsid,1,null,'string',null,null),
 ('COStatus','CO Status','COStatus','text',@newdsid,1,null,'string',null,null),
-('COIssueDate','CO Issue Date','COIssueDate','text',@newdsid,1,null,'string',null,null),
+('COIssueDate','CO Issue Date','COIssueDate','datetime',@newdsid,1,null,'datetime',null,null),
 ('COConditions','CO Conditions','COConditions','text',@newdsid,1,null,'string',null,null);
 
 
 insert into datasets 
 (ProjectId, DefaultRowQAStatusId, DefaultActivityQAStatusId, StatusId, CreateDateTime, Name, Description, DatastoreId) 
 values 
-(@newprojectid, 1, 5, 1,getdate(),'Location','CDMS Location Form',@newdsid );
+(@newprojectid, 1, 5, 1,getdate(),'Permits','PermitForm',@newdsid );
 
 select @newdatasetid = scope_identity();
 

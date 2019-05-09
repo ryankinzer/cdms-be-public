@@ -367,8 +367,9 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\2019-05-07_permits_core.sql" />
-    <Content Include="db-scripts\full_update_script.sql" />
+    <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
+    <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
+    <Content Include="db-scripts\archive\full_update_script.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -378,7 +379,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
-    <Folder Include="db-scripts\archive\" />
     <Folder Include="Views\CrppDataset\" />
     <Folder Include="Views\Season\" />
   </ItemGroup>
