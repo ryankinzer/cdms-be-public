@@ -370,6 +370,13 @@
     <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
