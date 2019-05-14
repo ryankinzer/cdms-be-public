@@ -198,10 +198,6 @@
     <Compile Include="Migrations\201905071748401_reset.Designer.cs">
       <DependentUpon>201905071748401_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905071821222_permits.cs" />
-    <Compile Include="Migrations\201905071821222_permits.Designer.cs">
-      <DependentUpon>201905071821222_permits.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -419,9 +415,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905071748401_reset.resx">
       <DependentUpon>201905071748401_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905071821222_permits.resx">
-      <DependentUpon>201905071821222_permits.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
