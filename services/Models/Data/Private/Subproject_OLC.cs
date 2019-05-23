@@ -14,23 +14,23 @@ using services.ExtensionMethods;
  */
 namespace services.ExtensionMethods
 {
-    public static class Subproject_OLCExtensions
+    public static class Subproject_OlcExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<Subproject_OLC> Subproject_OLC(this ServicesContext ctx)
+        public static DbSet<Subproject_Olc> Subproject_Olc(this ServicesContext ctx)
         {
-            return ctx.GetDbSet("Subproject_OLC").Cast<Subproject_OLC>();
+            return ctx.GetDbSet("Subproject_Olc").Cast<Subproject_Olc>();
         }
 
-        public static DbSet<OLCEvent> OLCEvent(this ServicesContext ctx)
+        public static DbSet<OlcEvents> OlcEvents(this ServicesContext ctx)
         {
-            return ctx.GetDbSet("OLCEvent").Cast<OLCEvent>();
+            return ctx.GetDbSet("OlcEvents").Cast<OlcEvents>();
         }
     }
 }
 namespace services.Models.Data
 {
-    public class Subproject_OLC : Subproject
+    public class Subproject_Olc : Subproject
     {
         public string CatalogNumber { get; set; }
         public string RecordGroup { get; set; }
@@ -43,9 +43,11 @@ namespace services.Models.Data
         public string SignatoryTitle { get; set; }
         public string SignatoryAgency { get; set; }
         public string SignatoryName { get; set; }
+
+        public virtual List<OlcEvents> OlcEvents { get; set; }
     }
 
-    public class OLCEvent : Subproject
+    public class OlcEvents : Subproject
     {
         public int SubprojectId { get; set; }
         public string DocumentType { get; set; }
@@ -62,11 +64,11 @@ namespace services.Models.Data
         public DateTime? DateDiscovered { get; set; }
         public string PersonDiscovered { get; set; }
         public string Reference { get; set; }
-        public string Comments { get; set; }
+        public string EventComments { get; set; }
         public string FileAttach { get; set; }
 
         [JsonIgnore]
-        public virtual Subproject_OLC Subproject { get; set; }
+        public virtual Subproject_Olc Subproject { get; set; }
 
     }
 

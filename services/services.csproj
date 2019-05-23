@@ -180,6 +180,7 @@
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
+    <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
     <Compile Include="Controllers\Private\PermitController.cs" />
     <Compile Include="Controllers\QueryController.cs" />
     <Compile Include="Controllers\ListController.cs" />
@@ -197,10 +198,6 @@
     <Compile Include="Migrations\201905151606421_reset.cs" />
     <Compile Include="Migrations\201905151606421_reset.Designer.cs">
       <DependentUpon>201905151606421_reset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905151751489_AddOlcSubprojectAndEvent.cs" />
-    <Compile Include="Migrations\201905151751489_AddOlcSubprojectAndEvent.Designer.cs">
-      <DependentUpon>201905151751489_AddOlcSubprojectAndEvent.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -220,7 +217,7 @@
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
-    <Compile Include="Models\Data\Private\Subproject_OLC.cs" />
+    <Compile Include="Models\Data\Private\Subproject_Olc.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -368,6 +365,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\full_update_script_Olc.sql" />
     <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
@@ -420,9 +418,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905151606421_reset.resx">
       <DependentUpon>201905151606421_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905151751489_AddOlcSubprojectAndEvent.resx">
-      <DependentUpon>201905151751489_AddOlcSubprojectAndEvent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
