@@ -180,6 +180,8 @@
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
+    <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
+    <Compile Include="Controllers\Private\PermitController.cs" />
     <Compile Include="Controllers\QueryController.cs" />
     <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Controllers\CDMSController.cs" />
@@ -193,9 +195,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201905011823078_reset.cs" />
-    <Compile Include="Migrations\201905011823078_reset.Designer.cs">
-      <DependentUpon>201905011823078_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201905151606421_reset.cs" />
+    <Compile Include="Migrations\201905151606421_reset.Designer.cs">
+      <DependentUpon>201905151606421_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -211,6 +213,11 @@
     <Compile Include="Models\Data\BiomVisitMetrics.cs" />
     <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
     <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
+    <Compile Include="Models\Data\Private\Permits\Permit.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
+    <Compile Include="Models\Data\Private\Subproject_Olc.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -358,31 +365,17 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\2018-10-03_AddLocationTypeIdToDatastore.sql" />
-    <Content Include="db-scripts\2018-10-12_AddLastDatasetUpdatedView.sql" />
-    <Content Include="db-scripts\2018-10-16_CTUIRFixes.sql" />
-    <Content Include="db-scripts\2018-10-19_RemoveFieldCategory.sql" />
-    <Content Include="db-scripts\2018-10-22_ActivitySystemFields.sql" />
-    <Content Include="db-scripts\2018-10-23_AddActivityFieldsToDatasets.sql" />
-    <Content Include="db-scripts\2018-10-30_LocationSystemFields.sql" />
-    <Content Include="db-scripts\2018-11-01_CorrespondenceAndHabitat.sql" />
-    <Content Include="db-scripts\2018-11-02_MetadataUpdates.sql" />
-    <Content Include="db-scripts\2018-11-05_LookupTables.sql" />
-    <Content Include="db-scripts\2018-11-21_HabSitesUpdates.sql" />
-    <Content Include="db-scripts\2018-12-13_VariousUpdates.sql" />
-    <Content Include="db-scripts\2019-03-08b_ConvertTimeRelatedInCdmsV2.sql" />
-    <Content Include="db-scripts\2019-03-08a_UpdatesForDbPriorToRunningConvertTimeRelated.sql" />
-    <Content Include="db-scripts\full_update_script.sql" />
-    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPaluut.sql" />
-    <Content Include="db-scripts\full_update_script_BiomNewDs4ForPriv.sql" />
-    <Content Include="db-scripts\full_update_script_ForCdmsPriv.sql" />
-    <Content Include="db-scripts\full_update_script_ForPaluut.sql" />
-    <Content Include="db-scripts\full_update_script_SgsAddFldsPal.sql" />
-    <Content Include="db-scripts\full_update_script_SgsAddFldsPriv.sql" />
-    <Content Include="db-scripts\Leasing-01.sql" />
-    <Content Include="db-scripts\Leasing_FullUpgradeScript.sql" />
-    <Content Include="db-scripts\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
-    <Content Include="db-scripts\WaterTemp-01.sql" />
+    <Content Include="db-scripts\full_update_script_Olc.sql" />
+    <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
+    <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
+    <Content Include="db-scripts\archive\full_update_script.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -392,7 +385,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
-    <Folder Include="db-scripts\archive\" />
     <Folder Include="Views\CrppDataset\" />
     <Folder Include="Views\Season\" />
   </ItemGroup>
@@ -424,8 +416,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905011823078_reset.resx">
-      <DependentUpon>201905011823078_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905151606421_reset.resx">
+      <DependentUpon>201905151606421_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
