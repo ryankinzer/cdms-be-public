@@ -70,7 +70,8 @@ namespace services.Models.Data
         [DecimalPrecision(5, 2)]
         public decimal? OwnerSharePercent { get; set; }
 
-        public int? OwnersShareUnit { get; set; }
+        [DecimalPrecision(9, 2)]
+        public decimal? OwnerShareDollar { get; set; }
 
 
     }

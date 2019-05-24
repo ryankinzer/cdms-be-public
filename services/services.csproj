@@ -198,9 +198,9 @@
     <Compile Include="Migrations\201905241620324_reset.Designer.cs">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905241625571_new_production_fields.cs" />
-    <Compile Include="Migrations\201905241625571_new_production_fields.Designer.cs">
-      <DependentUpon>201905241625571_new_production_fields.cs</DependentUpon>
+    <Compile Include="Migrations\201905241707002_new_production_fields.cs" />
+    <Compile Include="Migrations\201905241707002_new_production_fields.Designer.cs">
+      <DependentUpon>201905241707002_new_production_fields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -415,8 +415,8 @@
     <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905241625571_new_production_fields.resx">
-      <DependentUpon>201905241625571_new_production_fields.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905241707002_new_production_fields.resx">
+      <DependentUpon>201905241707002_new_production_fields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

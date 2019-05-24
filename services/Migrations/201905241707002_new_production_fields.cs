@@ -8,12 +8,12 @@ namespace services.Migrations
         public override void Up()
         {
             AddColumn("dbo.LeaseProductions", "OwnerSharePercent", c => c.Decimal(precision: 5, scale: 2));
-            AddColumn("dbo.LeaseProductions", "OwnersShareUnit", c => c.Int());
+            AddColumn("dbo.LeaseProductions", "OwnerShareDollar", c => c.Decimal(precision: 9, scale: 2));
         }
         
         public override void Down()
         {
-            DropColumn("dbo.LeaseProductions", "OwnersShareUnit");
+            DropColumn("dbo.LeaseProductions", "OwnerShareDollar");
             DropColumn("dbo.LeaseProductions", "OwnerSharePercent");
         }
     }
