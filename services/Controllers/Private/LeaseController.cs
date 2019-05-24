@@ -402,6 +402,7 @@ namespace services.Controllers.Private
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
+                    con.Open();
                     logger.Debug(query);
                     cmd.ExecuteNonQuery();
                 }
