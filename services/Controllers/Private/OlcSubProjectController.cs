@@ -17,6 +17,8 @@ using services.ExtensionMethods;
 using System.Net.Mail;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace services.Controllers
 {
@@ -446,7 +448,7 @@ namespace services.Controllers
             logger.Debug("Set database...");
 
             dynamic json = jsonData;
-            logger.Debug("json = " + json);
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             Project p = db.Projects.Find(json.ProjectId.ToObject<int>());
@@ -470,20 +472,39 @@ namespace services.Controllers
             //string strDatastoreTablePrefix = json.DatastoreTablePrefix.ToObject<string>();
 
             var files_in_subproject = (from file in db.Files
+                                       where file.ProjectId == p.Id
                                        where file.Subproject_CrppId == subproject.Id
                                        select file).ToList();
+
+            logger.Debug("Got files_in_subproject...count = " + files_in_subproject.Count);
 
             //iterate potential files for match to delete
             foreach (var file in files_in_subproject)
             {
-                //habitatItem.ItemFiles is a JSON string of filenames that belong to this item. If we match, delete this one.
+                //olcEvent.FileAttach is a JSON string of filenames that belong to this item. If we match, delete this one.
                 if (olcEvent.FileAttach != null && olcEvent.FileAttach.Contains("\"" + file.Name + "\"")) //use "somefile.jpg" so that we don't delete: mysomefile.jpg
                 {
+                    // First, delete the file from the disk.
+                    logger.Debug("Found the file...");
                     //removes the File and the actual filesystem file
                     Resources.SubprojectFileHelper.DeleteSubprojectFile(file, p.Id, subproject.Id);
+                    logger.Debug("Deleted the file...");
+
+                    // Next, delete the file from dbo.Files.
+                    //open a raw database connection...
+                    using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                    {
+                        con.Open();
+
+                        var query = "DELETE FROM dbo.Files WHERE ProjectId = " + p.Id + " AND Subproject_CrppId = " + subproject.Id + " AND Name = " + file.Name;
+                        using (SqlCommand cmd = new SqlCommand(query, con))
+                        {
+                            logger.Debug(query);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                 }
             }
-
 
             db.OlcEvents().Remove(olcEvent);
             logger.Debug("Just removed this event from table OlcEvent:  " + olcEvent.Id);
@@ -506,7 +527,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            logger.Debug("json = " + json);
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             logger.Debug("me = " + me);
@@ -637,7 +658,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            logger.Debug("json = " + json);
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             //logger.Debug("me = " + me); // getCurrentUser displays the username; this is just machinestuff.
@@ -676,6 +697,17 @@ namespace services.Controllers
                 var prop = item as JProperty;
                 logger.Debug("Property name = " + prop.Name);
 
+                //try
+                //{
+                //    strTmp = item.ToObject<string>(); // We will use to determine if the value is blank, regardless of what the ultimate value is.
+                //    logger.Debug("strTmp = " + strTmp);
+                //}
+                //catch (Exception e)
+                //{
+                //    logger.Debug("Hmm -- couldn't convert this to a string: " + prop.Name + " ... this is probably fine.");
+                    //logger.Debug(e);
+                //}
+
                 dynamic subproject_json = prop.Value;
                 //logger.Debug("Property value = " + subproject_json);
 
@@ -693,9 +725,9 @@ namespace services.Controllers
                     olcEvent.Author = subproject_json;
                 else if (prop.Name == "AuthorAgency")
                     olcEvent.AuthorAgency = subproject_json;
-                else if (prop.Name == "Boundaries")
+                else if (prop.Name == "Boundary")
                 {
-                    logger.Debug("Boundaries = " + subproject_json);
+                    logger.Debug("Boundary = " + subproject_json);
 
                     olcEvent.Boundary = subproject_json;
                     logger.Debug("olcEvent.Boundary = " + olcEvent.Boundary);
@@ -728,6 +760,10 @@ namespace services.Controllers
                     olcEvent.Reference = subproject_json;
                 else if (prop.Name == "EventComments")
                     olcEvent.EventComments = subproject_json;
+                else if (prop.Name == "FileAttach")
+                {
+                        olcEvent.FileAttach = subproject_json;
+                }
             }
 
             olcEvent.SubprojectId = sId;
