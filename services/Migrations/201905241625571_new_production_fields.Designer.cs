@@ -7,13 +7,13 @@ namespace services.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class permits : IMigrationMetadata
+    public sealed partial class new_production_fields : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(permits));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(new_production_fields));
         
         string IMigrationMetadata.Id
         {
-            get { return "201905071821222_permits"; }
+            get { return "201905241625571_new_production_fields"; }
         }
         
         string IMigrationMetadata.Source

@@ -66,5 +66,12 @@ namespace services.Models.Data
         public decimal? TotalPaymentAmount { get; set; }
 
         public string Comments { get; set; }
+
+        [DecimalPrecision(5, 2)]
+        public decimal? OwnerSharePercent { get; set; }
+
+        public int? OwnersShareUnit { get; set; }
+
+
     }
 }

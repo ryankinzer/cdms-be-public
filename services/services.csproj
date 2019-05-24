@@ -194,13 +194,13 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201905071748401_reset.cs" />
-    <Compile Include="Migrations\201905071748401_reset.Designer.cs">
-      <DependentUpon>201905071748401_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201905241620324_reset.cs" />
+    <Compile Include="Migrations\201905241620324_reset.Designer.cs">
+      <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905071821222_permits.cs" />
-    <Compile Include="Migrations\201905071821222_permits.Designer.cs">
-      <DependentUpon>201905071821222_permits.cs</DependentUpon>
+    <Compile Include="Migrations\201905241625571_new_production_fields.cs" />
+    <Compile Include="Migrations\201905241625571_new_production_fields.Designer.cs">
+      <DependentUpon>201905241625571_new_production_fields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -367,6 +367,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\cdms_2019-05-24_add_production_fields.sql" />
+    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
@@ -410,11 +412,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905071748401_reset.resx">
-      <DependentUpon>201905071748401_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
+      <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905071821222_permits.resx">
-      <DependentUpon>201905071821222_permits.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905241625571_new_production_fields.resx">
+      <DependentUpon>201905241625571_new_production_fields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
