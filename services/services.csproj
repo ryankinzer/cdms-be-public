@@ -369,8 +369,8 @@
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="db-scripts\full_update_script_OlcPal.sql" />
     <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
-    <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
-    <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
+    <Content Include="db-scripts\archive\paluut_2019-05-07_permits_core.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
     <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
     <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
