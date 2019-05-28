@@ -199,6 +199,10 @@
     <Compile Include="Migrations\201905241620324_reset.Designer.cs">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905281951134_add_columnindex.cs" />
+    <Compile Include="Migrations\201905281951134_add_columnindex.Designer.cs">
+      <DependentUpon>201905281951134_add_columnindex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -379,6 +383,7 @@
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
+    <Content Include="db-scripts\paluut_permitupdates_20190528.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -421,6 +426,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905281951134_add_columnindex.resx">
+      <DependentUpon>201905281951134_add_columnindex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -25,7 +25,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().AsEnumerable();
+            return db.Permit().Where(o => o.PermitStatus != "Archived").AsEnumerable();
 
         }
 
