@@ -1,4 +1,6 @@
-﻿CREATE TABLE [dbo].[Permits] (
+﻿--This file should be run on both systems (Paluut and CDMS); it has only the core items.
+
+CREATE TABLE [dbo].[Permits] (
     [Id] [int] NOT NULL IDENTITY,
     [AllotmentName] [nvarchar](max),
     [ProjectName] [nvarchar](max),

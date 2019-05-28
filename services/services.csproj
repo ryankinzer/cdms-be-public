@@ -180,6 +180,7 @@
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
+    <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
     <Compile Include="Controllers\Private\PermitController.cs" />
     <Compile Include="Controllers\QueryController.cs" />
     <Compile Include="Controllers\ListController.cs" />
@@ -197,10 +198,6 @@
     <Compile Include="Migrations\201905241620324_reset.cs" />
     <Compile Include="Migrations\201905241620324_reset.Designer.cs">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905241707002_new_production_fields.cs" />
-    <Compile Include="Migrations\201905241707002_new_production_fields.Designer.cs">
-      <DependentUpon>201905241707002_new_production_fields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -220,6 +217,7 @@
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
+    <Compile Include="Models\Data\Private\Subproject_Olc.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -369,9 +367,18 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\cdms_2019-05-24_add_production_fields.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPal.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
     <Content Include="db-scripts\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -414,9 +421,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905241707002_new_production_fields.resx">
-      <DependentUpon>201905241707002_new_production_fields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
