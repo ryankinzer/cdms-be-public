@@ -13,4 +13,3 @@ select @newfieldid = scope_identity();
 insert into DatasetFields 
 (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) values 
 (1281, @newfieldid, 1, getdate(), 'Permit Number','PermitNumber','text',null,1);
-
