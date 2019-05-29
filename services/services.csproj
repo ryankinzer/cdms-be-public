@@ -199,9 +199,9 @@
     <Compile Include="Migrations\201905241620324_reset.Designer.cs">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905291721385_permitcontact.cs" />
-    <Compile Include="Migrations\201905291721385_permitcontact.Designer.cs">
-      <DependentUpon>201905291721385_permitcontact.cs</DependentUpon>
+    <Compile Include="Migrations\201905292128583_parcels.cs" />
+    <Compile Include="Migrations\201905292128583_parcels.Designer.cs">
+      <DependentUpon>201905292128583_parcels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -218,8 +218,10 @@
     <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
     <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
     <Compile Include="Models\Data\Private\Permits\Permit.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitCadasterView.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitContact.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitParcel.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
     <Compile Include="Models\Data\Private\Subproject_Olc.cs" />
@@ -428,8 +430,8 @@
     <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905291721385_permitcontact.resx">
-      <DependentUpon>201905291721385_permitcontact.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905292128583_parcels.resx">
+      <DependentUpon>201905292128583_parcels.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

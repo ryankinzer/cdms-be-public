@@ -172,4 +172,23 @@ ALTER TABLE [dbo].[PermitContacts] ADD CONSTRAINT [FK_dbo.PermitContacts_dbo.Per
 
 go
 
+-- cadaster view and permit parcels table
+create view PermitCadaster_VW as
+select * from sdevector.sde.Cadaster_evw
+
+go
+
+CREATE TABLE [dbo].[PermitParcels] (
+    [Id] [int] NOT NULL IDENTITY,
+    [PermitId] [int] NOT NULL,
+    [ObjectId] [int] NOT NULL,
+    [ParcelNumber] [nvarchar](max),
+    [AllotmentNumber] [nvarchar](max),
+    CONSTRAINT [PK_dbo.PermitParcels] PRIMARY KEY ([Id])
+)
+CREATE INDEX [IX_PermitId] ON [dbo].[PermitParcels]([PermitId])
+CREATE INDEX [IX_ObjectId] ON [dbo].[PermitParcels]([ObjectId])
+ALTER TABLE [dbo].[PermitParcels] ADD CONSTRAINT [FK_dbo.PermitParcels_dbo.Permits_PermitId] FOREIGN KEY ([PermitId]) REFERENCES [dbo].[Permits] ([Id])
+
+go
 
