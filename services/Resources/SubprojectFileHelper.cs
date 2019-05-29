@@ -17,6 +17,9 @@ namespace services.Resources
         //removes the file from both the File table and the disk
         public static void DeleteSubprojectFile(Models.File existing_file, int projectId, int subprojectId)
         {
+            logger.Debug("Inside DeleteSubprojectFile...");
+            logger.Debug("existing_file.Name = " + existing_file.Name + ", projectId = " + projectId + ", subprojectId = " + subprojectId);
+
             var db = ServicesContext.Current;
 
             //string root = System.Web.HttpContext.Current.Server.MapPath("~/uploads");

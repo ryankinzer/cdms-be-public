@@ -921,7 +921,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            //logger.Debug("json = " + json);
+            logger.Debug("json = " + json);
 
             //string strJson = "[" + json + "]";
 

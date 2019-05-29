@@ -402,6 +402,7 @@ namespace services.Controllers.Private
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
+                    con.Open();
                     logger.Debug(query);
                     cmd.ExecuteNonQuery();
                 }
@@ -411,6 +412,7 @@ namespace services.Controllers.Private
 
         }
 
+
         [HttpPost]
         public HttpResponseMessage SaveLease(JObject jsonData)
         {
@@ -419,9 +421,11 @@ namespace services.Controllers.Private
                 throw new Exception("Not Authorized.");
 
             var db = ServicesContext.Current;
-
             dynamic json = jsonData;
+
             Lease lease = json.Lease.ToObject<Lease>();
+            List<int> cropsharestoremove = json.CropShareRemove.ToObject<List<int>>();
+            List<LeaseCropShare> cropshares = json.LeaseCropShares.ToObject<List<LeaseCropShare>>();
 
             string changed_reason = "";
             JToken jt_changed_reason = json.SelectToken("Lease.ChangedReason");
@@ -438,20 +442,21 @@ namespace services.Controllers.Private
 
             if (lease.Id == 0)
             {
+                lease.LeaseCropShares = cropshares; //reattach the cropshares coming in
                 db.Lease().Add(lease);
                 db.SaveChanges();
 
                 //if this is a brand new lease, it should have FieldsToLink array of ids
                 if (fields_to_link != null && fields_to_link.Length > 0)
                 {
-                    logger.Debug(" incoming fields to link: "+ JsonConvert.SerializeObject(fields_to_link));
+                    //logger.Debug(" incoming fields to link: "+ JsonConvert.SerializeObject(fields_to_link));
 
 
                     lease.LeaseFields = new List<LeaseField>();
 
                     foreach (int fieldid in fields_to_link)
                     {
-                        logger.Debug("Adding field: " + fieldid + " to " + lease.Id);
+                        //logger.Debug("Adding field: " + fieldid + " to " + lease.Id);
                         LeaseField field = db.LeaseField().Find(fieldid);
                         lease.LeaseFields.Add(field);
                     }
@@ -465,17 +470,56 @@ namespace services.Controllers.Private
             else
             {
                 db.Entry(lease).State = EntityState.Modified;
+                lease.LeaseCropShares = new List<LeaseCropShare>();
                 
                 try
                 {
-                    foreach (var lcs in lease.LeaseCropShares) {
+                    foreach (var lcs in cropshares) {
+
+                        LeaseCropShare new_lcs;
+                        
                         if (lcs.Id != 0)
-                            db.Entry(lcs).State = EntityState.Modified;
+                        {
+                            //logger.Debug("modified and updating:" + lcs.Id);
+                            new_lcs = db.LeaseCropShare().Find(lcs.Id);
+                        }
                         else
-                            db.Entry(lcs).State = EntityState.Added;
+                        {
+                            //logger.Debug("making a new one");
+                            new_lcs = new LeaseCropShare();
+                        }
+
+                        new_lcs.LeaseId = lcs.LeaseId;
+                        new_lcs.Crop = lcs.Crop;
+                        new_lcs.CropShareType = lcs.CropShareType;
+                        new_lcs.CropSharePercent = lcs.CropSharePercent;
+                        new_lcs.Comment = lcs.Comment;
+                        new_lcs.CostSharePercent = lcs.CostSharePercent;
+
+                        if (lcs.Id != 0)
+                        {
+                            //logger.Debug(" -- modified -- " + new_lcs.Id);
+                            db.Entry(new_lcs).State = EntityState.Modified;
+                        }else{
+                            //logger.Debug(" -- adding -- " + new_lcs.Id);
+                            lease.LeaseCropShares.Add(lcs);
+                        }
+                        
+                    }
+
+                    //db.SaveChanges();
+
+                    //logger.Debug("now remove if there are any:");
+
+                    if (cropsharestoremove.Count > 0)
+                    {
+                        var query = "DELETE FROM LeaseCropShares WHERE LeaseId = " + lease.Id + " AND Id in (" + string.Join<int>(",", cropsharestoremove) + ")";
+                        //logger.Debug("trying to delete: " + query);
+                        db.Database.ExecuteSqlCommand(query);
                     }
 
                     db.SaveChanges();
+
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
