@@ -25,9 +25,24 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().Where(o => o.PermitStatus != "Archived").AsEnumerable();
+            return db.Permit().Where(o => o.PermitStatus != "Archived").OrderByDescending(o => o.ApplicationDate).Take(100).AsEnumerable(); //TODO just getting 100 for now
 
         }
+
+
+        [HttpGet]
+        public dynamic GetPermitContacts(int Id)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitContacts().Where(o => o.PermitId == Id).AsEnumerable();
+
+        }
+
 
     }
 }

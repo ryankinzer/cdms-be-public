@@ -7,13 +7,13 @@ namespace services.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class add_columnindex : IMigrationMetadata
+    public sealed partial class permitcontact : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(add_columnindex));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(permitcontact));
         
         string IMigrationMetadata.Id
         {
-            get { return "201905281951134_add_columnindex"; }
+            get { return "201905291721385_permitcontact"; }
         }
         
         string IMigrationMetadata.Source
