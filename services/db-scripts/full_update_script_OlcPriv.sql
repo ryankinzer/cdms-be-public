@@ -144,6 +144,11 @@ go
 insert into dbo.Subproject_Olc(CatalogNumber, RecordGroup, SeriesTitle, FacilityHoused, Box, BoxLocation, CategoryTitle, CategoryIndex, SignatoryTitle, SignatoryAgency, SignatoryName, ByUserId, EffDt)
 values ('ReferenceRecord', null, null, null, null, null, null, null, null, null, null, 1081, CONVERT(VARCHAR(23), GETDATE(), 121))
 
+--Add OLC roles to those needing it.
 update dbo.Users
-set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor", "OLC"]'
+set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor","OLC"]'
 where Username = 'georgec'
+
+--Add restriction to project and dataset
+update dbo.Projects set Config = '{"RestrictRoles":"OLC"}' where [Name] = 'Office of Legal Counsel' -- This must be a string.
+update dbo.Datasets set Config = '{"RestrictRoles":["OLC"],"ActivitiesPage":{"Route":"olcevents"}}' where [Name] = 'OLC' -- This must be an array.
