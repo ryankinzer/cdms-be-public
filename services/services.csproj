@@ -199,10 +199,6 @@
     <Compile Include="Migrations\201905241620324_reset.Designer.cs">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905292128583_parcels.cs" />
-    <Compile Include="Migrations\201905292128583_parcels.Designer.cs">
-      <DependentUpon>201905292128583_parcels.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -373,6 +369,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\cdms_2019-05-24_add_production_fields.sql" />
+    <Content Include="db-scripts\20190528_cdms.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="db-scripts\full_update_script_OlcPal.sql" />
     <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
@@ -386,7 +383,7 @@
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
-    <Content Include="db-scripts\paluut_permitupdates_20190528.sql" />
+    <Content Include="db-scripts\20190528_paluut.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -429,9 +426,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
       <DependentUpon>201905241620324_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905292128583_parcels.resx">
-      <DependentUpon>201905292128583_parcels.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

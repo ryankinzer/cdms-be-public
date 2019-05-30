@@ -11,7 +11,7 @@ namespace services.ExtensionMethods
     public static class PermitEventExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<PermitEvent> PermitEvent(this ServicesContext ctx)
+        public static DbSet<PermitEvent> PermitEvents(this ServicesContext ctx)
         {
             return ctx.GetDbSet("PermitEvent").Cast<PermitEvent>();
         }

@@ -194,3 +194,46 @@ ALTER TABLE [dbo].[PermitParcels] ADD CONSTRAINT [FK_dbo.PermitParcels_dbo.Permi
 
 go
 
+-- now for the permit events dataset and fields
+
+DECLARE @newdsid int = 0;
+DECLARE @newprojectid int = 0;
+DECLARE @newdatasetid int = 0;
+
+set @newprojectid = (select id from projects where name = 'Permit Project');
+
+
+INSERT into Datastores (Name, Description, OwnerUserId, DefaultConfig)
+values ('Permit Events', 'Permit event fields', 1, '{}');
+select @newdsid = scope_identity();
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('EventDate','Created','Date event created','datetime',@newdsid,1,null,'datetime',null,null),
+('EventType','Event Type','Event Type','select',@newdsid,1,null,'string','["Approval","Document","Correspondence","Inspection","Record"]',null),
+('ItemType','Item Type','Item Type','select',@newdsid,1,null,'string','["CRPP","WRP","County","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null),
+('RequestDate','Request Date','Request Date','datetime',@newdsid,1,null,'datetime',null,null),
+('ResponseDate','Response Date','Response Date','datetime',@newdsid,1,null,'datetime',null,null),
+('Reviewer','Reviewer','Reviewer','text',@newdsid,1,null,'string',null,null),
+('Result','Result','Result','text',@newdsid,1,null,'string',null,null),
+('Reference','Reference','Reference','text',@newdsid,1,null,'string',null,null),
+('Comments','Comments','Comments','text',@newdsid,1,null,'string',null,null),
+('Files','Attachments','Files','file',@newdsid,1,null,'file',null,null);
+
+
+insert into datasets 
+(ProjectId, DefaultRowQAStatusId, DefaultActivityQAStatusId, StatusId, CreateDateTime, Name, Description, DatastoreId) 
+values 
+(@newprojectid, 1, 5, 1,getdate(),'Permit Events','Permit Events Form',@newdsid );
+
+select @newdatasetid = scope_identity();
+
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select
+@newdatasetid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
+FROM Fields where DatastoreId = @newdsid;
+
+go
+select * from datastores
