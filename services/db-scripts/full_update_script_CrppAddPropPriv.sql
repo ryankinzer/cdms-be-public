@@ -46,7 +46,7 @@ values(
 (select Id from dbo.Fields where DbColumnName = 'OnReservation'),
 1,
 (convert(varchar, getdate(), 121)),
-'On Reserveration',
+'On Reservation',
 'OnReservation',
 1,
 null,
