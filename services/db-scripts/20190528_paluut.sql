@@ -1,4 +1,6 @@
-﻿-- add columnindex field to datasetfields for grouping fields in the UI
+﻿-- PALUUT: updates for permit module + columnindex for datasetfields (kb)
+
+-- add columnindex field to datasetfields for grouping fields in the UI
 ALTER TABLE [dbo].[DatasetFields] ADD [ColumnIndex] [int]
 
 go
