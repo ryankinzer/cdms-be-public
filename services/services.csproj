@@ -195,13 +195,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201905301844360_reset.cs" />
-    <Compile Include="Migrations\201905301844360_reset.Designer.cs">
-      <DependentUpon>201905301844360_reset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905301848291_AddCrppProp.cs" />
-    <Compile Include="Migrations\201905301848291_AddCrppProp.Designer.cs">
-      <DependentUpon>201905301848291_AddCrppProp.cs</DependentUpon>
+    <Compile Include="Migrations\201905311615134_reset.cs" />
+    <Compile Include="Migrations\201905311615134_reset.Designer.cs">
+      <DependentUpon>201905311615134_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -369,10 +365,9 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\cdms_2019-05-24_add_production_fields.sql" />
-    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
-    <Content Include="db-scripts\full_update_script_CrppAddPropPal.sql" />
-    <Content Include="db-scripts\full_update_script_CrppAddPropPriv.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-24_add_production_fields.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPriv.sql" />
     <Content Include="db-scripts\full_update_script_OlcPal.sql" />
     <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
     <Content Include="db-scripts\archive\paluut_2019-05-07_permits_core.sql" />
@@ -384,7 +379,6 @@
     <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
-    <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -425,11 +419,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905301844360_reset.resx">
-      <DependentUpon>201905301844360_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905301848291_AddCrppProp.resx">
-      <DependentUpon>201905301848291_AddCrppProp.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905311615134_reset.resx">
+      <DependentUpon>201905311615134_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
