@@ -1,8 +1,11 @@
-﻿using services.ExtensionMethods;
+﻿using Newtonsoft.Json.Linq;
+using services.ExtensionMethods;
 using services.Models;
+using services.Models.Data;
 using services.Resources;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -83,7 +86,31 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpPost]
+        public HttpResponseMessage SavePermit(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            Permit permit = json.Permit.ToObject<Permit>();
+
+            if(permit.Id == 0) {
+                db.Permit().Add(permit);
+                db.SaveChanges();
+            }
+            else{
+                db.Entry(permit).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, permit);
+            return response;
+        }
 
 
-    }
+        }
 }
