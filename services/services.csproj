@@ -213,6 +213,9 @@
     <Compile Include="Models\Data\BiomVisitMetrics.cs" />
     <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
     <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
+    <Compile Include="Models\Data\CreelPhone.cs" />
+    <Compile Include="Models\Data\CreelPhone_Detail.cs" />
+    <Compile Include="Models\Data\CreelPhone_Header.cs" />
     <Compile Include="Models\Data\Private\Permits\Permit.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
