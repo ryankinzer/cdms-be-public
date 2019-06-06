@@ -70,6 +70,19 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpGet]
+        public dynamic GetPermitFiles(int ProjectId, int PermitId)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.Files.Where(o => o.ProjectId == ProjectId && o.ItemId == PermitId).AsEnumerable();
+
+        }
+
 
 
     }

@@ -44,9 +44,8 @@ namespace services.Models.Data
 
         public string PermitConditions { get; set; }
         public string PermitFile { get; set; }
-        public string Finding { get; set; }
-        public DateTime? FindingDate { get; set; }
-
+        public string FileStatus { get; set; }
+        
         public decimal? Fee { get; set; }
         public DateTime? FeePaymentDate { get; set; }
         public decimal? FeePaymentAmount{ get; set; }
@@ -77,7 +76,7 @@ namespace services.Models.Data
 
         public bool? IsVoid { get; set; }
         public bool? IsFloodHazardOverlay { get; set; }
-        public string OccupationalGroup { get; set; }
+        public string OccupancyGroup { get; set; }
         public string ConstructionType { get; set; }
         public string BusinessName { get; set; }
 

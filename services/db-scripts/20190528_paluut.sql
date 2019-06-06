@@ -2,7 +2,10 @@
 
 -- add columnindex field to datasetfields for grouping fields in the UI
 ALTER TABLE [dbo].[DatasetFields] ADD [ColumnIndex] [int]
+go
 
+-- add itemid to file for cross-referencing permitnumber and in the future, correspondenceitems, etc.
+ALTER TABLE [dbo].[Files] ADD [ItemId] [int]
 go
 
 -- add the permitnumber that we somehow missed!
@@ -236,4 +239,116 @@ select
 FROM Fields where DatastoreId = @newdsid;
 
 go
-select * from datastores
+
+
+ALTER TABLE [dbo].[Permits] DROP COLUMN [OccupationalGroup];
+go
+ALTER TABLE [dbo].[Permits] ADD [OccupancyGroup] [nvarchar](max)
+go
+
+update fields 
+set 
+Name = 'Occupancy Group',
+Description = 'Occupancy Group',
+DbColumnName = 'OccupancyGroup'
+where 
+dbcolumnname = 'OccupationalGroup';
+
+update datasetfields 
+set 
+Label = 'Occupancy Group',
+DbColumnName = 'OccupancyGroup'
+where 
+dbcolumnname = 'OccupationalGroup';
+go
+
+ALTER TABLE [dbo].[Permits] DROP COLUMN [FindingDate];
+ALTER TABLE [dbo].[Permits] DROP COLUMN [Finding];
+go
+ALTER TABLE [dbo].[Permits] ADD [FileStatus] [nvarchar](max)
+go
+
+update fields 
+set 
+Name = 'File Status',
+Description = 'File Status',
+DbColumnName = 'FileStatus'
+where 
+dbcolumnname = 'Finding';
+
+update datasetfields 
+set 
+Label = 'File Status',
+DbColumnName = 'FileStatus'
+where 
+dbcolumnname = 'Finding';
+go
+
+-- now for metadata fields for permit
+DECLARE @newentityid int = 0;
+insert into MetadataEntities (Name, Description) values ('Permit Fields','Permit lookup fields');
+select @newentityid = scope_identity();
+
+insert into MetadataProperties (metadataentityid, name, description, datatype, controltype, possiblevalues)
+values
+(@newentityid,'ImprovementType','Improvement Type','string','select','["(RETIRED) Mobile Home – Placement",
+"(RETIRED) Mobile Home – Replacement",
+"Access. Building",
+"Addition",
+"AG Exempt",
+"Communication Tower – New",
+"Communication Tower–Improvement",
+"Electrical",
+"Forest Practice",
+"Home - New",
+"Home Occupation",
+"Land Division",
+"Manufactured Commercial–Placement",
+"Manufactured Home–Placement",
+"Manufactured Home–Replacement",
+"Mechanical",
+"New Commercial Construction",
+"Other",
+"Plumbing",
+"Remodel",
+"SDP Construction",
+"SDP Major Repair",
+"SDP Minor Repair",
+"SDP Site Assessment",
+"Sign",
+"Utility Pole/line",
+"Zone Change - Code",
+"Zone Change–Map"]'),
+(@newentityid,'IssuedBy','Issued By','string','select','["Dani Schulte","Holly Anderson"]'),
+(@newentityid,'ReviewedBy','Reviewed By','string','select','["Dani Schulte","Holly Anderson"]'),
+(@newentityid,'PermitStatus','Permit Status','string','select','["Under Review", "Approved", "Conditionally Approved", "Denied","Incomplete","Cancelled", "Archived"]'),
+(@newentityid,'FileStatus','File Status','string','select','["Active", "Inactive", "Archived"]'),
+(@newentityid,'FeePaymentType','Fee Payment Type','string','select','["Finance Office","Permit Office"]'),
+(@newentityid,'FeePaymentMethod','Fee Payment Method','string','select','["Cash","Check","Credit","PO"]'),
+(@newentityid,'BuildingUse','Building Use','string','select','["Residential","Commercial","Industrial"]'),
+(@newentityid,'OccupancyGroup','Occupancy Group','string','select','["A-1","A-2","A-3","A-4","A-5","B","E","F-1","F-2","H-1","H-2","H-3","H-4","H-5","I-1","I-2","I-3","I-4","M","R-1","R-2","R-3","R-4","S-1","S-2","U"]'),
+(@newentityid,'ConstructionType','Construction Type','string','select','["VA",
+"IIA",
+"II",
+"1-B",
+"VB",
+"IB",
+"IIB",
+"V-N",
+"V"]'),
+(@newentityid,'COStatus','CO Status','string','select','["Yes","No","N/A"]');
+
+go
+
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 52' where datastoreid = 33 and dbColumnname = 'ImprovementType';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 62' where datastoreid = 33 and dbColumnname = 'COStatus';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 61' where datastoreid = 33 and dbColumnname = 'ConstructionType';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 60' where datastoreid = 33 and dbColumnname = 'OccupancyGroup';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 59' where datastoreid = 33 and dbColumnname = 'BuildingUse';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 58' where datastoreid = 33 and dbColumnname = 'FeePaymentMethod';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 57' where datastoreid = 33 and dbColumnname = 'FeePaymentType';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 56' where datastoreid = 33 and dbColumnname = 'FileStatus';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 55' where datastoreid = 33 and dbColumnname = 'PermitStatus';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 54' where datastoreid = 33 and dbColumnname = 'ReviewedBy';
+update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 53' where datastoreid = 33 and dbColumnname = 'IssuedBy';
+go
