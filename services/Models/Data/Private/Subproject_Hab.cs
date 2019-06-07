@@ -34,6 +34,7 @@ namespace services.Models.Data
     public class Subproject_Hab : Subproject
     {
         public string ProjectName { get; set; }
+        public string ProjectLead { get; set; }
         public string ProjectSummary { get; set; }
         public string ProjectDescription { get; set; }
         public DateTime? ProjectStartDate { get; set; }

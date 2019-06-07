@@ -195,6 +195,14 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
+    <Compile Include="Migrations\201906071832319_reset.cs" />
+    <Compile Include="Migrations\201906071832319_reset.Designer.cs">
+      <DependentUpon>201906071832319_reset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906071835235_AddHabProjLead.cs" />
+    <Compile Include="Migrations\201906071835235_AddHabProjLead.Designer.cs">
+      <DependentUpon>201906071835235_AddHabProjLead.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -418,6 +426,14 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201906071832319_reset.resx">
+      <DependentUpon>201906071832319_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906071835235_AddHabProjLead.resx">
+      <DependentUpon>201906071835235_AddHabProjLead.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
