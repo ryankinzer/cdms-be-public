@@ -199,10 +199,6 @@
     <Compile Include="Migrations\201906071832319_reset.Designer.cs">
       <DependentUpon>201906071832319_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906071835235_AddHabProjLead.cs" />
-    <Compile Include="Migrations\201906071835235_AddHabProjLead.Designer.cs">
-      <DependentUpon>201906071835235_AddHabProjLead.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -388,6 +384,8 @@
     <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\full_update_script_HabProjLeadPal.sql" />
+    <Content Include="db-scripts\full_update_script_HabProjLeadPriv.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -430,9 +428,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201906071832319_reset.resx">
       <DependentUpon>201906071832319_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201906071835235_AddHabProjLead.resx">
-      <DependentUpon>201906071835235_AddHabProjLead.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
