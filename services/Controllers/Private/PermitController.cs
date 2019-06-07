@@ -73,6 +73,20 @@ namespace services.Controllers.Private
 
         }
 
+
+        [HttpGet]
+        public dynamic GetAllPermitPersons()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitPerson().AsEnumerable();
+
+        }
+
         [HttpGet]
         public dynamic GetPermitFiles(int ProjectId, int PermitId)
         {
@@ -112,5 +126,62 @@ namespace services.Controllers.Private
         }
 
 
+        [HttpPost]
+        public HttpResponseMessage SavePermitPerson(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitPerson person = json.PermitPerson.ToObject<PermitPerson>();
+
+            if (person.Id == 0)
+            {
+                db.PermitPerson().Add(person);
+                db.SaveChanges();
+            }
+            else
+            {
+                db.Entry(person).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, person);
+            return response;
         }
+
+        [HttpPost]
+        public HttpResponseMessage SavePermitContact(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitContact incoming_contact = json.PermitContact.ToObject<PermitContact>();
+
+            PermitContact existing = db.PermitContacts().Find(incoming_contact.PermitId, incoming_contact.PermitPersonId);
+
+            if(existing == null) {
+                db.PermitContacts().Add(incoming_contact);
+                db.SaveChanges();
+            } else {
+                existing.IsPrimary = incoming_contact.IsPrimary;
+                existing.ContactType = incoming_contact.ContactType;
+                db.Entry(existing).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+           
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_contact);
+            return response;
+        }
+
+
+    }
 }
