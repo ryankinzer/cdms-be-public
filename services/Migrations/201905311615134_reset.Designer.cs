@@ -13,7 +13,7 @@ namespace services.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201905301844360_reset"; }
+            get { return "201905311615134_reset"; }
         }
         
         string IMigrationMetadata.Source
