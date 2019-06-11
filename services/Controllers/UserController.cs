@@ -402,7 +402,6 @@ namespace services.Controllers
                                    orderby u.Fullname
                                    select u).ToList();
 
-            //return userAsEnumerable();
             return userList.AsEnumerable();
         }
 
