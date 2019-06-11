@@ -150,5 +150,8 @@ set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor","OLC"]'
 where Username = 'georgec'
 
 --Add restriction to project and dataset
-update dbo.Projects set Config = '{"RestrictRoles":"OLC"}' where [Name] = 'Office of Legal Counsel' -- This must be a string.
+--Add Config entry to make the Lookup tables work.
+update dbo.Projects set Config = '{"Lookups":[{"Id":11,"Label":"OLC","Type":"Metafields"}],"RestrictRoles":"OLC"}'
+where [Name] = 'Office of Legal Counsel' -- This must be a string.
+
 update dbo.Datasets set Config = '{"RestrictRoles":["OLC"],"ActivitiesPage":{"Route":"olcevents"}}' where [Name] = 'OLC' -- This must be an array.
