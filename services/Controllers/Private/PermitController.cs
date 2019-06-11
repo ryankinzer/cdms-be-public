@@ -183,5 +183,32 @@ namespace services.Controllers.Private
         }
 
 
+        [HttpPost]
+        public HttpResponseMessage RemovePermitContact(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitContact incoming_contact = json.PermitContact.ToObject<PermitContact>();
+
+            PermitContact existing = db.PermitContacts().Find(incoming_contact.PermitId, incoming_contact.PermitPersonId);
+
+            if (existing != null)
+            {
+                db.PermitContacts().Remove(existing);
+                db.SaveChanges();
+            }
+            
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
+        }
+
+
+        
+
     }
 }
