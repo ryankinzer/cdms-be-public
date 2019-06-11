@@ -32,8 +32,21 @@ namespace services.Controllers.Private
 
         }
 
-
         [HttpGet]
+        public dynamic AllParcels()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitCadasterView().OrderBy(o => o.ParcelId).AsEnumerable();
+
+        }
+        
+
+                [HttpGet]
         public dynamic GetPermitContacts(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
@@ -207,8 +220,51 @@ namespace services.Controllers.Private
             return response;
         }
 
+        [HttpPost]
+        public HttpResponseMessage SavePermitParcel(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
 
-        
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitParcel incoming_parcel = json.PermitParcel.ToObject<PermitParcel>();
+
+            db.PermitParcels().Add(incoming_parcel);
+            db.SaveChanges();
+
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_parcel);
+            return response;
+        }
+
+
+        [HttpPost]
+        public HttpResponseMessage RemovePermitParcel(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitParcel incoming_parcel = json.PermitParcel.ToObject<PermitParcel>();
+
+            PermitParcel existing = db.PermitParcels().Find(incoming_parcel.Id);
+
+            if (existing != null)
+            {
+                db.PermitParcels().Remove(existing);
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
+        }
+
 
     }
 }

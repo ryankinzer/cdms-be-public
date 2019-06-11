@@ -187,8 +187,7 @@ CREATE TABLE [dbo].[PermitParcels] (
     [Id] [int] NOT NULL IDENTITY,
     [PermitId] [int] NOT NULL,
     [ObjectId] [int] NOT NULL,
-    [ParcelNumber] [nvarchar](max),
-    [AllotmentNumber] [nvarchar](max),
+    [ParcelId] [nvarchar](max),
     CONSTRAINT [PK_dbo.PermitParcels] PRIMARY KEY ([Id])
 )
 CREATE INDEX [IX_PermitId] ON [dbo].[PermitParcels]([PermitId])

@@ -35,12 +35,12 @@ namespace services.Models.Data
         public string Datasource { get; set; }
         public string Comment { get; set; }
         public string Address { get; set; }
-        public decimal? AcresGIS { get; set; }
-        public decimal? AcresCty { get; set; }
+        public decimal? Acres_GIS { get; set; }
+        public decimal? Acres_Cty { get; set; }
         public string PLSS { get; set; }
         public string PLSS2 { get; set; }
         public string PLSS3 { get; set; }
-        public string PLSSLabel { get; set; }
+        public string PLSS_Label { get; set; }
         public DateTime? Last_Edited_Date { get; set; }
 
     }

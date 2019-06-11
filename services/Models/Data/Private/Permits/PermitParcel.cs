@@ -32,15 +32,13 @@ namespace services.Models.Data
         public int PermitId { get; set; }
         public int ObjectId { get; set; }
 
-        public string ParcelNumber { get; set; }
-        public string AllotmentNumber { get; set; }
+        public string ParcelId { get; set; }
 
         //relationships
 
         [JsonIgnore]
         public virtual Permit Permit { get; set; }
 
-        [JsonIgnore]
         public virtual PermitCadasterView Object { get; set; }
     }
 }
