@@ -136,7 +136,7 @@ values
 (@Entity, 'Boundary', 'Related to Boundary despute', 'string', '["East", "West", "North","South", "Other"]', 'select'),
 (@Entity, 'SignificantArea', 'Significant Area referred to', 'string', '["NW Reservation","NE Reservation","SE Reservation","SW Reservation", "East Reservation","Wildhorse Creek","Lee''s Encampment-Cayuse Summer Camp","Lee''s Encampment-Meacham","McKay Creek","Birch Creek", "West McKay Land Claim", "City of Pendleton-Notch Act"]', 'select'),
 (@Entity, 'MiscelleneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
-(@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy", "Malena Pinkham", "Alanna Nanegos", "Teara Farrow Ferman"]', 'select'),
+(@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy","Alanna Nanegos","Teara Farrow Ferman"]', 'select'),
 (@Entity, 'FacilityHoused', 'Facility the box or file is located in', 'string', '["NGC","TCI","NARA Sandpoint"]', 'select')
 go
 
@@ -144,11 +144,34 @@ go
 insert into dbo.Subproject_Olc(CatalogNumber, RecordGroup, SeriesTitle, FacilityHoused, Box, BoxLocation, CategoryTitle, CategoryIndex, SignatoryTitle, SignatoryAgency, SignatoryName, ByUserId, EffDt)
 values ('ReferenceRecord', null, null, null, null, null, null, null, null, null, null, 1081, CONVERT(VARCHAR(23), GETDATE(), 121))
 
+--Add Organization for new user.
+insert into dbo.Organizations ([Name], [Description]) values ('TCI', 'Tamastslikt Cultural Institute')
+
+declare @intOrgId AS int;
+set @intOrgId = (select Id from dbo.Organizations where [Name] = 'TCI');
+
+--Add Department for new user.
+insert into dbo.Departments (OrganizationId, [Name], [Description])
+values ((select Id from dbo.Organizations where [Name] = 'TCI'),'TCI', 'Tamastslikt Cultural Institute')
+
+declare @intDepId as int;
+set @intDepId = (select Id from dbo.Departments where [Name] = 'TCI');
+
+--Add OLC user
+insert into dbo.Users(OrganizationId, Username, [Description], LastLogin, DepartmentId, Fullname, Roles)
+values(@intOrgId,'BobbieC','TCI Director', (select convert(varchar, getdate(), 121)), @intDepId, 'Bobbie Conner', '["OLC"]')
+
 --Add OLC roles to those needing it.
-update dbo.Users
-set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor","OLC"]'
-where Username = 'georgec'
+update dbo.Users set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor","OLC"]' where Username = 'georgec'
+update dbo.Users set [Roles] = '["CRPP","OLC"]' where Username = 'TearaF'
+update dbo.Users set [Roles] = '["WRS","OLC"]' where Username = 'AlannaN'
+update dbo.Users set [Roles] = '["WRS","OLC"]' where Username = 'NaomiS'
+update dbo.Users set [Roles] = '["Admin","DECD","CRPP","Leasing","LeasingEditor","LeaseCropAdmin","OLC"]' where Username = 'colettec'
+
 
 --Add restriction to project and dataset
-update dbo.Projects set Config = '{"RestrictRoles":"OLC"}' where [Name] = 'Office of Legal Counsel' -- This must be a string.
+--Add Config entry to make the Lookup tables work.
+update dbo.Projects set Config = '{"Lookups":[{"Id":11,"Label":"OLC","Type":"Metafields"}],"RestrictRoles":"OLC"}'
+where [Name] = 'Office of Legal Counsel' -- This must be a string.
+
 update dbo.Datasets set Config = '{"RestrictRoles":["OLC"],"ActivitiesPage":{"Route":"olcevents"}}' where [Name] = 'OLC' -- This must be an array.
