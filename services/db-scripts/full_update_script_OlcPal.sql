@@ -58,3 +58,14 @@ FROM            dbo.Subproject_Olc AS sp INNER JOIN
                          dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
 go
 
+
+--Update field name
+ALTER TABLE [dbo].[OlcEvents] ADD [MiscellaneousContext] [nvarchar](max)
+DECLARE @var0 nvarchar(128)
+SELECT @var0 = name
+FROM sys.default_constraints
+WHERE parent_object_id = object_id(N'dbo.OlcEvents')
+AND col_name(parent_object_id, parent_column_id) = 'MiscelleneousContext';
+IF @var0 IS NOT NULL
+    EXECUTE('ALTER TABLE [dbo].[OlcEvents] DROP CONSTRAINT [' + @var0 + ']')
+ALTER TABLE [dbo].[OlcEvents] DROP COLUMN [MiscelleneousContext]

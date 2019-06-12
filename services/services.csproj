@@ -195,9 +195,13 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201905241620324_reset.cs" />
-    <Compile Include="Migrations\201905241620324_reset.Designer.cs">
-      <DependentUpon>201905241620324_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201906121631369_reset.cs" />
+    <Compile Include="Migrations\201906121631369_reset.Designer.cs">
+      <DependentUpon>201906121631369_reset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121635105_ChangeOlcFieldName.cs" />
+    <Compile Include="Migrations\201906121635105_ChangeOlcFieldName.Designer.cs">
+      <DependentUpon>201906121635105_ChangeOlcFieldName.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -419,8 +423,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905241620324_reset.resx">
-      <DependentUpon>201905241620324_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906121631369_reset.resx">
+      <DependentUpon>201906121631369_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121635105_ChangeOlcFieldName.resx">
+      <DependentUpon>201906121635105_ChangeOlcFieldName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

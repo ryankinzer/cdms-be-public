@@ -55,6 +55,31 @@ FROM            dbo.Subproject_Olc AS sp INNER JOIN
                          dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
 go
 
+--Note:  The update above this line has already been put into Prod.
+--However, the data part (below) was not put in yet.
+--Update field name
+ALTER TABLE [dbo].[OlcEvents] ADD [MiscellaneousContext] [nvarchar](max)
+DECLARE @var0 nvarchar(128)
+SELECT @var0 = name
+FROM sys.default_constraints
+WHERE parent_object_id = object_id(N'dbo.OlcEvents')
+AND col_name(parent_object_id, parent_column_id) = 'MiscelleneousContext';
+IF @var0 IS NOT NULL
+    EXECUTE('ALTER TABLE [dbo].[OlcEvents] DROP CONSTRAINT [' + @var0 + ']')
+ALTER TABLE [dbo].[OlcEvents] DROP COLUMN [MiscelleneousContext]
+
+--Update the views
+drop view OlcEvents_vw
+go
+create view OlcEvents_vw
+AS
+SELECT        e.Id, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.Author, e.AuthorAgency, e.Boundary, e.SignificantArea, e.MiscellaneousContext, e.Description, e.TwnRngSec, e.NumberItems, e.DateDiscovered, 
+                         e.PersonDiscovered, e.Reference
+FROM            dbo.Subproject_Olc AS sp INNER JOIN
+                         dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
+go
+
+
 -- Add the data
 -- Add the project
 declare @datasetBaseName as varchar(max) = 'OLC'
@@ -135,7 +160,7 @@ values
 (@Entity, 'DocumentType', 'Document Type', 'string', '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report"]', 'select'),
 (@Entity, 'Boundary', 'Related to Boundary despute', 'string', '["East", "West", "North","South", "Other"]', 'select'),
 (@Entity, 'SignificantArea', 'Significant Area referred to', 'string', '["NW Reservation","NE Reservation","SE Reservation","SW Reservation", "East Reservation","Wildhorse Creek","Lee''s Encampment-Cayuse Summer Camp","Lee''s Encampment-Meacham","McKay Creek","Birch Creek", "West McKay Land Claim", "City of Pendleton-Notch Act"]', 'select'),
-(@Entity, 'MiscelleneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
+(@Entity, 'MiscellaneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
 (@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy","Alanna Nanegos","Teara Farrow Ferman"]', 'select'),
 (@Entity, 'FacilityHoused', 'Facility the box or file is located in', 'string', '["NGC","TCI","NARA Sandpoint"]', 'select')
 go
