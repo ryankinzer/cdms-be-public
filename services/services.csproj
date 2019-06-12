@@ -199,10 +199,6 @@
     <Compile Include="Migrations\201906121631369_reset.Designer.cs">
       <DependentUpon>201906121631369_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906121635105_ChangeOlcFieldName.cs" />
-    <Compile Include="Migrations\201906121635105_ChangeOlcFieldName.Designer.cs">
-      <DependentUpon>201906121635105_ChangeOlcFieldName.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -432,9 +428,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201906121631369_reset.resx">
       <DependentUpon>201906121631369_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201906121635105_ChangeOlcFieldName.resx">
-      <DependentUpon>201906121635105_ChangeOlcFieldName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
