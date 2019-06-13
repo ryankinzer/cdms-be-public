@@ -369,7 +369,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\cdms_2019-05-24_add_production_fields.sql" />
-    <Content Include="db-scripts\20190528_cdms.sql" />
+    <Content Include="db-scripts\20190613_cdms.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
     <Content Include="db-scripts\full_update_script_OlcPal.sql" />
     <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
@@ -383,7 +383,7 @@
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
     <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
     <Content Include="db-scripts\full_update_script_CreelSurveyFixValidation.sql" />
-    <Content Include="db-scripts\20190528_paluut.sql" />
+    <Content Include="db-scripts\20190613_paluut.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
