@@ -266,5 +266,49 @@ namespace services.Controllers.Private
         }
 
 
+        [HttpPost]
+        public HttpResponseMessage SavePermitEvent(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            PermitEvent incoming_event = json.PermitEvent.ToObject<PermitEvent>();
+
+            PermitEvent existing = db.PermitEvents().Find(incoming_event.Id);
+
+            if (existing == null)
+            {
+                db.PermitEvents().Add(incoming_event);
+                db.SaveChanges();
+            }
+            else
+            {
+                existing.ByUser = incoming_event.ByUser;
+                existing.Comments = incoming_event.Comments;
+                existing.EventDate = incoming_event.EventDate;
+                existing.EventType = incoming_event.EventType;
+                existing.Files = incoming_event.Files;
+                existing.ItemType = incoming_event.ItemType;
+                existing.PermitId = incoming_event.PermitId;
+                existing.Reference = incoming_event.Reference;
+                existing.RequestDate = incoming_event.RequestDate;
+                existing.ResponseDate = incoming_event.ResponseDate;
+                existing.Result = incoming_event.Result;
+                existing.Reviewer = incoming_event.Reviewer;
+                
+                db.Entry(existing).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
+            return response;
+        }
+
     }
 }
