@@ -739,12 +739,12 @@ namespace services.Controllers
                     olcEvent.SignificantArea = subproject_json;
                     logger.Debug("olcEvent.SignificantArea = " + olcEvent.SignificantArea);
                 }
-                else if (prop.Name == "MiscelleneousContext")
+                else if (prop.Name == "MiscellaneousContext")
                 {
-                    logger.Debug("MiscelleneousContext = " + subproject_json);
+                    logger.Debug("MiscellaneousContext = " + subproject_json);
 
-                    olcEvent.MiscelleneousContext = subproject_json;
-                    logger.Debug("olcEvent.MiscelleneousContext = " + olcEvent.MiscelleneousContext);
+                    olcEvent.MiscellaneousContext = subproject_json;
+                    logger.Debug("olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext);
                 }
                 else if (prop.Name == "Description")
                     olcEvent.Description = subproject_json;
@@ -784,7 +784,7 @@ namespace services.Controllers
                 "olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
                 "olcEvent.Boundary = " + olcEvent.Boundary + "\n" +
                 "olcEvent.SignificantArea = " + olcEvent.SignificantArea + "\n" +
-                "olcEvent.MiscelleneousContext = " + olcEvent.MiscelleneousContext + "\n" +
+                "olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext + "\n" +
                 "olcEvent.Description = " + olcEvent.Description + "\n" +
                 "olcEvent.TwnRngSec = " + olcEvent.TwnRngSec + "\n" +
                 "olcEvent.NumberItems = " + olcEvent.NumberItems + "\n" +

@@ -57,7 +57,7 @@ namespace services.Models.Data
         public string AuthorAgency { get; set; }
         public string Boundary { get; set; }
         public string SignificantArea { get; set; }
-        public string MiscelleneousContext { get; set; }
+        public string MiscellaneousContext { get; set; }
         public string Description { get; set; }
         public string TwnRngSec { get; set; }
         public int? NumberItems { get; set; }

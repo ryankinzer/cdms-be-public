@@ -392,6 +392,19 @@ namespace services.Controllers
             return userList.AsEnumerable();
         }
 
+        // GET api/v1/user/getolcstaff
+        public IEnumerable<User> GetOlcStaff()
+        {
+            logger.Debug("Inside UserController.cs, GetOlcStaff...");
+            var db = ServicesContext.Current;
+            List<User> userList = (from u in db.User
+                                   where u.Inactive == null && u.Roles.Contains("OLC")
+                                   orderby u.Fullname
+                                   select u).ToList();
+
+            return userList.AsEnumerable();
+        }
+
         public dynamic GetMyLastUpdatedDatasets() {
 
             User me = AuthorizationManager.getCurrentUser();

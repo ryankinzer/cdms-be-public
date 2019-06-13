@@ -140,9 +140,22 @@ namespace services.Controllers
 
                     var identity = new GenericIdentity(user.Username, "Basic");
 
-                    string[] roles = (!String.IsNullOrEmpty(user.Roles)) ? user.Roles.Split(":".ToCharArray()) : new string[0];
+                    //string[] roles = (!String.IsNullOrEmpty(user.Roles)) ? user.Roles.Split(":".ToCharArray()) : new string[0];
+                    string[] roles = (!String.IsNullOrEmpty(user.Roles)) ? user.Roles.Split(",".ToCharArray()) : new string[0];
+                    logger.Debug("roles.Length = " + roles.Length);
 
-                    logger.Debug("Roles == " + roles.ToString());
+                    string strRoles = "";
+                    int intCount = 0;
+                    foreach (var item in roles)
+                    {
+                        if (intCount == 0)
+                            strRoles += item;
+                        else
+                            strRoles += ", " + item;
+                    }
+
+                    //logger.Debug("Roles == " + roles.ToString());
+                    logger.Debug("Roles == " + strRoles);
 
                     var principal = new GenericPrincipal(identity, roles);
                     Thread.CurrentPrincipal = principal;

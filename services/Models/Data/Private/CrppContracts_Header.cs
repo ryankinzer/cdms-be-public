@@ -33,5 +33,6 @@ namespace services.Models.Data
 
         public Single? AwardAmount { get; set; }
         public DateTime? FinalReportSubmitted { get; set; }
+        public string OnReservation { get; set; }
     }
 }

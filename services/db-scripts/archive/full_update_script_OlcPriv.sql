@@ -55,6 +55,31 @@ FROM            dbo.Subproject_Olc AS sp INNER JOIN
                          dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
 go
 
+--Note:  The update above this line has already been put into Prod.
+--However, the data part (below) was not put in yet.
+--Update field name
+ALTER TABLE [dbo].[OlcEvents] ADD [MiscellaneousContext] [nvarchar](max)
+DECLARE @var0 nvarchar(128)
+SELECT @var0 = name
+FROM sys.default_constraints
+WHERE parent_object_id = object_id(N'dbo.OlcEvents')
+AND col_name(parent_object_id, parent_column_id) = 'MiscelleneousContext';
+IF @var0 IS NOT NULL
+    EXECUTE('ALTER TABLE [dbo].[OlcEvents] DROP CONSTRAINT [' + @var0 + ']')
+ALTER TABLE [dbo].[OlcEvents] DROP COLUMN [MiscelleneousContext]
+
+--Update the views
+drop view OlcEvents_vw
+go
+create view OlcEvents_vw
+AS
+SELECT        e.Id, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.Author, e.AuthorAgency, e.Boundary, e.SignificantArea, e.MiscellaneousContext, e.Description, e.TwnRngSec, e.NumberItems, e.DateDiscovered, 
+                         e.PersonDiscovered, e.Reference
+FROM            dbo.Subproject_Olc AS sp INNER JOIN
+                         dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
+go
+
+
 -- Add the data
 -- Add the project
 declare @datasetBaseName as varchar(max) = 'OLC'
@@ -135,8 +160,8 @@ values
 (@Entity, 'DocumentType', 'Document Type', 'string', '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report"]', 'select'),
 (@Entity, 'Boundary', 'Related to Boundary despute', 'string', '["East", "West", "North","South", "Other"]', 'select'),
 (@Entity, 'SignificantArea', 'Significant Area referred to', 'string', '["NW Reservation","NE Reservation","SE Reservation","SW Reservation", "East Reservation","Wildhorse Creek","Lee''s Encampment-Cayuse Summer Camp","Lee''s Encampment-Meacham","McKay Creek","Birch Creek", "West McKay Land Claim", "City of Pendleton-Notch Act"]', 'select'),
-(@Entity, 'MiscelleneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
-(@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy", "Malena Pinkham", "Alanna Nanegos", "Teara Farrow Ferman"]', 'select'),
+(@Entity, 'MiscellaneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
+(@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy","Alanna Nanegos","Teara Farrow Ferman"]', 'select'),
 (@Entity, 'FacilityHoused', 'Facility the box or file is located in', 'string', '["NGC","TCI","NARA Sandpoint"]', 'select')
 go
 
@@ -144,6 +169,34 @@ go
 insert into dbo.Subproject_Olc(CatalogNumber, RecordGroup, SeriesTitle, FacilityHoused, Box, BoxLocation, CategoryTitle, CategoryIndex, SignatoryTitle, SignatoryAgency, SignatoryName, ByUserId, EffDt)
 values ('ReferenceRecord', null, null, null, null, null, null, null, null, null, null, 1081, CONVERT(VARCHAR(23), GETDATE(), 121))
 
-update dbo.Users
-set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor", "OLC"]'
-where Username = 'georgec'
+--Add Organization for new user.
+insert into dbo.Organizations ([Name], [Description]) values ('TCI', 'Tamastslikt Cultural Institute')
+
+declare @intOrgId AS int;
+set @intOrgId = (select Id from dbo.Organizations where [Name] = 'TCI');
+
+--Add Department for new user.
+insert into dbo.Departments (OrganizationId, [Name], [Description])
+values ((select Id from dbo.Organizations where [Name] = 'TCI'),'TCI', 'Tamastslikt Cultural Institute')
+
+declare @intDepId as int;
+set @intDepId = (select Id from dbo.Departments where [Name] = 'TCI');
+
+--Add OLC user
+insert into dbo.Users(OrganizationId, Username, [Description], LastLogin, DepartmentId, Fullname, Roles)
+values(@intOrgId,'BobbieC','TCI Director', (select convert(varchar, getdate(), 121)), @intDepId, 'Bobbie Conner', '["OLC"]')
+
+--Add OLC roles to those needing it.
+update dbo.Users set [Roles] = '["Admin","DECD","CRPP","WRS","Leasing","LeasingEditor","OLC"]' where Username = 'georgec'
+update dbo.Users set [Roles] = '["CRPP","OLC"]' where Username = 'TearaF'
+update dbo.Users set [Roles] = '["WRS","OLC"]' where Username = 'AlannaN'
+update dbo.Users set [Roles] = '["WRS","OLC"]' where Username = 'NaomiS'
+update dbo.Users set [Roles] = '["Admin","DECD","CRPP","Leasing","LeasingEditor","LeaseCropAdmin","OLC"]' where Username = 'colettec'
+
+
+--Add restriction to project and dataset
+--Add Config entry to make the Lookup tables work.
+update dbo.Projects set Config = '{"Lookups":[{"Id":11,"Label":"OLC","Type":"Metafields"}],"RestrictRoles":"OLC"}'
+where [Name] = 'Office of Legal Counsel' -- This must be a string.
+
+update dbo.Datasets set Config = '{"RestrictRoles":["OLC"],"ActivitiesPage":{"Route":"olcevents"}}' where [Name] = 'OLC' -- This must be an array.

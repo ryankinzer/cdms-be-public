@@ -972,6 +972,8 @@ namespace services.Controllers
                 }
                 else if (prop.Name == "ProjectName")
                     s.ProjectName = subproject_json;
+                else if (prop.Name == "ProjectLead")
+                    s.ProjectLead = subproject_json;
                 else if (prop.Name == "ProjectSummary")
                     s.ProjectSummary = subproject_json;
                 else if (prop.Name == "ProjectDescription")
@@ -1052,6 +1054,7 @@ namespace services.Controllers
                 "s.Id = " + s.Id + "\n" +
                 "s.ProjectId = " + s.ProjectId + "\n" +
                 "s.ProjectName = " + s.ProjectName + "\n" +
+                "s.ProjectLead = " + s.ProjectLead + "\n" +
                 "s.ProjectDescription = " + s.ProjectDescription + "\n" +
                 "s.LocationId = " + s.LocationId + "\n" +
                 "s.ProjectStartDate = " + s.ProjectStartDate + "\n" +
