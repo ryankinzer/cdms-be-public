@@ -26,6 +26,7 @@ namespace services.Models
         public int? FeatureImage { get; set; }
         public int? DatasetId { get; set; }
         public int SharingLevel { get; set; }
+        public int? ItemId { get; set; }
 
         [JsonIgnore]
         public virtual Project Project { get; set; }
