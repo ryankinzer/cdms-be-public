@@ -130,8 +130,8 @@ SELECT
     DefaultRowQAStatusId      = 1,
     StatusId                  = 1,
     CreateDateTime            = GetDate(),
-    Name                      = @datasetBaseName,
-    Description               = @datasetBaseName + ': ' + p.name,
+    Name                      = 'Eastern Boundary Research',
+    Description               = 'Eastern Boundary Research',
     DefaultActivityQAStatusId = 6,
     DatastoreId               = (SELECT IDENT_CURRENT('dbo.Datastores')),
     Config                    = '{"ActivitiesPage":{"Route":"olcevents"}}'
