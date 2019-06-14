@@ -148,22 +148,6 @@ where
 dbcolumnname = 'OccupationalGroup';
 go
 
-update fields 
-set 
-Name = 'File Status',
-Description = 'File Status',
-DbColumnName = 'FileStatus'
-where 
-dbcolumnname = 'Finding';
-
-update datasetfields 
-set 
-Label = 'File Status',
-DbColumnName = 'FileStatus'
-where 
-dbcolumnname = 'Finding';
-go
-
 -- some rules
 
 
@@ -245,7 +229,6 @@ update fields set possiblevalues = null, datasource='select possiblevalues from 
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 60' where datastoreid = 33 and dbColumnname = 'BuildingUse';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 59' where datastoreid = 33 and dbColumnname = 'FeePaymentMethod';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 58' where datastoreid = 33 and dbColumnname = 'FeePaymentType';
-update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 57' where datastoreid = 33 and dbColumnname = 'FileStatus';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 56' where datastoreid = 33 and dbColumnname = 'PermitStatus';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 55' where datastoreid = 33 and dbColumnname = 'ReviewedBy';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 54' where datastoreid = 33 and dbColumnname = 'IssuedBy';
@@ -296,6 +279,42 @@ UPDATE DatasetFields set OrderIndex = 232, ColumnIndex = 2 WHERE DatasetId = 128
 UPDATE DatasetFields set OrderIndex = 135, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COStatus' 
 UPDATE DatasetFields set OrderIndex = 130, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COIssueDate' 
 UPDATE DatasetFields set OrderIndex = 140, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COConditions' 
+
+
+go
+
+-- add the permitnumber
+DECLARE @newfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('PermitNumber','Permit Number','Permit Number','text',33,1,null,'string',null,null);
+
+select @newfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) values 
+(1281, @newfieldid, 1, getdate(), 'Permit Number','PermitNumber','text',null,1);
+
+go
+
 UPDATE DatasetFields set OrderIndex = 20, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'PermitNumber' 
+UPDATE DatasetFields set Label = 'Application Rec''d' WHERE DatasetId = 1281 and DbColumnName = 'ApplicationDate' 
+UPDATE DatasetFields set ControlType = 'textarea' WHERE DatasetId = 1281 and DbColumnName = 'COConditions' 
+UPDATE DatasetFields set ControlType = 'select' WHERE DatasetId = 1281 and DbColumnName in ('OccupancyGroup','BuildingUse')
+
+go
+
+DECLARE @anothernewfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('FileStatus','File Status','File Status','select',33,1,'select possiblevalues from metadataproperties where id = 57','string',null,null);
+
+select @anothernewfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @anothernewfieldid, 1, getdate(), 'File Status','FileStatus','select',null,1,3,400);
 
 go
