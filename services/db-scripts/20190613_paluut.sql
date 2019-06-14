@@ -25,8 +25,11 @@ ALTER TABLE [dbo].[PermitContacts] ADD CONSTRAINT [FK_dbo.PermitContacts_dbo.Per
 go
 
 -- cadaster view and permit parcels table
+-- NOTE: I created a GIS-SQL linked server on the DMZ-SQL for this and have to use this method to call the query because of:
+-- http://www.sql-server-helper.com/error-messages/msg-7325.aspx
+
 create view PermitCadaster_VW as
-select * from sdevector.sde.Cadaster_evw
+select * from OPENQUERY([GIS-SQL], 'select * from sdevector.sde.Cadaster_evw');
 
 go
 
@@ -95,9 +98,11 @@ ALTER TABLE [dbo].[Permits] ADD [FileStatus] [nvarchar](max)
 go
 
 
-delete from fields where dbcolumnname in  ('FindingDate', 'Finding') and datastoreid = 33;
-go
 delete from datasetfields where dbcolumnname in ('FindingDate', 'Finding') and datasetid = 1281;
+go
+
+
+delete from fields where dbcolumnname in  ('FindingDate', 'Finding') and datastoreid = 33;
 go
 
 -- update the fields that were incorrect
