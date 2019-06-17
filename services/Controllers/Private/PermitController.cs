@@ -33,6 +33,34 @@ namespace services.Controllers.Private
         }
 
         [HttpGet]
+        public dynamic RoutingPermits()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.Permit().Where(o => o.PermitStatus == "Under Review" || o.PermitStatus == "New Application").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
+
+        }
+
+
+        [HttpGet]
+        public dynamic InspectionPermits()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.Permit().Where(o => o.PermitStatus == "Approved" || o.PermitStatus == "Conditionally Approved").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
+
+        }
+
+
+        [HttpGet]
         public dynamic AllParcels()
         {
             User me = AuthorizationManager.getCurrentUser();

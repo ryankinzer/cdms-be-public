@@ -318,3 +318,10 @@ insert into DatasetFields
 (1281, @anothernewfieldid, 1, getdate(), 'File Status','FileStatus','select',null,1,3,400);
 
 go
+
+insert into Departments (organizationid, [name], description) values (1,'Planning','Planning Department');
+go
+
+update Projects set OwnerId = 1, config = '{"Lookups":[{"Id":9,"Label":"Permit Fields","Type":"Metafields"}]}' where name = 'Permit Project';
+go
+
