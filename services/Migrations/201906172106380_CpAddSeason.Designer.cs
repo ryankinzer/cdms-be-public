@@ -7,13 +7,13 @@ namespace services.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class reset : IMigrationMetadata
+    public sealed partial class CpAddSeason : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(reset));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CpAddSeason));
         
         string IMigrationMetadata.Id
         {
-            get { return "201906121631369_reset"; }
+            get { return "201906172106380_CpAddSeason"; }
         }
         
         string IMigrationMetadata.Source

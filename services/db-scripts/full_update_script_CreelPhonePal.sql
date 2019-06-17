@@ -126,8 +126,8 @@ SELECT
 	DefaultRowQAStatusId      = 1,
 	StatusId                  = 1,
 	CreateDateTime            = GetDate(),
-	Name                      = @datasetBaseName,
-	Description               = @datasetBaseName + ': ' + p.name,
+	Name                      = 'Harvest-Phone Interview',
+	Description               = 'Harvest Phone Interview',
 	DefaultActivityQAStatusId = 6,
 	DatastoreId               = (SELECT IDENT_CURRENT('dbo.Datastores')),
 	Config                    = '{"DataEntryPage": {"HiddenFields": ["Instrument","BulkQaChange"]}}'
@@ -390,7 +390,7 @@ drop table #NewDatasetIds
 -- Add system activity fields to DatasetFields
 declare @DatasetId as int; 
 declare @FieldId as int; 
-set @DatasetId = (select Id from dbo.Datasets where [Name] = 'CreelPhone'); 
+set @DatasetId = (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview'); 
 
 set @FieldId = (select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where [Name] like '%ActivitySystem%') and [DbColumnName] = 'ActivityDate'); 
 
@@ -416,3 +416,40 @@ where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone')
 update dbo.Fields set DataSource = 'SELECT Id, Name as Label from Waterbodies'
 where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone') and DbColumnName = 'StreamName'
 
+
+--Note:  The update above this line has already been put into Test, and other updates stacked on top of it.
+ALTER TABLE [dbo].[CreelPhone_Header] ADD [Season] [int] NOT NULL DEFAULT 0
+
+insert into dbo.Fields ([Name], [Description], DataType, DbColumnName, ControlType, DataSource, DatastoreId)
+values ('Season', 'Fishing season year', 'int', 'Season', 'select', 'SELECT Id, Name as Label from Seasons', (select Id from dbo.Datastores where TablePrefix = 'CreelPhone'))
+
+set @FieldId = (select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Season');
+
+insert into dbo.DatasetFields (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, SourceId, InstrumentId, OrderIndex, ControlType)
+values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Season', 'Season', 1, null, 15, 'select-number')
+GO
+
+--Update CreelPhone views for new property
+DROP VIEW CreelPhone_Header_VW
+GO
+CREATE VIEW CreelPhone_Header_VW
+AS
+SELECT Id, FishermanId, Fished, InterviewComments, ActivityId, ByUserId, EffDt, Season
+FROM dbo.CreelPhone_Header AS h
+WHERE (EffDt = 
+	(SELECT MAX(EffDt) AS MaxEffDt
+	FROM            dbo.CreelPhone_Header AS hh
+	WHERE        (ActivityId = h.ActivityId)))
+GO
+
+DROP VIEW CreelPhone_vw
+GO
+CREATE VIEW CreelPhone_vw
+AS
+SELECT a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.FishermanId, h.Fished, h.InterviewComments, h.ByUserId, h.EffDt, h.Season, d.Id AS CreelPhone_Detail_Id, d.StreamName, d.Trips, d.HoursFished, d.CreelInterviews, d.Species, d.NumberCaught, d.Disposition, d.LifeStage, d.Sex, d.Origin, d.MethodCaught, d.FishComments, d.RowId, d.ByUserId AS CreelPhone_Detail_ByUserId, d.QAStatusId, d.EffDt AS CreelPhone_Detail_EffDt, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel
+FROM dbo.Activities AS a 
+INNER JOIN dbo.CreelPhone_Header_VW AS h ON a.Id = h.ActivityId 
+LEFT OUTER JOIN dbo.CreelPhone_Detail_VW AS d ON h.ActivityId = d.ActivityId 
+INNER JOIN dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId 
+INNER JOIN dbo.Locations AS l ON a.LocationId = l.Id 
+GO

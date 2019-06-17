@@ -84,6 +84,6 @@ INNER JOIN dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId
 INNER JOIN dbo.Locations AS l ON a.LocationId = l.Id 
 GO
 
-
+ALTER TABLE [dbo].[CreelPhone_Header] ADD [Season] [int] NOT NULL DEFAULT 0
 
 
