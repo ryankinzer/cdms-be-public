@@ -1,4 +1,5 @@
-﻿using services.Models;
+﻿using Newtonsoft.Json;
+using services.Models;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,6 @@ namespace services.Models.Data
         public string Reference { get; set; }
         public string Comments { get; set; }
         public string Files { get; set; }
-
 
 
     }

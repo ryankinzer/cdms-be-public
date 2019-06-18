@@ -325,3 +325,47 @@ go
 update Projects set OwnerId = 1, config = '{"Lookups":[{"Id":9,"Label":"Permit Fields","Type":"Metafields"}]}' where name = 'Permit Project';
 go
 
+-- add routing field
+DECLARE @newroutingfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["Plan","WRP","Env","PubWrks","TERO","CRPP","Roads"]',null);
+
+select @newroutingfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @newroutingfieldid, 1, getdate(), 'Reviews Required','ReviewsRequired','multiselect-checkbox',null,1, 6, 600);
+
+go
+
+-- add scope of work field
+DECLARE @newsowfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ScopeOfWork','Scope of Work','Scope of Work','textarea',33,1,null,'string',null,null);
+
+select @newsowfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @newsowfieldid, 1, getdate(), 'Scope of Work','ScopeOfWork','textarea',null,1, 1, 125);
+
+go
+
+
+ALTER TABLE [dbo].[Permits] ADD [ReviewsRequired] [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD [ScopeOfWork] [nvarchar](max);
+
+ALTER TABLE [dbo].[Permits] ADD Route_Plan [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_WRP [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_ENV [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_PubWrks [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_TERO [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_CRPP [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_Roads [nvarchar](max);
+go
+
+ 
