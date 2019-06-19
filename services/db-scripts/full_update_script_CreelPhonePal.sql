@@ -405,10 +405,10 @@ values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Location
 
 -- Any other adjustments
 insert into dbo.LookupTables([Name], Label, [Description], DatasetId)
-values('Fishermen', 'Fishermen', 'Fishermen Lookup Table', (select Id from dbo.Datasets where [Name] = 'CreelPhone'))
+values('Fishermen', 'Fishermen', 'Fishermen Lookup Table', (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview'))
 
 update dbo.Datasets set Config = '{"DataEntryPage": {"HiddenFields": ["Instrument","BulkQaChange"]},"LookupTable":"Fishermen"}'
-where [Name] = 'CreelPhone'
+where [Name] = 'Harvest-Phone Interview'
 
 update dbo.Fields set DataSource = 'select Id, fullname as Label from Fishermen'
 where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone') and DbColumnName = 'FishermanId'
@@ -416,17 +416,24 @@ where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone')
 update dbo.Fields set DataSource = 'SELECT Id, Name as Label from Waterbodies'
 where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone') and DbColumnName = 'StreamName'
 
+update dbo.Fields set ControlType = 'multiselect'
+where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone') and DbColumnName = 'MethodCaught'
+
+update dbo.DatasetFields set ControlType = 'multiselect'
+where DbColumnName = 'MethodCaught' and DatasetId in (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview') 
+
+update dbo.DatasetFields set ControlType = 'hidden' where DatasetId in (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview') and DbColumnName = 'LocationId'
 
 --Note:  The update above this line has already been put into Test, and other updates stacked on top of it.
 ALTER TABLE [dbo].[CreelPhone_Header] ADD [Season] [int] NOT NULL DEFAULT 0
 
 insert into dbo.Fields ([Name], [Description], DataType, DbColumnName, ControlType, DataSource, DatastoreId)
-values ('Season', 'Fishing season year', 'int', 'Season', 'select', 'SELECT Id, Name as Label from Seasons', (select Id from dbo.Datastores where TablePrefix = 'CreelPhone'))
+values ('Season', 'Fishing season year', 'int', 'Season', 'number', null, (select Id from dbo.Datastores where TablePrefix = 'CreelPhone'))
 
 set @FieldId = (select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Season');
 
 insert into dbo.DatasetFields (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, SourceId, InstrumentId, OrderIndex, ControlType)
-values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Season', 'Season', 1, null, 15, 'select-number')
+values (@DatasetId, @FieldId, 1, CONVERT(VARCHAR(23), GETDATE(), 121), 'Season', 'Season', 1, null, 15, 'number')
 GO
 
 --Update CreelPhone views for new property
