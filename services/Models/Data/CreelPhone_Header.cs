@@ -11,5 +11,6 @@ namespace services.Models.Data
         public int FishermanId { get; set; }
         public string Fished { get; set; }
         public string InterviewComments { get; set; }
+        public int Season { get; set; }
     }
 }
