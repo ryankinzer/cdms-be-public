@@ -330,7 +330,7 @@ DECLARE @newroutingfieldid int = 0;
 
 insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
 values 
-('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["Plan","WRP","Env","PubWrks","TERO","CRPP","Roads"]',null);
+('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null);
 
 select @newroutingfieldid = scope_identity();
 
@@ -361,7 +361,7 @@ ALTER TABLE [dbo].[Permits] ADD [ScopeOfWork] [nvarchar](max);
 
 ALTER TABLE [dbo].[Permits] ADD Route_Plan [nvarchar](max);
 ALTER TABLE [dbo].[Permits] ADD Route_WRP [nvarchar](max);
-ALTER TABLE [dbo].[Permits] ADD Route_ENV [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_Env [nvarchar](max);
 ALTER TABLE [dbo].[Permits] ADD Route_PubWrks [nvarchar](max);
 ALTER TABLE [dbo].[Permits] ADD Route_TERO [nvarchar](max);
 ALTER TABLE [dbo].[Permits] ADD Route_CRPP [nvarchar](max);
