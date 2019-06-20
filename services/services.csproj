@@ -199,10 +199,6 @@
     <Compile Include="Migrations\201906172100188_reset.Designer.cs">
       <DependentUpon>201906172100188_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906172106380_CpAddSeason.cs" />
-    <Compile Include="Migrations\201906172106380_CpAddSeason.Designer.cs">
-      <DependentUpon>201906172106380_CpAddSeason.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -423,9 +419,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201906172100188_reset.resx">
       <DependentUpon>201906172100188_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201906172106380_CpAddSeason.resx">
-      <DependentUpon>201906172106380_CpAddSeason.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

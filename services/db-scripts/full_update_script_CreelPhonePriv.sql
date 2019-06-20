@@ -86,4 +86,27 @@ GO
 
 ALTER TABLE [dbo].[CreelPhone_Header] ADD [Season] [int] NOT NULL DEFAULT 0
 
+--Update CreelPhone views for new property
+DROP VIEW CreelPhone_Header_VW
+GO
+CREATE VIEW CreelPhone_Header_VW
+AS
+SELECT Id, FishermanId, Fished, InterviewComments, ActivityId, ByUserId, EffDt, Season
+FROM dbo.CreelPhone_Header AS h
+WHERE (EffDt = 
+	(SELECT MAX(EffDt) AS MaxEffDt
+	FROM            dbo.CreelPhone_Header AS hh
+	WHERE        (ActivityId = h.ActivityId)))
+GO
 
+DROP VIEW CreelPhone_vw
+GO
+CREATE VIEW CreelPhone_vw
+AS
+SELECT a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.FishermanId, h.Fished, h.InterviewComments, h.ByUserId, h.EffDt, h.Season, d.Id AS CreelPhone_Detail_Id, d.StreamName, d.Trips, d.HoursFished, d.CreelInterviews, d.Species, d.NumberCaught, d.Disposition, d.LifeStage, d.Sex, d.Origin, d.MethodCaught, d.FishComments, d.RowId, d.ByUserId AS CreelPhone_Detail_ByUserId, d.QAStatusId, d.EffDt AS CreelPhone_Detail_EffDt, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel
+FROM dbo.Activities AS a 
+INNER JOIN dbo.CreelPhone_Header_VW AS h ON a.Id = h.ActivityId 
+LEFT OUTER JOIN dbo.CreelPhone_Detail_VW AS d ON h.ActivityId = d.ActivityId 
+INNER JOIN dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId 
+INNER JOIN dbo.Locations AS l ON a.LocationId = l.Id 
+GO
