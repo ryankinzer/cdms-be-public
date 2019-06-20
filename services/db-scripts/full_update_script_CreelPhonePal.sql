@@ -424,6 +424,9 @@ where DbColumnName = 'MethodCaught' and DatasetId in (select Id from dbo.Dataset
 
 update dbo.DatasetFields set ControlType = 'hidden' where DatasetId in (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview') and DbColumnName = 'LocationId'
 
+update dbo.DatasetFields set ControlType = 'fisherman-select' where DatasetId in (select Id from dbo.Datasets where [Name] = 'Harvest-Phone Interview') and DbColumnName = 'FishermanId'
+update dbo.Fields set ControlType = 'fisherman-select' where DatastoreId in (select Id from dbo.Datastores where [Name] = 'CreelPhone' and DbColumnName = 'FishermanId')
+
 --Note:  The update above this line has already been put into Test, and other updates stacked on top of it.
 ALTER TABLE [dbo].[CreelPhone_Header] ADD [Season] [int] NOT NULL DEFAULT 0
 
