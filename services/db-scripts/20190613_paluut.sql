@@ -325,6 +325,9 @@ go
 update Projects set OwnerId = 1, config = '{"Lookups":[{"Id":9,"Label":"Permit Fields","Type":"Metafields"}]}' where name = 'Permit Project';
 go
 
+
+--- TEST UPDATED with above already
+
 -- add routing field
 DECLARE @newroutingfieldid int = 0;
 
@@ -368,4 +371,26 @@ ALTER TABLE [dbo].[Permits] ADD Route_CRPP [nvarchar](max);
 ALTER TABLE [dbo].[Permits] ADD Route_Roads [nvarchar](max);
 go
 
- 
+ -- update result as a dropdown
+DECLARE @permitmdentity int = 0;
+DECLARE @resultmdid int = 0;
+DECLARE @eventsdsid int = 0;
+DECLARE @eventsdatasetid int = 0;
+
+select @permitmdentity = id from MetadataEntities where Name = 'Permit Fields';
+select @eventsdsid = id from Datastores where Name = 'Permit Events';
+select @eventsdatasetid = id from Datasets where Name = 'Permit Events';
+
+insert into MetadataProperties (metadataentityid, name, description, datatype, controltype, possiblevalues) values 
+(@permitmdentity,'ReviewResult','Review Result','string','select','["Passed","Signature Required","Photos Required","Reinspection Required"]');
+
+select @resultmdid = scope_identity();
+
+update fields set controltype = 'select', possiblevalues = null, datasource=concat('select possiblevalues from metadataproperties where id = ',@resultmdid) where datastoreid = @eventsdsid and dbColumnname = 'Result';
+update datasetfields set controltype = 'select' where datasetid = @eventsdatasetid and dbColumnname = 'Result';
+update datasetfields set label = 'Date Sent' where datasetid = @eventsdatasetid and dbColumnname = 'EventDate';
+update datasetfields set label = 'Date Completed' where datasetid = @eventsdatasetid and dbColumnname = 'ResponseDate';
+
+update fields set possiblevalues = '["Review","Document","Correspondence","Inspection","Record","Notice","Site Visit","Other"]' where datastoreid = @eventsdsid and dbcolumnname = 'EventType';
+--update fields set possiblevalues = '["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","County","Fire","TPO","BldgCode","BldgPlan","SitePlan","OwnerAuth","Survey","PhoneCall","Email","InPerson","Finance","Structural","Electrical","Final"]' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
+update fields set possiblevalues = '{"CRPP":"CRPP","WRP":"WRP","Plan":"Planning (TPO)","Env":"Env. Health","PubWrks":"Pub. Works","TERO":"TERO","Roads":"County","Fire":"Fire Dept.","BldgPlan":"Bldg Plan","SitePlan":"Site Plan","OwnerAuth":"Owner Auth","Survey":"Survey","PhoneCall":"Phone Call","Email":"Email","InPerson":"In Person","Finance":"Finance","Structural":"Structural","Electrical":"Electrical","Final":"Final","Other":"Other"}' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
