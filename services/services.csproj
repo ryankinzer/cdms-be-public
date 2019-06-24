@@ -195,9 +195,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201906121631369_reset.cs" />
-    <Compile Include="Migrations\201906121631369_reset.Designer.cs">
-      <DependentUpon>201906121631369_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201906172100188_reset.cs" />
+    <Compile Include="Migrations\201906172100188_reset.Designer.cs">
+      <DependentUpon>201906172100188_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -371,7 +371,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-	<Content Include="db-scripts\20190613_paluut.sql" />
+    <Content Include="db-scripts\20190613_paluut.sql" />
     <Content Include="db-scripts\20190613_cdms.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePal.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePriv.sql" />
@@ -417,8 +417,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906121631369_reset.resx">
-      <DependentUpon>201906121631369_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906172100188_reset.resx">
+      <DependentUpon>201906172100188_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
