@@ -739,9 +739,9 @@ namespace services.Controllers
                     olcEvent.SignificantArea = subproject_json;
                     logger.Debug("olcEvent.SignificantArea = " + olcEvent.SignificantArea);
                 }
-                else if (prop.Name == "MiscelleneousContext")
+                else if (prop.Name == "MiscellaneousContext")
                 {
-                    logger.Debug("MiscelleneousContext = " + subproject_json);
+                    logger.Debug("MiscellaneousContext = " + subproject_json);
 
                     olcEvent.MiscellaneousContext = subproject_json;
                     logger.Debug("olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext);

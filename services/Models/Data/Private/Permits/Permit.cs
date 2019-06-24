@@ -1,4 +1,5 @@
-﻿using services.Models;
+﻿using Newtonsoft.Json;
+using services.Models;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
@@ -44,9 +45,8 @@ namespace services.Models.Data
 
         public string PermitConditions { get; set; }
         public string PermitFile { get; set; }
-        public string Finding { get; set; }
-        public DateTime? FindingDate { get; set; }
-
+        public string FileStatus { get; set; }
+        
         public decimal? Fee { get; set; }
         public DateTime? FeePaymentDate { get; set; }
         public decimal? FeePaymentAmount{ get; set; }
@@ -77,7 +77,7 @@ namespace services.Models.Data
 
         public bool? IsVoid { get; set; }
         public bool? IsFloodHazardOverlay { get; set; }
-        public string OccupationalGroup { get; set; }
+        public string OccupancyGroup { get; set; }
         public string ConstructionType { get; set; }
         public string BusinessName { get; set; }
 
@@ -86,7 +86,16 @@ namespace services.Models.Data
         public string COConditions { get; set; }
 
 
+        public string ReviewsRequired { get; set; }
+        public string ScopeOfWork { get; set; }
 
+        public string Route_Plan { get; set; }
+        public string Route_WRP { get; set; }
+        public string Route_Env { get; set; }
+        public string Route_PubWrks { get; set; }
+        public string Route_TERO { get; set; }
+        public string Route_CRPP { get; set; }
+        public string Route_Roads { get; set; }
 
 
     }
