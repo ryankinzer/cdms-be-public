@@ -148,22 +148,6 @@ where
 dbcolumnname = 'OccupationalGroup';
 go
 
-update fields 
-set 
-Name = 'File Status',
-Description = 'File Status',
-DbColumnName = 'FileStatus'
-where 
-dbcolumnname = 'Finding';
-
-update datasetfields 
-set 
-Label = 'File Status',
-DbColumnName = 'FileStatus'
-where 
-dbcolumnname = 'Finding';
-go
-
 -- some rules
 
 
@@ -245,7 +229,6 @@ update fields set possiblevalues = null, datasource='select possiblevalues from 
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 60' where datastoreid = 33 and dbColumnname = 'BuildingUse';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 59' where datastoreid = 33 and dbColumnname = 'FeePaymentMethod';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 58' where datastoreid = 33 and dbColumnname = 'FeePaymentType';
-update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 57' where datastoreid = 33 and dbColumnname = 'FileStatus';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 56' where datastoreid = 33 and dbColumnname = 'PermitStatus';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 55' where datastoreid = 33 and dbColumnname = 'ReviewedBy';
 update fields set possiblevalues = null, datasource='select possiblevalues from metadataproperties where id = 54' where datastoreid = 33 and dbColumnname = 'IssuedBy';
@@ -296,6 +279,118 @@ UPDATE DatasetFields set OrderIndex = 232, ColumnIndex = 2 WHERE DatasetId = 128
 UPDATE DatasetFields set OrderIndex = 135, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COStatus' 
 UPDATE DatasetFields set OrderIndex = 130, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COIssueDate' 
 UPDATE DatasetFields set OrderIndex = 140, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'COConditions' 
-UPDATE DatasetFields set OrderIndex = 20, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'PermitNumber' 
+
 
 go
+
+-- add the permitnumber
+DECLARE @newfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('PermitNumber','Permit Number','Permit Number','text',33,1,null,'string',null,null);
+
+select @newfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) values 
+(1281, @newfieldid, 1, getdate(), 'Permit Number','PermitNumber','text',null,1);
+
+go
+
+UPDATE DatasetFields set OrderIndex = 20, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'PermitNumber' 
+UPDATE DatasetFields set Label = 'Application Rec''d' WHERE DatasetId = 1281 and DbColumnName = 'ApplicationDate' 
+UPDATE DatasetFields set ControlType = 'textarea' WHERE DatasetId = 1281 and DbColumnName = 'COConditions' 
+UPDATE DatasetFields set ControlType = 'select' WHERE DatasetId = 1281 and DbColumnName in ('OccupancyGroup','BuildingUse')
+
+go
+
+DECLARE @anothernewfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('FileStatus','File Status','File Status','select',33,1,'select possiblevalues from metadataproperties where id = 57','string',null,null);
+
+select @anothernewfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @anothernewfieldid, 1, getdate(), 'File Status','FileStatus','select',null,1,3,400);
+
+go
+
+insert into Departments (organizationid, [name], description) values (1,'Planning','Planning Department');
+go
+
+update Projects set OwnerId = 1, config = '{"Lookups":[{"Id":9,"Label":"Permit Fields","Type":"Metafields"}]}' where name = 'Permit Project';
+go
+
+
+--- TEST UPDATED with above already
+
+-- add routing field
+DECLARE @newroutingfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null);
+
+select @newroutingfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @newroutingfieldid, 1, getdate(), 'Reviews Required','ReviewsRequired','multiselect-checkbox',null,1, 6, 600);
+
+go
+
+-- add scope of work field
+DECLARE @newsowfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ScopeOfWork','Scope of Work','Scope of Work','textarea',33,1,null,'string',null,null);
+
+select @newsowfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @newsowfieldid, 1, getdate(), 'Scope of Work','ScopeOfWork','textarea',null,1, 1, 125);
+
+go
+
+
+ALTER TABLE [dbo].[Permits] ADD [ReviewsRequired] [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD [ScopeOfWork] [nvarchar](max);
+
+ALTER TABLE [dbo].[Permits] ADD Route_Plan [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_WRP [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_Env [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_PubWrks [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_TERO [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_CRPP [nvarchar](max);
+ALTER TABLE [dbo].[Permits] ADD Route_Roads [nvarchar](max);
+go
+
+ -- update result as a dropdown
+DECLARE @permitmdentity int = 0;
+DECLARE @resultmdid int = 0;
+DECLARE @eventsdsid int = 0;
+DECLARE @eventsdatasetid int = 0;
+
+select @permitmdentity = id from MetadataEntities where Name = 'Permit Fields';
+select @eventsdsid = id from Datastores where Name = 'Permit Events';
+select @eventsdatasetid = id from Datasets where Name = 'Permit Events';
+
+insert into MetadataProperties (metadataentityid, name, description, datatype, controltype, possiblevalues) values 
+(@permitmdentity,'ReviewResult','Review Result','string','select','["Passed","Signature Required","Photos Required","Reinspection Required"]');
+
+select @resultmdid = scope_identity();
+
+update fields set controltype = 'select', possiblevalues = null, datasource=concat('select possiblevalues from metadataproperties where id = ',@resultmdid) where datastoreid = @eventsdsid and dbColumnname = 'Result';
+update datasetfields set controltype = 'select' where datasetid = @eventsdatasetid and dbColumnname = 'Result';
+update datasetfields set label = 'Date Sent' where datasetid = @eventsdatasetid and dbColumnname = 'EventDate';
+update datasetfields set label = 'Date Completed' where datasetid = @eventsdatasetid and dbColumnname = 'ResponseDate';
+
+update fields set possiblevalues = '["Review","Document","Correspondence","Inspection","Record","Notice","Site Visit","Other"]' where datastoreid = @eventsdsid and dbcolumnname = 'EventType';
+--update fields set possiblevalues = '["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","County","Fire","TPO","BldgCode","BldgPlan","SitePlan","OwnerAuth","Survey","PhoneCall","Email","InPerson","Finance","Structural","Electrical","Final"]' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
+update fields set possiblevalues = '{"CRPP":"CRPP","WRP":"WRP","Plan":"Planning (TPO)","Env":"Env. Health","PubWrks":"Pub. Works","TERO":"TERO","Roads":"County","Fire":"Fire Dept.","BldgPlan":"Bldg Plan","SitePlan":"Site Plan","OwnerAuth":"Owner Auth","Survey":"Survey","PhoneCall":"Phone Call","Email":"Email","InPerson":"In Person","Finance":"Finance","Structural":"Structural","Electrical":"Electrical","Final":"Final","Other":"Other"}' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
