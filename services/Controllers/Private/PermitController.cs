@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using services.ExtensionMethods;
 using services.Models;
 using services.Models.Data;
@@ -6,9 +7,11 @@ using services.Resources;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace services.Controllers.Private
@@ -137,7 +140,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Files.Where(o => o.ProjectId == ProjectId && o.ItemId == PermitId).AsEnumerable();
+            return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == PermitId).AsEnumerable();
 
         }
 
@@ -336,6 +339,290 @@ namespace services.Controllers.Private
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
             return response;
+        }
+
+        // POST /api/v1/permit/UploadFile
+        public Task<HttpResponseMessage> UploadFile()
+        {
+            logger.Debug("starting to process incoming permit files.");
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+
+            //string root = System.Web.HttpContext.Current.Server.MapPath("~/uploads/subprojects");
+            //string prefix = @"";
+            //string root = System.Configuration.ConfigurationManager.AppSettings["PathToCrppProjectDocuments"] + ("\\uploads\\subprojects");
+            string root = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\";
+            //string root = System.IO.Path.Combine(prefix, strPath);
+            logger.Debug("root = " + root);
+            string rootUrl = Request.RequestUri.AbsoluteUri.Replace(Request.RequestUri.AbsolutePath, String.Empty);
+            logger.Debug("rootUrl = " + rootUrl);
+
+
+            // Make sure our folder exists
+            DirectoryInfo dirInfo = new DirectoryInfo(@root);
+            if (!dirInfo.Exists)
+            {
+                logger.Debug("Dir does not exist; will create it...");
+                try
+                {
+                    System.IO.Directory.CreateDirectory(root);
+                    logger.Debug("Created the dir...");
+                }
+                catch (IOException ioe)
+                {
+                    logger.Debug("Exception:  " + ioe.Message + ", " + ioe.InnerException);
+                }
+            }
+            else
+                logger.Debug("P dir already exists...");
+
+            logger.Debug("saving files to location: " + root);
+            logger.Debug(" and the root url = " + rootUrl);
+
+            var provider = new MultipartFormDataStreamProvider(root);
+            logger.Debug("provider = " + provider.ToString());
+
+            User me = AuthorizationManager.getCurrentUser();
+
+            var db = ServicesContext.Current;
+
+            // provider below gets set to the root path, a few lines up above.
+            var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
+            {
+                if (o.IsFaulted || o.IsCanceled)
+                {
+                    logger.Debug("Error: " + o.Exception.Message);
+                    throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.InternalServerError, o.Exception));
+                }
+
+                //Look up our project
+                Int32 ProjectId = Convert.ToInt32(provider.FormData.Get("ProjectId"));
+                logger.Debug("And we think the ProjectId === " + ProjectId);
+
+                Int32 SubprojectId = Convert.ToInt32(provider.FormData.Get("SubprojectId"));
+                logger.Debug("And we think the Subprojectid === " + SubprojectId);
+
+                Int32 ItemId = Convert.ToInt32(provider.FormData.Get("ItemId"));
+                logger.Debug("And we think the ItemId === " + ItemId);
+
+                Project project = db.Projects.Find(ProjectId);
+                Permit permit = db.Permit().Find(SubprojectId);
+
+                if (project == null)
+                    throw new Exception("Project ID not found: " + ProjectId);
+
+                if (!project.isOwnerOrEditor(me))
+                    throw new Exception("Authorization error.");
+
+                if (permit == null)
+                    throw new Exception("Subproject ID not found: " + SubprojectId);
+
+
+                //If the project/dataset folder does not exist, create it.
+                string subprojectPath = root + project.Id + "\\S\\" + permit.Id;
+                //DirectoryInfo datasetDirInfo = new DirectoryInfo(@root);
+                DirectoryInfo subprojectDirInfo = new DirectoryInfo(subprojectPath);
+                if (!subprojectDirInfo.Exists)
+                {
+                    logger.Debug("Dir does not exist; will create it...");
+                    try
+                    {
+                        System.IO.Directory.CreateDirectory(root);
+                        logger.Debug("Created the dir...");
+                    }
+                    catch (IOException ioe)
+                    {
+                        logger.Debug("Exception:  " + ioe.Message + ", " + ioe.InnerException);
+                    }
+                }
+
+                //Now iterate through the files that just came in
+                List<services.Models.File> files = new List<services.Models.File>();
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+
+                    logger.Debug("Filename = " + file.LocalFileName);
+                    logger.Debug("Orig = " + file.Headers.ContentDisposition.FileName);
+                    logger.Debug("Name? = " + file.Headers.ContentDisposition.Name);
+
+                    //var fileIndex = getFileIndex(file.Headers.ContentDisposition.Name); //"uploadedfile0" -> 0
+                    var fileIndex = "0";
+                    logger.Debug("Fileindex = " + fileIndex);
+                    var filename = file.Headers.ContentDisposition.FileName;
+                    filename = filename.Replace("\"", string.Empty);
+                    logger.Debug("filename = " + filename);
+
+                    if (!String.IsNullOrEmpty(filename))
+                    {
+                        try
+                        {
+
+                            var newFileName = FileController.relocateSubprojectFile(
+                                            file.LocalFileName,
+                                            ProjectId,
+                                            SubprojectId,
+                                            filename,
+                                            false);
+
+                            var info = new System.IO.FileInfo(newFileName);
+
+                            services.Models.File newFile = new services.Models.File();
+                            newFile.Title = provider.FormData.Get("Title"); //"Title_1, etc.
+                            logger.Debug("Title = " + newFile.Title);
+
+                            newFile.Description = provider.FormData.Get("Description"); //"Description_1, etc.
+                            logger.Debug("Desc = " + newFile.Description);
+
+                            newFile.Name = info.Name;
+
+                            newFile.Link = System.Configuration.ConfigurationManager.AppSettings["UploadsLinkPrefix"] + "\\P\\" + ProjectId + "\\S\\" + SubprojectId + "\\" + info.Name;
+
+                            newFile.ItemId = ItemId;
+
+                            newFile.Size = (info.Length / 1024).ToString(); //file.Headers.ContentLength.ToString();
+                            newFile.FileTypeId = FileType.getFileTypeFromFilename(info);
+                            newFile.UserId = me.Id;
+                            newFile.ProjectId = ProjectId;
+                            newFile.DatasetId = null; // No datasetId for subproject files.
+                            newFile.Subproject_CrppId = SubprojectId;
+                            logger.Debug(" Adding file " + newFile.Name + " at " + newFile.Link);
+
+                            files.Add(newFile);
+
+                        }
+                        catch (Exception e)
+                        {
+                            // For BodyPart cleanup, turn this line on.
+                            //strErrorMessage = "Error: " + e.ToString();
+                            logger.Debug("Error: " + e.ToString());
+                            throw e;
+                        }
+                    }
+                }
+
+                // We will return thefiles to the calling program.
+                List<services.Models.File> thefiles = new List<services.Models.File>();
+
+                //Add files to database for this project.
+                if (files.Count() > 0)
+                {
+                    logger.Debug("woot -- we have file objects to save");
+                    foreach (var file in files)
+                    {
+                        project.Files.Add(file);
+                        thefiles.Add(file);
+                    }
+                    db.Entry(project).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
+
+
+                logger.Debug("Done saving subproject files.");
+                var result = JsonConvert.SerializeObject(thefiles);
+                HttpResponseMessage resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
+
+                return resp;
+            });
+
+            return task;
+        }
+
+        // POST /api/v1/permit/deletefile
+        [HttpPost]
+        public HttpResponseMessage DeleteFile(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
+            User me = AuthorizationManager.getCurrentUser();
+            Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
+            if (project == null)
+                throw new System.Exception("Configuration error.  Please try again.");
+
+            logger.Debug("The project = " + project);
+
+            if (project == null)
+                throw new System.Exception("Configuration error.  Please try again.");
+
+            if (!project.isOwnerOrEditor(me))
+                throw new System.Exception("Authorization error.");
+            else
+                logger.Debug("User is authorized.");
+
+            int subprojectId = json.SubprojectId.ToObject<int>();
+            logger.Debug("subprojectId = " + subprojectId);
+            int itemId = json.ItemId.ToObject<int>();
+            logger.Debug("EventId = " + itemId);
+
+            services.Models.File existing_file = json.File.ToObject<services.Models.File>();
+            logger.Debug("Obtained file from input data...");
+            logger.Debug("existing_file.Name = " + existing_file.Name);
+
+            /*if (existing_file == null)
+                throw new System.Exception("File not found.");
+            else
+                logger.Debug("The file exists.");
+             */
+
+            //string root = System.Web.HttpContext.Current.Server.MapPath("~/uploads");
+            //string root = System.Configuration.ConfigurationManager.AppSettings["PathToCrppProjectDocuments"] + ("\\uploads\\subprojects");
+            //string root = System.Configuration.ConfigurationManager.AppSettings["PathToCrppProjectDocuments"];
+            string root = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\";
+            string theFullPath = root + project.Id + "\\S\\" + subprojectId + "\\" + existing_file.Name;
+            //string rootUrl = Request.RequestUri.AbsoluteUri.Replace(Request.RequestUri.AbsolutePath, String.Empty);
+            //logger.Debug("Deleting files from location: " + root + "\\" + subprojectId);
+            //logger.Debug(" and the root url = " + rootUrl);
+            //logger.Debug("theFullPath = " + theFullPath);
+
+            //var provider = new MultipartFormDataStreamProvider(root);
+            var provider = new MultipartFormDataStreamProvider(theFullPath);
+            //logger.Debug("provider = " + provider);
+
+            logger.Debug("About to delete the file:  " + theFullPath);
+
+            FileInfo fi = new FileInfo(theFullPath);
+            bool exists = fi.Exists;
+            if (exists)
+            {
+                logger.Debug("File exists.  Deleting...");
+                System.IO.File.Delete(theFullPath);
+            }
+            else
+            {
+                logger.Debug("File does not exist.");
+            }
+
+            //result = ActionController.deleteProjectFile(theFullPath);
+            //logger.Debug("Result of delete action:  " + result);
+
+            int numFiles = (from f in db.Files
+                            where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.Name == existing_file.Name
+                            select f).Count();
+
+            if (numFiles > 0)
+            {
+                var fileToDelete = (from f in db.Files
+                                    where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.Name == existing_file.Name
+                                    select f).FirstOrDefault();
+                logger.Debug("Removing " + fileToDelete.Name + " from subproject " + subprojectId + " in the database.");
+                db.Files.Remove(fileToDelete);
+                logger.Debug("Saving the action");
+                db.SaveChanges();
+            }
+            else
+            {
+                logger.Debug("No record in tbl Files for Pid:  " + project.Id + ", SubpId = " + subprojectId + ", fileName = " + existing_file.Name);
+            }
+            logger.Debug("Done.");
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
     }

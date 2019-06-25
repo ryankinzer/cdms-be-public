@@ -333,7 +333,7 @@ DECLARE @newroutingfieldid int = 0;
 
 insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
 values 
-('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null);
+('ReviewsRequired','Reviews Required','Reviews Required','multiselect-checkbox',33,1,null,'string','["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads"]',null);
 
 select @newroutingfieldid = scope_identity();
 
@@ -394,3 +394,9 @@ update datasetfields set label = 'Date Completed' where datasetid = @eventsdatas
 update fields set possiblevalues = '["Review","Document","Correspondence","Inspection","Record","Notice","Site Visit","Other"]' where datastoreid = @eventsdsid and dbcolumnname = 'EventType';
 --update fields set possiblevalues = '["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","County","Fire","TPO","BldgCode","BldgPlan","SitePlan","OwnerAuth","Survey","PhoneCall","Email","InPerson","Finance","Structural","Electrical","Final"]' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
 update fields set possiblevalues = '{"CRPP":"CRPP","WRP":"WRP","Plan":"Planning (TPO)","Env":"Env. Health","PubWrks":"Pub. Works","TERO":"TERO","Roads":"County","Fire":"Fire Dept.","BldgPlan":"Bldg Plan","SitePlan":"Site Plan","OwnerAuth":"Owner Auth","Survey":"Survey","PhoneCall":"Phone Call","Email":"Email","InPerson":"In Person","Finance":"Finance","Structural":"Structural","Electrical":"Electrical","Final":"Final","Other":"Other"}' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
+
+
+-- UPDATED ON TEST 6/24
+
+update permits set filestatus = 'Archived' where permitstatus = 'Archived'
+
