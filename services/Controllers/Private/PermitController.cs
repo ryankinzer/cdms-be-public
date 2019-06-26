@@ -103,6 +103,21 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpGet]
+        public dynamic GetRelatedParcels(string ParcelId )
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            //permits with matching parcelids
+            List<int> parcels = db.PermitParcels().Where(o => o.ParcelId == ParcelId).Select(o => o.PermitId).ToList<int>();
+            return db.Permit().Where(o => parcels.Contains(o.Id)).AsEnumerable();
+
+        }
+
 
         [HttpGet]
         public dynamic GetPermitEvents(int Id)
