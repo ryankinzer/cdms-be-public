@@ -392,15 +392,22 @@ update datasetfields set label = 'Date Sent' where datasetid = @eventsdatasetid 
 update datasetfields set label = 'Date Completed' where datasetid = @eventsdatasetid and dbColumnname = 'ResponseDate';
 
 update fields set possiblevalues = '["Review","Document","Correspondence","Inspection","Record","Notice","Site Visit","Other"]' where datastoreid = @eventsdsid and dbcolumnname = 'EventType';
---update fields set possiblevalues = '["CRPP","WRP","Plan","Env","PubWrks","TERO","Roads","County","Fire","TPO","BldgCode","BldgPlan","SitePlan","OwnerAuth","Survey","PhoneCall","Email","InPerson","Finance","Structural","Electrical","Final"]' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
-update fields set possiblevalues = '{"CRPP":"CRPP","WRP":"WRP","Plan":"Planning (TPO)","Env":"Env. Health","PubWrks":"Pub. Works","TERO":"TERO","Roads":"County","Fire":"Fire Dept.","BldgPlan":"Bldg Plan","SitePlan":"Site Plan","OwnerAuth":"Owner Auth","Survey":"Survey","PhoneCall":"Phone Call","Email":"Email","InPerson":"In Person","Finance":"Finance","Structural":"Structural","Electrical":"Electrical","Final":"Final","Other":"Other"}' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
+
+update fields set possiblevalues = '{"CRPP":"CRPP","WRP":"WRP","BldgCode":"Bldg Code","Env":"Env. Health","PubWrks":"Pub. Works","TERO":"TERO","Roads":"County","Fire":"Fire Dept.","SitePlan":"Site Plan","OwnerAuth":"Owner Auth","Survey":"Survey","PhoneCall":"Phone Call","Email":"Email","InPerson":"In Person","Finance":"Finance","Structural":"Structural","Electrical":"Electrical","Final":"Final","Other":"Other"}' where datastoreid = @eventsdsid and dbcolumnname = 'ItemType';
 go
 
--- UPDATED ON TEST 6/24
+-- above UPDATED ON TEST 6/24
 
 update permits set filestatus = 'Archived' where permitstatus = 'Archived'
 
 update fields set [Rule] = '{"OnChange":"header[''IssueDate'']=header[''StatusDate'']=moment().format(''L'');header[''ExpireDate''] = moment(header[''IssueDate'']).add(''years'',1).format(''L'');header[''PermitStatus'']=''Approved'';header[''StatusBy'']=event.scope.Profile.Fullname;"}' where datastoreid = 33 and dbcolumnname = 'IssuedBy';
 
 update fields set [Rule] = '{"OnChange":"header[''StatusBy'']=event.scope.Profile.Fullname;"}' where datastoreid = 33 and dbcolumnname = 'StatusDate';
+
+update fields set possiblevalues = '["CRPP","WRP","BldgCode","Env","PubWrks","TERO","Roads"]' where datastoreid = 33 and dbColumnName = 'ReviewsRequired';
+
+ALTER TABLE [dbo].[Permits] ADD Route_BldgCode [nvarchar](max);
+ALTER TABLE [dbo].[Permits] DROP COLUMN Route_Plan;
+
+
 go
