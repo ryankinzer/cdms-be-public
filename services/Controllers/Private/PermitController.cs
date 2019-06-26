@@ -523,11 +523,12 @@ namespace services.Controllers.Private
 
 
                 logger.Debug("Done saving subproject files.");
-                var result = JsonConvert.SerializeObject(thefiles);
-                HttpResponseMessage resp = new HttpResponseMessage(HttpStatusCode.OK);
-                resp.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
+                //var result = JsonConvert.SerializeObject(thefiles);
 
-                return resp;
+                return Request.CreateResponse(HttpStatusCode.OK, thefiles);
+                //resp.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");  //to stop IE from being stupid.
+
+                //return resp;
             });
 
             return task;
