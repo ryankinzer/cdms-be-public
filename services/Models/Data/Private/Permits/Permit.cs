@@ -89,7 +89,7 @@ namespace services.Models.Data
         public string ReviewsRequired { get; set; }
         public string ScopeOfWork { get; set; }
 
-        public string Route_Plan { get; set; }
+        public string Route_BldgCode { get; set; }
         public string Route_WRP { get; set; }
         public string Route_Env { get; set; }
         public string Route_PubWrks { get; set; }
