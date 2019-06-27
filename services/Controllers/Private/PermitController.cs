@@ -5,8 +5,11 @@ using services.Models;
 using services.Models.Data;
 using services.Resources;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -145,6 +148,98 @@ namespace services.Controllers.Private
             return db.PermitPerson().AsEnumerable();
 
         }
+
+        [HttpGet]
+        public dynamic GetOutstandingRequests()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            var sql = @"select p.PermitNumber, p.ProjectName, pe.EventType, pe.ItemType, pe.RequestDate 
+            from permits p
+            join permitevents pe on pe.PermitId = p.Id
+            where
+            pe.ResponseDate is null
+            and pe.EventType in ('Review', 'Inspection')";
+
+            DataTable requests = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(requests);
+                }
+            }
+
+            return requests;
+
+        }
+
+        [HttpGet]
+        public dynamic GetExpiringPermits()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            var sql = @"select p.PermitNumber, p.ProjectName, p.ExpireDate, 
+            (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
+            (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
+            from permits p
+            where p.ExpireDate < dateadd(dd,30,getDate())";
+
+            DataTable expires = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(expires);
+                }
+            }
+
+            return expires;
+
+        }
+
+        
+        [HttpGet]
+        public dynamic GetPermitStatistics()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            var sql = @"select PermitStatus, count(*) as TotalCount from permits group by PermitStatus";
+
+            DataTable stats = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(stats);
+                }
+            }
+
+            return stats;
+
+        }
+
 
         [HttpGet]
         public dynamic GetPermitFiles(int ProjectId, int PermitId)
