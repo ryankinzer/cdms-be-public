@@ -220,6 +220,7 @@
     <Compile Include="Models\Data\Private\Permits\PermitCadasterView.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitContact.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitEventNotifier.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitParcel.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
@@ -352,6 +353,7 @@
     <Compile Include="Resources\AuthorizationManager.cs" />
     <Compile Include="Resources\CipherHelper.cs" />
     <Compile Include="Resources\DateTimeHelper.cs" />
+    <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
