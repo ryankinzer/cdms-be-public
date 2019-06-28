@@ -411,3 +411,19 @@ ALTER TABLE [dbo].[Permits] DROP COLUMN Route_Plan;
 
 
 go
+
+-- above updated on TEST 6/27
+
+CREATE TABLE [dbo].[Feedbacks] (
+    [Id] [int] NOT NULL IDENTITY,
+    [Title] [nvarchar](max),
+    [Message] [nvarchar](max),
+    [Module] [nvarchar](max),
+    [SubmitterName] [nvarchar](max),
+    [SubmitDate] [datetime] NOT NULL,
+    [ResponseMessage] [nvarchar](max),
+    [ResponseDate] [datetime],
+    [Status] [nvarchar](max),
+    CONSTRAINT [PK_dbo.Feedbacks] PRIMARY KEY ([Id])
+)
+

@@ -93,7 +93,8 @@ namespace services.Models
         public DbSet<ActivityType> ActivityTypes { get; set; }
 
         public DbSet<LookupTable> LookupTables { get; set; }
-
+        public DbSet<Feedback> Feedback { get; set; }
+    
         //lookup tables
         public DbSet<Fisherman> Fishermen { get; set; }
         public DbSet<Collaborator> Collaborators { get; set; }
