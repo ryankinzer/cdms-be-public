@@ -1,19 +1,20 @@
 ﻿using NLog;
+using services.Models.Data;
 using services.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace services.Models.Data.Private.Permits
+namespace services.Resources
 {
     public class PermitEventNotifier
     {
-        public static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static void notify(Permit in_permit, PermitEvent in_event){
 
-            string PermitURL = System.Configuration.ConfigurationManager.AppSettings["PermitURL"]; 
+            string PermitURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitURL"]; 
 
             string recipient = PermitEventNotifier.getEmailContactForEvent(in_event);
 
@@ -46,7 +47,7 @@ namespace services.Models.Data.Private.Permits
 
         }
 
-        public static string getEmailContactForEvent(PermitEvent in_event){
+        private static string getEmailContactForEvent(PermitEvent in_event){
             return "kenburcham@ctuir.org";
         }
 

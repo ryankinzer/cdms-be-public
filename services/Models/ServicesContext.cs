@@ -94,6 +94,7 @@ namespace services.Models
 
         public DbSet<LookupTable> LookupTables { get; set; }
         public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<NotificationLog> NotificationLog { get; set; }
     
         //lookup tables
         public DbSet<Fisherman> Fishermen { get; set; }

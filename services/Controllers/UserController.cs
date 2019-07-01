@@ -253,6 +253,8 @@ namespace services.Controllers
             db.Feedback.Add(feedback);
             db.SaveChanges();
 
+            Resources.FeedbackNotifier.notify(feedback);
+
             return feedback;
 
         }

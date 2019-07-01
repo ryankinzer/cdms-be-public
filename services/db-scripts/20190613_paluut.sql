@@ -427,3 +427,14 @@ CREATE TABLE [dbo].[Feedbacks] (
     CONSTRAINT [PK_dbo.Feedbacks] PRIMARY KEY ([Id])
 )
 
+CREATE TABLE [dbo].[NotificationLogs] (
+    [Id] [int] NOT NULL IDENTITY,
+    [ByUser] [int] NOT NULL,
+    [Recipient] [nvarchar](max),
+    [Sender] [nvarchar](max),
+    [Subject] [nvarchar](max),
+    [Body] [nvarchar](max),
+    [SentDate] [datetime] NOT NULL,
+    [Result] [nvarchar](max),
+    CONSTRAINT [PK_dbo.NotificationLogs] PRIMARY KEY ([Id])
+)
