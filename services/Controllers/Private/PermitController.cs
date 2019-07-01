@@ -158,7 +158,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, pe.EventType, pe.ItemType, pe.RequestDate 
+            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
             from permits p
             join permitevents pe on pe.PermitId = p.Id
             where
@@ -190,7 +190,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, p.ExpireDate, 
+            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
@@ -425,6 +425,12 @@ namespace services.Controllers.Private
             {
                 db.PermitEvents().Add(incoming_event);
                 db.SaveChanges();
+
+                if (incoming_event.EventType == "Review" || incoming_event.EventType == "Inspection")
+                {
+                    Permit permit = db.Permit().Find(incoming_event.PermitId);
+                    Resources.PermitEventNotifier.notify(permit, incoming_event); //only notify on "new" events
+                }
             }
             else
             {
@@ -444,8 +450,6 @@ namespace services.Controllers.Private
                 db.Entry(existing).State = EntityState.Modified;
                 db.SaveChanges();
             }
-
-
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
             return response;
