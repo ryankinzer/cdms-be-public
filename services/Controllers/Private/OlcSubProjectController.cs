@@ -752,6 +752,13 @@ namespace services.Controllers
                     olcEvent.Boundary = subproject_json;
                     logger.Debug("olcEvent.Boundary = " + olcEvent.Boundary);
                 }
+                else if (prop.Name == "OtherBoundary")
+                {
+                    logger.Debug("OtherBoundary = " + subproject_json);
+
+                    olcEvent.OtherBoundary = subproject_json;
+                    logger.Debug("olcEvent.OtherBoundary = " + olcEvent.OtherBoundary);
+                }
                 else if (prop.Name == "SignificantArea")
                 {
                     logger.Debug("SignificantArea = " + subproject_json);
@@ -822,6 +829,7 @@ namespace services.Controllers
                 "olcEvent.RecipientAgency = " + olcEvent.RecipientAgency + "\n" +
                 "olcEvent.RecipientLocation = " + olcEvent.RecipientLocation + "\n" +
                 "olcEvent.Boundary = " + olcEvent.Boundary + "\n" +
+                "olcEvent.OtherBoundary = " + olcEvent.OtherBoundary + "\n" +
                 "olcEvent.SignificantArea = " + olcEvent.SignificantArea + "\n" +
                 "olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext + "\n" +
                 "olcEvent.SurveyNumber = " + olcEvent.SurveyNumber + "\n" +

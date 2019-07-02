@@ -86,6 +86,7 @@ namespace services.Models.Data
         public string SurveyAuthorizingAgency { get; set; }
         public string SurveyDates { get; set; }
         public string Tasks { get; set; }
+        public string OtherBoundary { get; set; }
 
         [JsonIgnore]
         public virtual Subproject_Olc Subproject { get; set; }
