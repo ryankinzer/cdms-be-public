@@ -199,6 +199,10 @@
     <Compile Include="Migrations\201906242223301_reset.Designer.cs">
       <DependentUpon>201906242223301_reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907011903429_AddOlcPropsUpd.cs" />
+    <Compile Include="Migrations\201907011903429_AddOlcPropsUpd.Designer.cs">
+      <DependentUpon>201907011903429_AddOlcPropsUpd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -419,6 +423,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201906242223301_reset.resx">
       <DependentUpon>201906242223301_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907011903429_AddOlcPropsUpd.resx">
+      <DependentUpon>201907011903429_AddOlcPropsUpd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
