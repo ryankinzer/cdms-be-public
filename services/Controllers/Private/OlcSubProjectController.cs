@@ -273,7 +273,7 @@ namespace services.Controllers
 
             foreach (var olce in s)
             {
-                logger.Debug("olce = " + olce.CatalogNumber);
+                //logger.Debug("olce = " + olce.CatalogNumber);
                 olce.OlcEvents = olce.OlcEvents.OrderByDescending(x => x.EffDt).ToList();
             }
 
@@ -527,7 +527,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            //logger.Debug("json = " + json);
+            logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             logger.Debug("me = " + me);
@@ -550,17 +550,20 @@ namespace services.Controllers
 
 
             logger.Debug(
-                "s.CatalogNumber = " + s.CatalogNumber + "\n" +
+                //"s.CatalogNumber = " + s.CatalogNumber + "\n" +
+                "s.Agency = " + s.Agency + "\n" +
+                "s.AgencyLocation = " + s.AgencyLocation + "\n" +
                 "s.RecordGroup = " + s.RecordGroup + "\n" +
                 "s.SeriesTitle = " + s.SeriesTitle + "\n" +
                 "s.FacilityHoused = " + s.FacilityHoused + "\n" +
                 "s.Box = " + s.Box + "\n" +
-                "s.BoxLocation = " + s.BoxLocation + "\n" +
+                //"s.BoxLocation = " + s.BoxLocation + "\n" +
                 "s.CategoryTitle = " + s.CategoryTitle + "\n" +
-                "s.CategoryIndex = " + s.CategoryIndex + "\n" +
-                "s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
-                "s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
-                "s.SignatoryName = " + s.SignatoryName + "\n" +
+                //"s.CategoryIndex = " + s.CategoryIndex + "\n" +
+                "s.CategorySubtitle = " + s.CategorySubtitle + "\n" +
+                //"s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
+                //"s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
+                //"s.SignatoryName = " + s.SignatoryName + "\n" +
                 "s.EffDt = " + s.EffDt + "\n" +
                 "s.ByUserId = " + s.ByUserId + "\n"
                 );
@@ -597,17 +600,20 @@ namespace services.Controllers
                 {
                     Subproject_Olc s2 = db.Subproject_Olc().Find(s.Id);
 
-                    s2.CatalogNumber = s.CatalogNumber;
+                    //s2.CatalogNumber = s.CatalogNumber;
+                    s2.Agency = s.Agency;
+                    s2.AgencyLocation = s.AgencyLocation;
                     s2.RecordGroup = s.RecordGroup;
                     s2.SeriesTitle = s.SeriesTitle;
                     s2.FacilityHoused = s.FacilityHoused;
                     s2.Box = s.Box;
-                    s2.BoxLocation = s.BoxLocation;
+                    //s2.BoxLocation = s.BoxLocation;
                     s2.CategoryTitle = s.CategoryTitle;
-                    s2.CategoryIndex = s.CategoryIndex;
-                    s2.SignatoryTitle = s.SignatoryTitle;
-                    s2.SignatoryAgency = s.SignatoryAgency;
-                    s2.SignatoryName = s.SignatoryName;
+                    //s2.CategoryIndex = s.CategoryIndex;
+                    s2.CategorySubtitle = s.CategorySubtitle;
+                    //s2.SignatoryTitle = s.SignatoryTitle;
+                    //s2.SignatoryAgency = s.SignatoryAgency;
+                    //s2.SignatoryName = s.SignatoryName;
                     s2.EffDt = s.EffDt;
                     s2.ByUserId = s.ByUserId;
 
@@ -658,7 +664,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            //logger.Debug("json = " + json);
+            logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             //logger.Debug("me = " + me); // getCurrentUser displays the username; this is just machinestuff.
@@ -709,7 +715,7 @@ namespace services.Controllers
                 //}
 
                 dynamic subproject_json = prop.Value;
-                //logger.Debug("Property value = " + subproject_json);
+                logger.Debug("Property value = " + subproject_json);
 
                 //if (prop.Name == "SubprojectId")
                 //    olcEvent.SubprojectId = sId;
@@ -723,8 +729,22 @@ namespace services.Controllers
                     olcEvent.FileName = subproject_json;
                 else if (prop.Name == "Author")
                     olcEvent.Author = subproject_json;
-                else if (prop.Name == "AuthorAgency")
-                    olcEvent.AuthorAgency = subproject_json;
+                //else if (prop.Name == "AuthorAgency")
+                //    olcEvent.AuthorAgency = subproject_json;
+                else if (prop.Name == "AgencyDivision")
+                    olcEvent.AgencyDivision = subproject_json;
+                else if (prop.Name == "SignatoryName")
+                    olcEvent.SignatoryName = subproject_json;
+                else if (prop.Name == "SignatoryTitle")
+                    olcEvent.SignatoryTitle = subproject_json;
+                else if (prop.Name == "RecipientName")
+                    olcEvent.RecipientName = subproject_json;
+                else if (prop.Name == "RecipientTitle")
+                    olcEvent.RecipientTitle = subproject_json;
+                else if (prop.Name == "RecipientAgency")
+                    olcEvent.RecipientAgency = subproject_json;
+                else if (prop.Name == "RecipientLocation")
+                    olcEvent.RecipientLocation = subproject_json;
                 else if (prop.Name == "Boundary")
                 {
                     logger.Debug("Boundary = " + subproject_json);
@@ -746,6 +766,16 @@ namespace services.Controllers
                     olcEvent.MiscellaneousContext = subproject_json;
                     logger.Debug("olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext);
                 }
+                else if (prop.Name == "SurveyNumber")
+                    olcEvent.SurveyNumber = subproject_json;
+                else if (prop.Name == "SurveyContractNumber")
+                    olcEvent.SurveyContractNumber = subproject_json;
+                else if (prop.Name == "SurveyorName")
+                    olcEvent.SurveyorName = subproject_json;
+                else if (prop.Name == "SurveyAuthorizingAgency")
+                    olcEvent.SurveyAuthorizingAgency = subproject_json;
+                else if (prop.Name == "SurveyDates")
+                    olcEvent.SurveyDates = subproject_json;
                 else if (prop.Name == "Description")
                     olcEvent.Description = subproject_json;
                 else if (prop.Name == "TwnRngSec")
@@ -758,8 +788,10 @@ namespace services.Controllers
                     olcEvent.PersonDiscovered = subproject_json;
                 else if (prop.Name == "Reference")
                     olcEvent.Reference = subproject_json;
-                else if (prop.Name == "EventComments")
-                    olcEvent.EventComments = subproject_json;
+                //else if (prop.Name == "EventComments")
+                //    olcEvent.EventComments = subproject_json;
+                else if (prop.Name == "Tasks")
+                    olcEvent.Tasks = subproject_json;
                 else if (prop.Name == "FileAttach")
                 {
                         olcEvent.FileAttach = subproject_json;
@@ -781,17 +813,30 @@ namespace services.Controllers
                 "olcEvent.DocumentDate = " + olcEvent.DocumentDate + "\n" +
                 "olcEvent.FileName = " + olcEvent.FileName + "\n" +
                 "olcEvent.Author = " + olcEvent.Author + "\n" +
-                "olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
+                //"olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
+                "olcEvent.AgencyDivision = " + olcEvent.AgencyDivision + "\n" +
+                "olcEvent.SignatoryName = " + olcEvent.SignatoryName + "\n" +
+                "olcEvent.SignatoryTitle = " + olcEvent.SignatoryTitle + "\n" +
+                "olcEvent.RecipientName = " + olcEvent.RecipientName + "\n" +
+                "olcEvent.RecipientTitle = " + olcEvent.RecipientTitle + "\n" +
+                "olcEvent.RecipientAgency = " + olcEvent.RecipientAgency + "\n" +
+                "olcEvent.RecipientLocation = " + olcEvent.RecipientLocation + "\n" +
                 "olcEvent.Boundary = " + olcEvent.Boundary + "\n" +
                 "olcEvent.SignificantArea = " + olcEvent.SignificantArea + "\n" +
                 "olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext + "\n" +
+                "olcEvent.SurveyNumber = " + olcEvent.SurveyNumber + "\n" +
+                "olcEvent.SurveyContractNumber = " + olcEvent.SurveyContractNumber + "\n" +
+                "olcEvent.SurveyorName = " + olcEvent.SurveyorName + "\n" +
+                "olcEvent.SurveyAuthorizingAgency = " + olcEvent.SurveyAuthorizingAgency + "\n" +
+                "olcEvent.SurveyDates = " + olcEvent.SurveyDates + "\n" +
                 "olcEvent.Description = " + olcEvent.Description + "\n" +
                 "olcEvent.TwnRngSec = " + olcEvent.TwnRngSec + "\n" +
                 "olcEvent.NumberItems = " + olcEvent.NumberItems + "\n" +
                 "olcEvent.DateDiscovered = " + olcEvent.DateDiscovered + "\n" +
                 "olcEvent.PersonDiscovered = " + olcEvent.PersonDiscovered + "\n" +
                 "olcEvent.Reference = " + olcEvent.Reference + "\n" +
-                "olcEvent.EventComments = " + olcEvent.EventComments + "\n" +
+                //"olcEvent.EventComments = " + olcEvent.EventComments + "\n" +
+                "olcEvent.Tasks = " + olcEvent.Tasks + "\n" +
                 "olcEvent.EffDt = " + olcEvent.EffDt + "\n" +
                 "olcEvent.ByUserId = " + olcEvent.ByUserId + "\n"
                 );
