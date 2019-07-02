@@ -438,3 +438,5 @@ CREATE TABLE [dbo].[NotificationLogs] (
     [Result] [nvarchar](max),
     CONSTRAINT [PK_dbo.NotificationLogs] PRIMARY KEY ([Id])
 )
+
+-- above updated on TEST 7/1
