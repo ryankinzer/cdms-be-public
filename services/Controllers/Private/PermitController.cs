@@ -429,7 +429,7 @@ namespace services.Controllers.Private
                 if (incoming_event.EventType == "Review" || incoming_event.EventType == "Inspection")
                 {
                     Permit permit = db.Permit().Find(incoming_event.PermitId);
-                    Resources.PermitEventNotifier.notify(permit, incoming_event); //only notify on "new" events
+                    Resources.PermitEventNotifier.notify(permit, incoming_event, json.PermitEvent); //only notify on "new" events
                 }
             }
             else

@@ -35,9 +35,6 @@ namespace services.Models.Data
         public string DeliveryUnit { get; set; }
 
         [DecimalPrecision(9, 2)]
-        public decimal? GrazingRentalRate { get; set; }
-
-        [DecimalPrecision(9, 2)]
         public decimal? Gross { get; set; }
 
         [DecimalPrecision(9, 2)]
