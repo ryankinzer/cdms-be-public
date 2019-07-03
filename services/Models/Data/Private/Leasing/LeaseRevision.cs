@@ -100,9 +100,8 @@ namespace services.Models.Data
 
         public string PaymentUnit { get; set; }
 
-
-        //public string LeaseLength { get; set; }
-
+        [DecimalPrecision(9, 2)]
+        public decimal? GrazingRentalRate { get; set; }
 
     }
 

@@ -57,3 +57,11 @@ CREATE TABLE [dbo].[NotificationLogs] (
 )
 
 go
+
+-- above applied to CDMS_TEST - 7/2
+
+alter table LeaseProductions drop column GrazingRentalRate;
+alter table Leases add GrazingRentalRate [decimal](9, 2);
+alter table LeaseRevisions add GrazingRentalRate [decimal](9, 2);
+
+go
