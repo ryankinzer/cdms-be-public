@@ -18,7 +18,7 @@ namespace services.Resources
             return EmailHelper.SendEmail(in_recipient, in_sender, in_subject, in_message, null);
         }
 
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message, Attachment in_attachment) {
+        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message, string in_attachment) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
             string EmailLogOnly = System.Configuration.ConfigurationManager.AppSettings["EmailServer_LogOnly"];
@@ -35,30 +35,45 @@ namespace services.Resources
 
             NotificationLog log = buildLog(message);
 
+            //handle attachment if there is one
+            MemoryStream ms = new MemoryStream();
+
             if (in_attachment != null)
-                message.Attachments.Add(in_attachment);
+            {
+                Byte[] pdf_doc = null;
+                var pdf = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(in_attachment, PdfSharp.PageSize.Letter);
+                pdf.Save(ms);
+                pdf_doc = ms.ToArray();
+
+                Attachment attachment = new Attachment(new MemoryStream(pdf_doc), "attachment.pdf");
+
+                message.Attachments.Add(attachment);
+
+            }
 
             try
             {
                 if (EmailLogOnly == "False")
                 {
                     log.Result = "Success";
-                    client.Send(message);
+                    client.Send(message); 
                 }
                 else
                 {
                     log.Result = "Log Only";
                 }
-                
+
                 db.NotificationLog.Add(log);
                 db.SaveChanges();
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 log.Result = "Failed: " + e.Message;
                 db.NotificationLog.Add(log);
                 db.SaveChanges();
                 throw e; //rethrow
             }
+
 
             return true; //otherwise the caller will get an exception
 
@@ -76,14 +91,17 @@ namespace services.Resources
             return log;
         }
 
-        internal static Attachment getAttachmentFromString(string in_body, string in_name)
+        internal static Byte[] PdfSharpConvert(String html)
         {
-            MemoryStream stream = new MemoryStream(Encoding.ASCII.GetBytes(in_body));
-            Attachment attachment = new Attachment(stream, "attachment_" + in_name + ".html");
-            attachment.ContentType.MediaType = MediaTypeNames.Text.Html;
-
-            return attachment;
-
+            Byte[] res = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var pdf = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.Letter);
+                pdf.Save(ms);
+                res = ms.ToArray();
+            }
+            return res;
         }
+
     }
 }

@@ -77,12 +77,12 @@ namespace services.Resources
 
             body += "<br/><br/> -- Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
 
-            Attachment attachment = null;
+            string attachment = null;
 
             //if it is an inspection, attach the body as an attachment and let the body just be an introduction
-            if(in_event.EventType == "Inspection_NOT")
+            if(in_event.EventType == "Inspection")
             {
-                attachment = EmailHelper.getAttachmentFromString(body, in_permit.PermitNumber);
+                attachment = body;
                 body = "Inspection requested. Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
             }
 
