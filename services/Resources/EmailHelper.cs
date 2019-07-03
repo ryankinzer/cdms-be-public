@@ -1,8 +1,11 @@
 ﻿using services.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Net.Mime;
+using System.Text;
 using System.Web;
 
 
@@ -10,12 +13,18 @@ namespace services.Resources
 {
     public class EmailHelper
     {
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message) {
+        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message)
+        {
+            return EmailHelper.SendEmail(in_recipient, in_sender, in_subject, in_message, null);
+        }
+
+        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message, Attachment in_attachment) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
             string EmailLogOnly = System.Configuration.ConfigurationManager.AppSettings["EmailServer_LogOnly"];
 
             MailMessage message = new MailMessage(in_sender, in_recipient, in_subject, in_message);
+            message.CC.Add("kenburcham@ctuir.org");
 
             message.IsBodyHtml = true;
 
@@ -25,6 +34,9 @@ namespace services.Resources
             var db = ServicesContext.Current;
 
             NotificationLog log = buildLog(message);
+
+            if (in_attachment != null)
+                message.Attachments.Add(in_attachment);
 
             try
             {
@@ -64,5 +76,14 @@ namespace services.Resources
             return log;
         }
 
+        internal static Attachment getAttachmentFromString(string in_body, string in_name)
+        {
+            MemoryStream stream = new MemoryStream(Encoding.ASCII.GetBytes(in_body));
+            Attachment attachment = new Attachment(stream, "attachment_" + in_name + ".html");
+            attachment.ContentType.MediaType = MediaTypeNames.Text.Html;
+
+            return attachment;
+
+        }
     }
 }
