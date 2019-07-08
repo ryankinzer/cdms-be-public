@@ -496,7 +496,7 @@ namespace services.Controllers
                     {
                         con.Open();
 
-                        var query = "DELETE FROM dbo.Files WHERE ProjectId = " + p.Id + " AND Subproject_CrppId = " + subproject.Id + " AND Name = " + file.Name;
+                        var query = "DELETE FROM dbo.Files WHERE ProjectId = " + p.Id + " AND Subproject_CrppId = " + subproject.Id + " AND Name = '" + file.Name + "'";
                         using (SqlCommand cmd = new SqlCommand(query, con))
                         {
                             logger.Debug(query);
@@ -879,10 +879,170 @@ namespace services.Controllers
 
         }
 
+        // POST /api/v1/olcsubproject/migrateolcevent
+        [HttpPost]
+        public HttpResponseMessage MigrateOlcEvent(JObject jsonData)
+        {
+            logger.Debug("Inside MigrateOlcEvent...");
+
+            var db = ServicesContext.Current;
+            logger.Debug("db = " + db);
+
+            dynamic json = jsonData;
+            logger.Debug("json = " + json);
+
+            User me = AuthorizationManager.getCurrentUser();
+            //logger.Debug("me = " + me); // getCurrentUser displays the username; this is just machinestuff.
+
+            int pId = json.ProjectId.ToObject<int>();
+            logger.Debug("pId = " + pId);
+
+            Project p = db.Projects.Find(pId);
+            logger.Debug("p = " + p);
+            if (p == null)
+                throw new System.Exception("Configuration error.  Please try again.");
+
+            logger.Debug("p.isOwnerOrEditor(me) = " + p.isOwnerOrEditor(me));
+            if (!p.isOwnerOrEditor(me))
+                throw new System.Exception("Authorization error.");
+
+            int sId = json.SubprojectId.ToObject<int>();
+            logger.Debug("sId = " + sId);
+
+            string strFileNames = json.FileNames.ToObject<string>();
+            logger.Debug("strFileNames = " + strFileNames);
+
+            int intCurrentEventId = -1;
+            int intNewEventId = -1;
+            int intMoveToSubprojectId = -1;
+            string strFileAttach = "";
+
+            // Spin through the fields passed in; as we find the fields, we will capture the data.
+            foreach (var item in json.OlcEvent)
+            {
+                //logger.Debug("Inside foreach loop");
+
+                if (!(item is JProperty))
+                {
+                    throw new System.Exception("There is a problem with your request. Format error.");
+                }
+
+                var prop = item as JProperty;
+                //logger.Debug("Property name = " + prop.Name);
+
+                dynamic event_json = prop.Value;
+                //logger.Debug("Property value = " + event_json);
+                //logger.Debug("Property type = " + prop.Type);
+
+                if (prop.Name == "Id")
+                {
+                    intCurrentEventId = event_json;
+                    logger.Debug("Got the current event Id:  " + intCurrentEventId);
+                }
+                else if (prop.Name == "ToSourceId")
+                {
+                    intMoveToSubprojectId = event_json;
+                    logger.Debug("Got the subproject Id that we are moving this event to:  " + intMoveToSubprojectId);
+                }
+
+            }
+
+            string strCurrentFilePath = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\" + pId + "\\S\\" + sId;
+            string strCurrentFilePathWithName = "";
+
+            string strNewFilePath = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\" + pId + "\\S\\" + intMoveToSubprojectId;
+            logger.Debug("The new path for the new subproject is:  " + strNewFilePath);
+            string strNewFilePathWithName = "";
+
+            string strNewFileLinks = "";
+
+            string[] aryFileNameList = strFileNames.Split(',');
+
+            string strFileLinks = "";
+            int intCount = 0;
+            foreach (var strFileName in aryFileNameList)
+            {
+                if (intCount == 0)
+                    strNewFileLinks += strNewFilePath + "\\" +strFileName;
+                else
+                    strNewFileLinks += "," + strNewFilePath + "\\" + strFileName;
+
+                var TheFileInfo = new
+                {
+                    Name = strFileName,
+                    Link = strNewFileLinks
+                };
+
+
+                if (intCount == 0)
+                    strFileLinks += JsonConvert.SerializeObject(TheFileInfo);
+                else
+                    strFileLinks += "," + JsonConvert.SerializeObject(TheFileInfo);
+                intCount++;
+            }
+            //logger.Debug("strNewFileLinks = " + strNewFileLinks);
+            strFileLinks = "[" + strFileLinks + "]";
+            logger.Debug("strFileLinks = " + strFileLinks);
+
+            
+            logger.Debug("Got the info we need, now to reassign the event and update the link...");
+
+            intCount = 0;
+            //open a raw database connection...
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                var query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + ", FileAttach = '" + strFileLinks + "' where [Id] = " + intCurrentEventId;
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    logger.Debug(query);
+                    cmd.ExecuteNonQuery();
+                }
+
+                string strfLink = "";
+
+                foreach (var strFileName in aryFileNameList)
+                {
+                    strfLink = strNewFilePath + "\\" + strFileName;
+                    
+                    query = "UPDATE dbo.Files set Subproject_CrppId = " + intMoveToSubprojectId + ", Link = '" + strfLink + "' where Subproject_CrppId = " + sId + " AND [Name] = '" + strFileName + "'";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        logger.Debug(query);
+                        cmd.ExecuteNonQuery();
+                        //logger.Debug("Executed sql command...");
+                    }
+                }
+            }
+
+            logger.Debug("OK, we updated the link, now to move the file from the old subproject folder to the updated...");
+
+            HttpResponseMessage resp = new HttpResponseMessage();
+            foreach (var strFileName in aryFileNameList)
+            {
+                strCurrentFilePathWithName = strCurrentFilePath + "\\" + strFileName;
+                strNewFilePathWithName = strNewFilePath + "\\" + strFileName;
+
+                if (System.IO.File.Exists(strNewFilePathWithName))
+                {
+                    //logger.Debug("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder; skipping...");
+                    throw new Exception("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder");
+                }
+                else
+                    resp = FileController.MoveFile(strCurrentFilePathWithName, strNewFilePathWithName);
+            }
+            
+
+            //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, olcEvent);
+            return resp;
+
+            //return new HttpResponseMessage(HttpStatusCode.OK);
+        }
 
         //private void SendEmailToProjectLead(string projectLeadUsername, string projectLeadFullName, string projectName, string updatingPerson)
         private void SendEmailToProjectLead(string projectLeadUsername, string projectLeadFullName, string projectName, string updatingPerson,
-            DateTime? responseDate, int numberOfDays)
+        DateTime? responseDate, int numberOfDays)
         {
             logger.Debug("**********Inside SendEmailToProjectLead...**********");
             logger.Debug("projectLeadUsername = " + projectLeadUsername);
