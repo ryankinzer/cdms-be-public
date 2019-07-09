@@ -65,3 +65,13 @@ alter table Leases add GrazingRentalRate [decimal](9, 2);
 alter table LeaseRevisions add GrazingRentalRate [decimal](9, 2);
 
 go
+
+CREATE TABLE [dbo].[PermitRoutes] (
+    [Id] [int] NOT NULL IDENTITY,
+    [EventType] [nvarchar](max),
+    [ItemType] [nvarchar](max),
+    [Rank] [int] NOT NULL,
+    [Email] [nvarchar](max),
+    CONSTRAINT [PK_dbo.PermitRoutes] PRIMARY KEY ([Id])
+)
+go

@@ -13,18 +13,24 @@ namespace services.Resources
 {
     public class EmailHelper
     {
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message)
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message)
         {
-            return EmailHelper.SendEmail(in_recipient, in_sender, in_subject, in_message, null);
+            return EmailHelper.SendEmail(in_recipients, in_sender, in_subject, in_message, null);
         }
 
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message, string in_attachment) {
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string in_attachment) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
             string EmailLogOnly = System.Configuration.ConfigurationManager.AppSettings["EmailServer_LogOnly"];
 
-            MailMessage message = new MailMessage(in_sender, in_recipient, in_subject, in_message);
-            message.CC.Add("kenburcham@ctuir.org");
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(in_sender);
+            message.Subject = in_subject;
+            message.Body = in_message;
+            in_recipients.ForEach(delegate (string recipient) {
+                message.To.Add(new MailAddress(recipient));
+            });
+            //message.CC.Add("kenburcham@ctuir.org");
 
             message.IsBodyHtml = true;
 

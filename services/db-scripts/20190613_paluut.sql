@@ -438,5 +438,12 @@ CREATE TABLE [dbo].[NotificationLogs] (
     [Result] [nvarchar](max),
     CONSTRAINT [PK_dbo.NotificationLogs] PRIMARY KEY ([Id])
 )
+go
 
 -- above updated on TEST 7/1
+
+-- convert the itemtype field to the new select-option
+DECLARE @eventsdsid int = 0;
+select @eventsdsid = id from Datastores where Name = 'Permit Events';
+
+update Fields set possiblevalues = '[{"Id":"CRPP","Label":"CRPP","Group":"Review"},{"Id":"WRP","Label":"WRP","Group":"Review"},{"Id":"BldgCode","Label":"Bldg Code","Group":"Review"},{"Id":"Env","Label":"Env. Health","Group":"Review"},{"Id":"PubWrks","Label":"Pub. Works","Group":"Review"},{"Id":"TERO","Label":"TERO","Group":"Review"},{"Id":"Roads","Label":"County","Group":"Review"},{"Id":"Fire","Label":"Fire Dept.","Group":"Review"},{"Id":"SitePlan","Label":"Site Plan","Group":"Document"},{"Id":"OwnerAuth","Label":"Owner Auth","Group":"Document"},{"Id":"Survey","Label":"Survey","Group":"Document"},{"Id":"PhoneCall","Label":"Phone Call","Group":"Correspondence"},{"Id":"Email","Label":"Email","Group":"Correspondence"},{"Id":"InPerson","Label":"In Person","Group":"Correspondence"},{"Id":"Finance","Label":"Finance","Group":"Finance"},{"Id":"Structural","Label":"Structural","Group":"Inspection"},{"Id":"Electrical","Label":"Electrical","Group":"Inspection"},{"Id":"Final","Label":"Final","Group":"Inspection"},{"Id":"Other","Label":"Other","Group":"Other"}]', controltype = 'select-group' where DatastoreId =  @eventsdsid and dbcolumnname = 'ItemType';
