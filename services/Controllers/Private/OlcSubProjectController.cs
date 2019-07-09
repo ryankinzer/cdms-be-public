@@ -250,7 +250,7 @@ namespace services.Controllers
         public IEnumerable<Subproject_Olc> GetOlcSubprojects()
         {
             var db = ServicesContext.Current;
-            logger.Info("Inside DatastoreController, getting OLC subprojects...");
+            logger.Info("Inside OlcSubProjectController, getting OLC subprojects...");
 
             /*  These are the results we want...
              *  Subproject records sorted in descending order by EffDt (most recent update on top).
@@ -300,6 +300,34 @@ namespace services.Controllers
             return sp.AsEnumerable();
             */
             /******************************************/
+        }
+
+        // POST /api/v1/olcsubproject/queryolcsubprojectsforsearch
+        [HttpPost]
+        public DataTable QueryOlcSubprojectsForSearch(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            logger.Info("Inside OlcSubProjectController, getting OLC subprojects...");
+
+            //List<Subproject_Olc> s = (from item in db.Subproject_Olc()
+            //                          where item.Id > 1
+            //                          orderby item.EffDt descending
+            //                          select item).ToList();
+
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where SubprojectId > 1";
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.CommandTimeout = 120; // 2 minutes in seconds.
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.SelectCommand.CommandTimeout = 120;
+                da.Fill(dt);
+            }
+
+            return dt;
         }
 
         // POST /api/v1/olcsubproject/deleteolceventfile
