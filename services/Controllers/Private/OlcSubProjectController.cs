@@ -593,6 +593,7 @@ namespace services.Controllers
                 //"s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
                 //"s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
                 //"s.SignatoryName = " + s.SignatoryName + "\n" +
+                "s.SourceArchiveId = " + s.SourceArchiveId + "\n" +
                 "s.EffDt = " + s.EffDt + "\n" +
                 "s.ByUserId = " + s.ByUserId + "\n"
                 );
@@ -644,6 +645,7 @@ namespace services.Controllers
                     //s2.SignatoryTitle = s.SignatoryTitle;
                     //s2.SignatoryAgency = s.SignatoryAgency;
                     //s2.SignatoryName = s.SignatoryName;
+                    s2.SourceArchiveId = s.SourceArchiveId;
                     s2.EffDt = s.EffDt;
                     s2.ByUserId = s.ByUserId;
 
@@ -829,6 +831,8 @@ namespace services.Controllers
                 //    olcEvent.EventComments = subproject_json;
                 else if (prop.Name == "Tasks")
                     olcEvent.Tasks = subproject_json;
+                else if (prop.Name == "EventArchiveId")
+                    olcEvent.EventArchiveId = subproject_json;
                 else if (prop.Name == "FileAttach")
                 {
                         olcEvent.FileAttach = subproject_json;
@@ -875,6 +879,7 @@ namespace services.Controllers
                 "olcEvent.Reference = " + olcEvent.Reference + "\n" +
                 //"olcEvent.EventComments = " + olcEvent.EventComments + "\n" +
                 "olcEvent.Tasks = " + olcEvent.Tasks + "\n" +
+                "olcEvent.EventArchiveId = " + olcEvent.EventArchiveId + "\n" +
                 "olcEvent.EffDt = " + olcEvent.EffDt + "\n" +
                 "olcEvent.ByUserId = " + olcEvent.ByUserId + "\n"
                 );

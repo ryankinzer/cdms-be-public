@@ -48,6 +48,7 @@ namespace services.Models.Data
         public string AgencyLocation { get; set; }
         public string CategorySubtitle { get; set; }
         public string OtherFacilityHoused { get; set; }
+        public string SourceArchiveId { get; set; }
 
 
         public virtual List<OlcEvents> OlcEvents { get; set; }
@@ -87,6 +88,7 @@ namespace services.Models.Data
         public string SurveyDates { get; set; }
         public string Tasks { get; set; }
         public string OtherBoundary { get; set; }
+        public string EventArchiveId { get; set; }
 
         [JsonIgnore]
         public virtual Subproject_Olc Subproject { get; set; }
