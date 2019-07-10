@@ -101,7 +101,8 @@ namespace services.Models.Data
 
         //public string LeaseLength { get; set; }
 
-
+        [DecimalPrecision(9, 2)]
+        public decimal? GrazingRentalRate { get; set; }
 
 
         //relationships
@@ -182,6 +183,7 @@ namespace services.Models.Data
             rev.FieldNumber = this.FieldNumber;
             rev.PaymentUnit = this.PaymentUnit;
             rev.HEL = this.HEL;
+            rev.GrazingRentalRate = this.GrazingRentalRate;
 
             return rev;
         }
