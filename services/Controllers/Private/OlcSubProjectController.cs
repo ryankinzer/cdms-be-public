@@ -584,6 +584,7 @@ namespace services.Controllers
                 "s.RecordGroup = " + s.RecordGroup + "\n" +
                 "s.SeriesTitle = " + s.SeriesTitle + "\n" +
                 "s.FacilityHoused = " + s.FacilityHoused + "\n" +
+                "s.OtherFacilityHoused = " + s.OtherFacilityHoused + "\n" +
                 "s.Box = " + s.Box + "\n" +
                 //"s.BoxLocation = " + s.BoxLocation + "\n" +
                 "s.CategoryTitle = " + s.CategoryTitle + "\n" +
@@ -634,6 +635,7 @@ namespace services.Controllers
                     s2.RecordGroup = s.RecordGroup;
                     s2.SeriesTitle = s.SeriesTitle;
                     s2.FacilityHoused = s.FacilityHoused;
+                    s2.OtherFacilityHoused = s.OtherFacilityHoused;
                     s2.Box = s.Box;
                     //s2.BoxLocation = s.BoxLocation;
                     s2.CategoryTitle = s.CategoryTitle;
