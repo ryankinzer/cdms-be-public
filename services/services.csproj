@@ -399,6 +399,8 @@
     <Content Include="db-scripts\full_update_script_CreelPhonePriv.sql" />
     <Content Include="db-scripts\full_update_script_HabProjLeadPal.sql" />
     <Content Include="db-scripts\full_update_script_HabProjLeadPriv.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPal.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
