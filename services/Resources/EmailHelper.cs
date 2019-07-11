@@ -18,6 +18,7 @@ namespace services.Resources
             return EmailHelper.SendEmail(in_recipients, in_sender, in_subject, in_message, null);
         }
 
+        //in_attachment will be converted to a pdf and then attached to the email.
         public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string in_attachment) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
@@ -59,10 +60,10 @@ namespace services.Resources
 
             try
             {
-                if (EmailLogOnly == "False")
+                if (EmailLogOnly != "True")
                 {
                     log.Result = "Success";
-                    client.Send(message); 
+                    //client.Send(message); 
                 }
                 else
                 {
@@ -87,12 +88,14 @@ namespace services.Resources
 
         private static NotificationLog buildLog(MailMessage message){
             NotificationLog log = new NotificationLog();
+            User me = AuthorizationManager.getCurrentUser();
 
             log.Sender = message.From.ToString();
             log.Recipient = message.To.ToString();
             log.Subject = message.Subject;
             log.Body = message.Body;
             log.SentDate = DateTime.Now;
+            log.ByUser = me.Id;
 
             return log;
         }

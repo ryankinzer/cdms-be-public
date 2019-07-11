@@ -3,6 +3,7 @@ using NLog;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace services.Resources
 {
@@ -15,7 +16,15 @@ namespace services.Resources
             string PermitURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitURL"];
             string PermitProjectId = System.Configuration.ConfigurationManager.AppSettings["PermitProjectId"];
 
-            List<string> recipients = PermitRouteHelper.getEmailForRoute(in_event.EventType, in_event.ItemType);
+            List<string> recipients = null;
+
+            //if we are a "Review" we should have incoming ReviewersContact because the user has specified the recipients they want. otherwise get from the routes (probably just "Inspection")...
+            if(in_event.EventType == "Review"){
+                JObject in_recipients = (JObject)in_json["ReviewersContact"];
+                recipients = in_recipients.Properties().Select(p => p.Name).ToList();
+            } else {
+                recipients = PermitRouteHelper.getRecipientsForRoute(in_event.EventType, in_event.ItemType);
+            }
 
             string subject = in_event.EventType + " Request from TPO for " + in_event.ItemType;
             if(in_permit.ReviewedBy != null){

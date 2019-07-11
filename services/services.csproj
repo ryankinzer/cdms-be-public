@@ -212,10 +212,6 @@
     <Compile Include="Migrations\201906282055113_reset.Designer.cs">
       <DependentUpon>201906282055113_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201907082304396_routes.cs" />
-    <Compile Include="Migrations\201907082304396_routes.Designer.cs">
-      <DependentUpon>201907082304396_routes.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -443,9 +439,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201906282055113_reset.resx">
       <DependentUpon>201906282055113_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907082304396_routes.resx">
-      <DependentUpon>201907082304396_routes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

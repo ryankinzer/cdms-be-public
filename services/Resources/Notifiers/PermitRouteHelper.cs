@@ -8,7 +8,7 @@ namespace services.Resources
 {
     class PermitRouteHelper
     {
-        public static List<string> getEmailForRoute(string in_eventtype, string in_itemtype) {
+        public static List<string> getRecipientsForRoute(string in_eventtype, string in_itemtype ) {
             var db = ServicesContext.Current;
 
             List<string> retval = new List<string>();
@@ -16,7 +16,7 @@ namespace services.Resources
             if (in_eventtype == "Inspection")
             {
                 PermitRoute route = db.PermitRoute().Where(o => o.EventType == in_eventtype).First();
-                retval.Add(route.Email); ;
+                retval.Add(route.Email); 
                 //return "FAX=5414297444@faxfinder.com";
             }
             else{

@@ -34,7 +34,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().OrderByDescending(o => o.ApplicationDate).AsEnumerable(); 
+            return db.Permit().AsEnumerable(); 
 
         }
 
@@ -251,6 +251,22 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
 
             return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == PermitId).AsEnumerable();
+
+        }
+
+        [HttpGet]
+        public dynamic GetPermitRoutes(string ItemType)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            //dynamic json = jsonData;
+
+            //string in_itemtype = json["ItemType"];
+
+            return db.PermitRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
 
         }
 
