@@ -689,8 +689,8 @@ namespace services.Controllers
         public HttpResponseMessage SaveOlcEvent(JObject jsonData)
         {
             logger.Debug("Inside SaveOlcEvent...");
-            string strId = null;  // Delare this up here, so that all if/try blocks can see it.
-            string strTmp = "";
+            //string strId = null;  // Delare this up here, so that all if/try blocks can see it.
+            //string strTmp = "";
 
             var db = ServicesContext.Current;
             logger.Debug("db = " + db);
@@ -759,12 +759,16 @@ namespace services.Controllers
                     olcEvent.DocumentDate = subproject_json;
                 else if (prop.Name == "FileName")
                     olcEvent.FileName = subproject_json;
-                else if (prop.Name == "Author")
-                    olcEvent.Author = subproject_json;
+                //else if (prop.Name == "Author")
+                //    olcEvent.Author = subproject_json;
+                else if (prop.Name == "EventAgency")
+                    olcEvent.EventAgency = subproject_json;
                 //else if (prop.Name == "AuthorAgency")
                 //    olcEvent.AuthorAgency = subproject_json;
                 else if (prop.Name == "AgencyDivision")
                     olcEvent.AgencyDivision = subproject_json;
+                else if (prop.Name == "EventAgencyLocation")
+                    olcEvent.EventAgencyLocation = subproject_json;
                 else if (prop.Name == "SignatoryName")
                     olcEvent.SignatoryName = subproject_json;
                 else if (prop.Name == "SignatoryTitle")
@@ -821,6 +825,8 @@ namespace services.Controllers
                     olcEvent.TwnRngSec = subproject_json;
                 else if (prop.Name == "NumberItems")
                     olcEvent.NumberItems = subproject_json;
+                else if (prop.Name == "PageNumber")
+                    olcEvent.PageNumber = subproject_json;
                 else if (prop.Name == "DateDiscovered")
                     olcEvent.DateDiscovered = subproject_json;
                 else if (prop.Name == "PersonDiscovered")
@@ -853,9 +859,11 @@ namespace services.Controllers
                 "olcEvent.DocumentType = " + olcEvent.DocumentType + "\n" +
                 "olcEvent.DocumentDate = " + olcEvent.DocumentDate + "\n" +
                 "olcEvent.FileName = " + olcEvent.FileName + "\n" +
-                "olcEvent.Author = " + olcEvent.Author + "\n" +
+                //"olcEvent.Author = " + olcEvent.Author + "\n" +
+                "olcEvent.EventAgency = " + olcEvent.EventAgency + "\n" +
                 //"olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
                 "olcEvent.AgencyDivision = " + olcEvent.AgencyDivision + "\n" +
+                "olcEvent.EventAgencyLocation = " + olcEvent.EventAgencyLocation + "\n" +
                 "olcEvent.SignatoryName = " + olcEvent.SignatoryName + "\n" +
                 "olcEvent.SignatoryTitle = " + olcEvent.SignatoryTitle + "\n" +
                 "olcEvent.RecipientName = " + olcEvent.RecipientName + "\n" +
@@ -874,6 +882,7 @@ namespace services.Controllers
                 "olcEvent.Description = " + olcEvent.Description + "\n" +
                 "olcEvent.TwnRngSec = " + olcEvent.TwnRngSec + "\n" +
                 "olcEvent.NumberItems = " + olcEvent.NumberItems + "\n" +
+                "olcEvent.PageNumber = " + olcEvent.PageNumber + "\n" +
                 "olcEvent.DateDiscovered = " + olcEvent.DateDiscovered + "\n" +
                 "olcEvent.PersonDiscovered = " + olcEvent.PersonDiscovered + "\n" +
                 "olcEvent.Reference = " + olcEvent.Reference + "\n" +
@@ -948,9 +957,9 @@ namespace services.Controllers
             logger.Debug("strFileNames = " + strFileNames);
 
             int intCurrentEventId = -1;
-            int intNewEventId = -1;
+            //int intNewEventId = -1;
             int intMoveToSubprojectId = -1;
-            string strFileAttach = "";
+            //string strFileAttach = "";
 
             // Spin through the fields passed in; as we find the fields, we will capture the data.
             foreach (var item in json.OlcEvent)

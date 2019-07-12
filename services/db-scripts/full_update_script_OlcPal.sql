@@ -80,7 +80,7 @@ SELECT        e.Id, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, 
 FROM            dbo.Subproject_Olc AS sp INNER JOIN
                          dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
 go
--- Entered down to here --
+-- Entered down to here before 20190710 --
 
 -- Update table properties
 ALTER TABLE [dbo].[Subproject_Olc] ADD [Agency] [nvarchar](max)
@@ -254,3 +254,35 @@ SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e
 FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
                          dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
 go
+
+-- Entered down to here 20190710 --
+
+-- Add update/add new properties
+sp_RENAME 'dbo.OlcEvents.Author', 'EventAgency', 'COLUMN'
+ALTER TABLE [dbo].[OlcEvents] ADD [EventAgencyLocation] [nvarchar](max)
+ALTER TABLE [dbo].[OlcEvents] ADD [PageNumber] [nvarchar](max)
+
+-- Update the views
+drop view dbo.OlcEvents_Search_VW
+go
+create view dbo.OlcEvents_Search_VW
+AS
+SELECT        Id, SubprojectId, DocumentType, DocumentDate, FileName, EventAgency, Boundary, SignificantArea, Description, TwnRngSec, NumberItems, PageNumber, DateDiscovered, PersonDiscovered, Reference, FileAttach, 
+                         MiscellaneousContext, SignatoryTitle, SignatoryName, AgencyDivision, EventAgencyLocation, RecipientName, RecipientTitle, RecipientAgency, RecipientLocation, SurveyNumber, SurveyContractNumber, SurveyorName, 
+                         SurveyAuthorizingAgency, SurveyDates, Tasks, EventArchiveId, ByUserId, EffDt, OtherBoundary
+FROM            dbo.OlcEvents
+go
+
+drop view dbo.OlcSubprojectsAndEvents_vw
+go
+create view dbo.OlcSubprojectsAndEvents_vw
+AS
+SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.EventAgency, e.Boundary, e.SignificantArea, e.Description, e.NumberItems, e.PageNumber, e.DateDiscovered, e.TwnRngSec, e.PersonDiscovered, e.Reference, 
+                         e.FileAttach, e.MiscellaneousContext, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.EventAgencyLocation, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, e.SurveyNumber, e.SurveyContractNumber, 
+                         e.SurveyorName, e.SurveyAuthorizingAgency, e.SurveyDates, e.Tasks, e.OtherBoundary, e.EventArchiveId, e.ByUserId AS EventByUserId, e.EffDt AS EventEffDt, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.CategoryTitle, 
+                         s.Agency, s.AgencyLocation, s.CategorySubtitle, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, s.EffDt AS SubprojectEffDt, s.SourceArchiveId
+FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
+                         dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
+go
+
+-- Entered down to here 20190712 --

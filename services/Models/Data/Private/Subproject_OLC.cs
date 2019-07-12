@@ -60,7 +60,8 @@ namespace services.Models.Data
         public string DocumentType { get; set; }
         public DateTime? DocumentDate { get; set; }
         public string FileName { get; set; }
-        public string Author { get; set; }
+        //public string Author { get; set; }
+        public string EventAgency { get; set; }
         //public string AuthorAgency { get; set; }
         public string Boundary { get; set; }
         public string SignificantArea { get; set; }
@@ -89,6 +90,8 @@ namespace services.Models.Data
         public string Tasks { get; set; }
         public string OtherBoundary { get; set; }
         public string EventArchiveId { get; set; }
+        public string EventAgencyLocation { get; set; }
+        public string PageNumber { get; set; }
 
         [JsonIgnore]
         public virtual Subproject_Olc Subproject { get; set; }
