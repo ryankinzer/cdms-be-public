@@ -300,9 +300,9 @@ ALTER TABLE [dbo].[OlcEvents] DROP COLUMN [EventComments]
 go
 
 -- Update the views
-drop view OlcEvents_vw
+drop view dbo.OlcEvents_vw
 go
-create view OlcEvents_vw
+create view dbo.OlcEvents_vw
 AS
 SELECT        e.Id, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.Author, e.Boundary, e.SignificantArea, e.MiscellaneousContext, e.Description, e.TwnRngSec, e.NumberItems, e.DateDiscovered, 
                          e.PersonDiscovered, e.Reference, e.FileAttach, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, e.SurveyNumber, e.SurveyContractNumber, e.SurveyorName, e.OtherBoundary,
@@ -327,15 +327,15 @@ where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'O
 -- Add views for Search page
 --drop view Subproject_Olc_Search_VW
 --go
-create view Subproject_Olc_Search_VW
+create view dbo.Subproject_Olc_Search_VW
 AS
 SELECT        Id, RecordGroup, SeriesTitle, FacilityHoused, Box, CategoryTitle, Agency, AgencyLocation, CategorySubtitle, OtherFacilityHoused, ByUserId, EffDt
 FROM            dbo.Subproject_Olc
 go
 
---drop view OlcEvents_Search_VW
+--drop view dbo.OlcEvents_Search_VW
 --go
-create view OlcEvents_Search_VW
+create view dbo.OlcEvents_Search_VW
 AS
 SELECT        Id, SubprojectId, DocumentType, DocumentDate, FileName, Author, Boundary, SignificantArea, Description, TwnRngSec, NumberItems, DateDiscovered, PersonDiscovered, Reference, FileAttach, MiscellaneousContext, 
                          SignatoryTitle, SignatoryName, AgencyDivision, RecipientName, RecipientTitle, RecipientAgency, RecipientLocation, SurveyNumber, SurveyContractNumber, SurveyorName, SurveyAuthorizingAgency, SurveyDates, Tasks, 
@@ -343,9 +343,9 @@ SELECT        Id, SubprojectId, DocumentType, DocumentDate, FileName, Author, Bo
 FROM            dbo.OlcEvents
 go
 
---drop view OlcEvents_Search_VW
+--drop view dbo.OlcSubprojectsAndEvents_vw
 --go
-create view OlcEvents_Search_VW
+create view dbo.OlcSubprojectsAndEvents_vw
 AS
 SELECT        e.Id AS EventId, e.SubprojectId AS EventSubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.Author, e.Boundary, e.SignificantArea, e.Description, e.TwnRngSec, e.NumberItems, e.DateDiscovered, 
                          e.PersonDiscovered, e.Reference, e.FileAttach, e.MiscellaneousContext, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, e.SurveyNumber, 
