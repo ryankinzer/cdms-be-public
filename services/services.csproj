@@ -109,6 +109,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -192,6 +193,7 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\Private\ExpandoController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
     <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
     <Compile Include="Controllers\Private\PermitController.cs" />

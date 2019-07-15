@@ -34,7 +34,24 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().AsEnumerable(); 
+            //return db.Permit().AsEnumerable(); <-- not as fast as a direct sql... 
+
+
+            var sql = @"select * from Permits order by ApplicationDate desc";
+
+            DataTable requests = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(requests);
+                }
+            }
+
+            return requests;
 
         }
 
