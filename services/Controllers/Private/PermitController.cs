@@ -56,6 +56,20 @@ namespace services.Controllers.Private
         }
 
         [HttpGet]
+        public dynamic GetPermitByPermitNumber(string PermitNumber)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.Permit().Where(o => o.PermitNumber == PermitNumber).FirstOrDefault();
+
+        }
+
+
+        [HttpGet]
         public dynamic RoutingPermits()
         {
             User me = AuthorizationManager.getCurrentUser();
