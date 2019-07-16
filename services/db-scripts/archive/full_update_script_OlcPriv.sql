@@ -130,8 +130,8 @@ SELECT
     DefaultRowQAStatusId      = 1,
     StatusId                  = 1,
     CreateDateTime            = GetDate(),
-    Name                      = @datasetBaseName,
-    Description               = @datasetBaseName + ': ' + p.name,
+    Name                      = 'Eastern Boundary Research',
+    Description               = 'Eastern Boundary Research',
     DefaultActivityQAStatusId = 6,
     DatastoreId               = (SELECT IDENT_CURRENT('dbo.Datastores')),
     Config                    = '{"ActivitiesPage":{"Route":"olcevents"}}'
@@ -158,9 +158,9 @@ set @Entity = (select Id from dbo.MetadataEntities where [Name] = 'OLC');
 insert into dbo.MetadataProperties(MetadataEntityId, [Name], [Description], DataType, PossibleValues, ControlType)
 values
 (@Entity, 'DocumentType', 'Document Type', 'string', '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report"]', 'select'),
-(@Entity, 'Boundary', 'Related to Boundary despute', 'string', '["East", "West", "North","South", "Other"]', 'select'),
-(@Entity, 'SignificantArea', 'Significant Area referred to', 'string', '["NW Reservation","NE Reservation","SE Reservation","SW Reservation", "East Reservation","Wildhorse Creek","Lee''s Encampment-Cayuse Summer Camp","Lee''s Encampment-Meacham","McKay Creek","Birch Creek", "West McKay Land Claim", "City of Pendleton-Notch Act"]', 'select'),
-(@Entity, 'MiscellaneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'select'),
+(@Entity, 'Boundary', 'Related to Boundary despute', 'string', '["East", "West", "North","South", "Other"]', 'multiselect'),
+(@Entity, 'SignificantArea', 'Significant Area referred to', 'string', '["NW Reservation","NE Reservation","SE Reservation","SW Reservation", "East Reservation","Wildhorse Creek","Lee''s Encampment-Cayuse Summer Camp","Lee''s Encampment-Meacham","McKay Creek","Birch Creek", "West McKay Land Claim", "City of Pendleton-Notch Act"]', 'multiselect'),
+(@Entity, 'MiscellaneousContext', 'Other Related Context', 'string', '["Allotments","Timber","Trespass","Agriculture","Theft","Railroad","Road","Complaint","Contracts"]', 'multiselect'),
 (@Entity, 'PersonDiscovered', 'Person who discovered the information', 'string', '["Naomi Stacy","Alanna Nanegos","Teara Farrow Ferman"]', 'select'),
 (@Entity, 'FacilityHoused', 'Facility the box or file is located in', 'string', '["NGC","TCI","NARA Sandpoint"]', 'select')
 go
