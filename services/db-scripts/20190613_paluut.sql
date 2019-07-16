@@ -466,3 +466,23 @@ insert into DatasetFields
 (1281, @newfeenotificationfieldid, 1, getdate(), 'Fee Notification Date','FeeNotificationDate','date',null,1, 5, 505);
 
 go
+
+-- add the plss fields back in
+insert into DatasetFields (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select 1281, f.Id, f.FieldRoleId, getDate(), f.Name, f.DbColumnName, f.ControlType, null, 1 FROM Fields f where f.DbColumnName in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+go
+
+UPDATE DatasetFields set OrderIndex = 293, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteTownship'; 
+UPDATE DatasetFields set OrderIndex = 294, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteRange' ;
+UPDATE DatasetFields set OrderIndex = 295, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteSection'; 
+UPDATE DatasetFields set OrderIndex = 296, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteQuarter' ;
+UPDATE DatasetFields set OrderIndex = 297, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteSixteenth'; 
+go
+
+--remove zoning because we're going to create our own special multiselect
+DELETE from DatasetFields where DatasetId = 1281 and DbColumnName = 'Zoning';
+go
+
+
+
+

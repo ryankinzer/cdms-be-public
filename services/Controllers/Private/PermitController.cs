@@ -175,7 +175,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
             from permits p
             join permitevents pe on pe.PermitId = p.Id
             where
@@ -207,7 +207,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
