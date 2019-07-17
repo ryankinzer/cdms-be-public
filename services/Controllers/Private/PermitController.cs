@@ -222,7 +222,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, pe.RequestDate
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.RequestDate
             from permits p 
 	            join permitevents pe on p.Id = pe.PermitId
             where pe.EventType = 'Public Hearing' and pe.ResponseDate is null";
