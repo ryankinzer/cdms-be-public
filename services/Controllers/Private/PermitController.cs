@@ -212,6 +212,39 @@ namespace services.Controllers.Private
 
         }
 
+        
+        [HttpGet]
+        public dynamic GetPublicHearingPermits()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, pe.RequestDate
+            from permits p 
+	            join permitevents pe on p.Id = pe.PermitId
+            where pe.EventType = 'Public Hearing' and pe.ResponseDate is null";
+
+            DataTable result = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(result);
+                }
+            }
+
+            return result;
+
+        }
+
+
+
         [HttpGet]
         public dynamic GetExpiringPermits()
         {
