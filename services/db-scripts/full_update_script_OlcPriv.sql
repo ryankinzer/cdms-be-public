@@ -323,6 +323,7 @@ where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'O
 update dbo.MetadataProperties
 set PossibleValues = '["NGC","TCI","NARA Sandpoint","Other"]'
 where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'OLC') and [Name] = 'FacilityHoused'
+go
 
 -- Add views for Search page
 --drop view Subproject_Olc_Search_VW
@@ -395,6 +396,7 @@ go
 sp_RENAME 'dbo.OlcEvents.Author', 'EventAgency', 'COLUMN'
 ALTER TABLE [dbo].[OlcEvents] ADD [EventAgencyLocation] [nvarchar](max)
 ALTER TABLE [dbo].[OlcEvents] ADD [PageNumber] [nvarchar](max)
+go
 
 -- Update the views
 drop view dbo.OlcEvents_Search_VW
@@ -420,3 +422,12 @@ FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
 go
 
 -- Entered down to here 20190712 --
+
+--Update data
+update dbo.MetadataProperties
+set PossibleValues = '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report", "Maps]'
+where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'OLC') and [Name] = 'DocumentType'
+go
+
+--Rename column
+sp_RENAME 'dbo.Subproject_Olc.CategorySubtitle', 'FileUnit', 'COLUMN'
