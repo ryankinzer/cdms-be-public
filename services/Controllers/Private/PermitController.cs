@@ -166,6 +166,18 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpGet]
+        public dynamic GetPermitRoutes()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitRoute().AsEnumerable();
+
+        }
 
         [HttpGet]
         public dynamic GetAllPermitPersons()

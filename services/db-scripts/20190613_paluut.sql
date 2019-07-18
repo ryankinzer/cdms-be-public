@@ -483,6 +483,9 @@ go
 DELETE from DatasetFields where DatasetId = 1281 and DbColumnName = 'Zoning';
 go
 
-
+ALTER TABLE [dbo].[NotificationLogs] ADD Module [nvarchar](max);
+go
+update NotificationLogs set Module = 'Permits'
+go;
 
 
