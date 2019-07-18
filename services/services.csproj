@@ -374,7 +374,7 @@
     <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
-    <Compile Include="Resources\Notifiers\PermitRouteHelper.cs" />
+    <Compile Include="Resources\PermitRouteHelper.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />

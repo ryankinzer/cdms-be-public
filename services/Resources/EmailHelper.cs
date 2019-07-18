@@ -63,7 +63,7 @@ namespace services.Resources
                 if (EmailLogOnly != "True")
                 {
                     log.Result = "Success";
-                    //client.Send(message); 
+                    client.Send(message); 
                 }
                 else
                 {

@@ -94,13 +94,13 @@ namespace services.Resources
             if(in_event.EventType == "Inspection")
             {
                 attachment = body;
-                body = "Inspection requested. Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
+                body = "Inspection requested for " + in_permit.PermitNumber + ". See attachment for details.<br/>Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
             }
 
 
             try
             {
-                EmailHelper.SendEmail( recipients, "kenburcham@ctuir.org", subject, body, attachment);
+                EmailHelper.SendEmail( recipients, "tpo@ctuir.org", subject, body, attachment);
 
                 logger.Debug("Sent an email to " + recipients.ToString()); 
             }
