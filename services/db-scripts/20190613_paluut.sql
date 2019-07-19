@@ -63,7 +63,7 @@ insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, F
 values 
 ('EventDate','Created','Date event created','date',@newdsid,1,null,'date',null,null),
 ('EventType','Event Type','Event Type','select',@newdsid,1,null,'string','["Approval","Document","Correspondence","Inspection","Record"]',null),
-('ItemType','Item Type','Item Type','select',@newdsid,1,null,'string','["CRPP","WRP","County","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null),
+('ItemType','Item Type','Item Type','select-group',@newdsid,1,null,'string','["CRPP","WRP","County","Blueprint","Site Plan","Phone Call","Email","TPO","Finance","Structural","Electrical","Final"]',null),
 ('RequestDate','Request Date','Request Date','date',@newdsid,1,null,'date',null,null),
 ('ResponseDate','Response Date','Response Date','date',@newdsid,1,null,'date',null,null),
 ('Reviewer','Reviewer','Reviewer','text',@newdsid,1,null,'string',null,null),
@@ -440,7 +440,18 @@ CREATE TABLE [dbo].[NotificationLogs] (
 )
 go
 
--- above updated on TEST 7/1
+-- above updated on TEST 7/1 ----------------------------------------
+
+CREATE TABLE [dbo].[PermitRoutes] (
+    [Id] [int] NOT NULL IDENTITY,
+    [EventType] [nvarchar](max),
+    [ItemType] [nvarchar](max),
+    [Rank] [int] NOT NULL,
+    [Email] [nvarchar](max),
+    CONSTRAINT [PK_dbo.PermitRoutes] PRIMARY KEY ([Id])
+)
+go
+
 
 -- convert the itemtype field to the new select-option
 DECLARE @eventsdsid int = 0;
@@ -486,6 +497,6 @@ go
 ALTER TABLE [dbo].[NotificationLogs] ADD Module [nvarchar](max);
 go
 update NotificationLogs set Module = 'Permits'
-go;
+go
 
-
+-- updated on PALUUT_TEST 7/19
