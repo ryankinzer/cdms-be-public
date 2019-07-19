@@ -46,7 +46,8 @@ namespace services.Models.Data
 
         public string Agency { get; set; }
         public string AgencyLocation { get; set; }
-        public string CategorySubtitle { get; set; }
+        //public string CategorySubtitle { get; set; }
+        public string FileUnit { get; set; }
         public string OtherFacilityHoused { get; set; }
         public string SourceArchiveId { get; set; }
 

@@ -589,7 +589,8 @@ namespace services.Controllers
                 //"s.BoxLocation = " + s.BoxLocation + "\n" +
                 "s.CategoryTitle = " + s.CategoryTitle + "\n" +
                 //"s.CategoryIndex = " + s.CategoryIndex + "\n" +
-                "s.CategorySubtitle = " + s.CategorySubtitle + "\n" +
+                //"s.CategorySubtitle = " + s.CategorySubtitle + "\n" +
+                "s.FileUnit = " + s.FileUnit + "\n" +
                 //"s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
                 //"s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
                 //"s.SignatoryName = " + s.SignatoryName + "\n" +
@@ -641,7 +642,8 @@ namespace services.Controllers
                     //s2.BoxLocation = s.BoxLocation;
                     s2.CategoryTitle = s.CategoryTitle;
                     //s2.CategoryIndex = s.CategoryIndex;
-                    s2.CategorySubtitle = s.CategorySubtitle;
+                    //s2.CategorySubtitle = s.CategorySubtitle;
+                    s2.FileUnit = s.FileUnit;
                     //s2.SignatoryTitle = s.SignatoryTitle;
                     //s2.SignatoryAgency = s.SignatoryAgency;
                     //s2.SignatoryName = s.SignatoryName;
