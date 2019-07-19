@@ -438,5 +438,54 @@ CREATE TABLE [dbo].[NotificationLogs] (
     [Result] [nvarchar](max),
     CONSTRAINT [PK_dbo.NotificationLogs] PRIMARY KEY ([Id])
 )
+go
 
 -- above updated on TEST 7/1
+
+-- convert the itemtype field to the new select-option
+DECLARE @eventsdsid int = 0;
+select @eventsdsid = id from Datastores where Name = 'Permit Events';
+
+update Fields set possiblevalues = '[{"Id":"CRPP","Label":"CRPP","Group":"Review"},{"Id":"WRP","Label":"WRP","Group":"Review"},{"Id":"BldgCode","Label":"Bldg Code","Group":"Review"},{"Id":"Env","Label":"Env. Health","Group":"Review"},{"Id":"PubWrks","Label":"Pub. Works","Group":"Review"},{"Id":"TERO","Label":"TERO","Group":"Review"},{"Id":"Roads","Label":"County","Group":"Review"},{"Id":"Fire","Label":"Fire Dept.","Group":"Review"},{"Id":"SitePlan","Label":"Site Plan","Group":"Document"},{"Id":"OwnerAuth","Label":"Owner Auth","Group":"Document"},{"Id":"Survey","Label":"Survey","Group":"Document"},{"Id":"PhoneCall","Label":"Phone Call","Group":"Correspondence"},{"Id":"Email","Label":"Email","Group":"Correspondence"},{"Id":"InPerson","Label":"In Person","Group":"Correspondence"},{"Id":"Finance","Label":"Finance","Group":"Finance"},{"Id":"Structural","Label":"Structural","Group":"Inspection"},{"Id":"Electrical","Label":"Electrical","Group":"Inspection"},{"Id":"Final","Label":"Final","Group":"Inspection"},{"Id":"Other","Label":"Other","Group":"Other"}]', controltype = 'select-group' where DatastoreId =  @eventsdsid and dbcolumnname = 'ItemType';
+update fields set possiblevalues = '["Review","Inspection","Document","Correspondence","Record","Notice","Site Visit","Public Hearing","Other"]' where datastoreid = @eventsdsid and dbcolumnname = 'EventType';
+
+go
+
+ALTER TABLE [dbo].[Permits] ADD FeeNotificationDate [datetime];
+
+DECLARE @newfeenotificationfieldid int = 0;
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('FeeNotificationDate','Fee Notification Date','Fee Notification Date','date',33,1,null,'date',null,null);
+
+select @newfeenotificationfieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId, ColumnIndex, OrderIndex) values 
+(1281, @newfeenotificationfieldid, 1, getdate(), 'Fee Notification Date','FeeNotificationDate','date',null,1, 5, 505);
+
+go
+
+-- add the plss fields back in
+insert into DatasetFields (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select 1281, f.Id, f.FieldRoleId, getDate(), f.Name, f.DbColumnName, f.ControlType, null, 1 FROM Fields f where f.DbColumnName in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+go
+
+UPDATE DatasetFields set OrderIndex = 293, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteTownship'; 
+UPDATE DatasetFields set OrderIndex = 294, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteRange' ;
+UPDATE DatasetFields set OrderIndex = 295, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteSection'; 
+UPDATE DatasetFields set OrderIndex = 296, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteQuarter' ;
+UPDATE DatasetFields set OrderIndex = 297, ColumnIndex = 2 WHERE DatasetId = 1281 and DbColumnName = 'SiteSixteenth'; 
+go
+
+--remove zoning because we're going to create our own special multiselect
+DELETE from DatasetFields where DatasetId = 1281 and DbColumnName = 'Zoning';
+go
+
+ALTER TABLE [dbo].[NotificationLogs] ADD Module [nvarchar](max);
+go
+update NotificationLogs set Module = 'Permits'
+go;
+
+

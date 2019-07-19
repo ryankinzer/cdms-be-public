@@ -14,7 +14,7 @@ namespace services.Resources
 
         public static void notify(Feedback feedback){
 
-            string recipient = System.Configuration.ConfigurationManager.AppSettings["FeedbackEmailTo"];
+            List<string> recipients = new List<string> { System.Configuration.ConfigurationManager.AppSettings["FeedbackEmailTo"] };
 
             User poster = AuthorizationManager.getCurrentUser();
 
@@ -29,8 +29,8 @@ namespace services.Resources
 
             try
             {
-                EmailHelper.SendEmail(recipient, "noreply@ctuir.org", subject, body);
-                logger.Debug("Sent an email to " + recipient); //TODO: save in the notification log
+                EmailHelper.SendEmail(recipients, "noreply@ctuir.org", subject, body);
+                logger.Debug("Sent an email to " + recipients.ToString()); //TODO: save in the notification log
             }
             catch (Exception e)
             {

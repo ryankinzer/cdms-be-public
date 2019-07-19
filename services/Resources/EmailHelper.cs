@@ -13,18 +13,25 @@ namespace services.Resources
 {
     public class EmailHelper
     {
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message)
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message)
         {
-            return EmailHelper.SendEmail(in_recipient, in_sender, in_subject, in_message, null);
+            return EmailHelper.SendEmail(in_recipients, in_sender, in_subject, in_message, null);
         }
 
-        public static Boolean SendEmail(string in_recipient, string in_sender, string in_subject, string in_message, string in_attachment) {
+        //in_attachment will be converted to a pdf and then attached to the email.
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string in_attachment) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
             string EmailLogOnly = System.Configuration.ConfigurationManager.AppSettings["EmailServer_LogOnly"];
 
-            MailMessage message = new MailMessage(in_sender, in_recipient, in_subject, in_message);
-            message.CC.Add("kenburcham@ctuir.org");
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(in_sender);
+            message.Subject = in_subject;
+            message.Body = in_message;
+            in_recipients.ForEach(delegate (string recipient) {
+                message.To.Add(new MailAddress(recipient));
+            });
+            //message.CC.Add("kenburcham@ctuir.org");
 
             message.IsBodyHtml = true;
 
@@ -53,7 +60,7 @@ namespace services.Resources
 
             try
             {
-                if (EmailLogOnly == "False")
+                if (EmailLogOnly != "True")
                 {
                     log.Result = "Success";
                     client.Send(message); 
@@ -81,12 +88,14 @@ namespace services.Resources
 
         private static NotificationLog buildLog(MailMessage message){
             NotificationLog log = new NotificationLog();
+            User me = AuthorizationManager.getCurrentUser();
 
             log.Sender = message.From.ToString();
             log.Recipient = message.To.ToString();
             log.Subject = message.Subject;
             log.Body = message.Body;
             log.SentDate = DateTime.Now;
+            log.ByUser = me.Id;
 
             return log;
         }

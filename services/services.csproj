@@ -109,6 +109,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -192,6 +193,7 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\Private\ExpandoController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
     <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
     <Compile Include="Controllers\Private\PermitController.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Models\Data\Private\Permits\PermitCadasterView.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitContact.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitRoute.cs" />
     <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
@@ -371,6 +374,7 @@
     <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
+    <Compile Include="Resources\PermitRouteHelper.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
@@ -391,6 +395,20 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20190613_paluut.sql" />
     <Content Include="db-scripts\20190613_cdms.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-08_lease_updates.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-24_add_production_fields.sql" />
+    <Content Include="db-scripts\archive\full_update_script.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_OlcPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_OlcPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\archive\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePal.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePriv.sql" />
     <Content Include="db-scripts\full_update_script_HabProjLeadPal.sql" />
