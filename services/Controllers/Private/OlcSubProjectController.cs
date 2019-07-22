@@ -587,7 +587,8 @@ namespace services.Controllers
                 "s.OtherFacilityHoused = " + s.OtherFacilityHoused + "\n" +
                 "s.Box = " + s.Box + "\n" +
                 //"s.BoxLocation = " + s.BoxLocation + "\n" +
-                "s.CategoryTitle = " + s.CategoryTitle + "\n" +
+                //"s.CategoryTitle = " + s.CategoryTitle + "\n" +
+                "s.LitigationCategory = " + s.LitigationCategory + "\n" +
                 //"s.CategoryIndex = " + s.CategoryIndex + "\n" +
                 //"s.CategorySubtitle = " + s.CategorySubtitle + "\n" +
                 "s.FileUnit = " + s.FileUnit + "\n" +
@@ -640,7 +641,8 @@ namespace services.Controllers
                     s2.OtherFacilityHoused = s.OtherFacilityHoused;
                     s2.Box = s.Box;
                     //s2.BoxLocation = s.BoxLocation;
-                    s2.CategoryTitle = s.CategoryTitle;
+                    //s2.CategoryTitle = s.CategoryTitle;
+                    s2.LitigationCategory = s.LitigationCategory;
                     //s2.CategoryIndex = s.CategoryIndex;
                     //s2.CategorySubtitle = s.CategorySubtitle;
                     s2.FileUnit = s.FileUnit;
