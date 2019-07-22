@@ -1004,34 +1004,41 @@ namespace services.Controllers
 
             string strNewFileLinks = "";
 
-            string[] aryFileNameList = strFileNames.Split(',');
-
-            string strFileLinks = "";
             int intCount = 0;
-            foreach (var strFileName in aryFileNameList)
+            string strFileLinks = "";
+            List<string> lstFileNameList = new List<string>();
+            if (!string.IsNullOrEmpty(strFileNames))
             {
-                if (intCount == 0)
-                    strNewFileLinks += strNewFilePath + "\\" +strFileName;
-                else
-                    strNewFileLinks += "," + strNewFilePath + "\\" + strFileName;
+                string[] aryFileNameList = strFileNames.Split(',');
 
-                var TheFileInfo = new
+                strFileLinks = "";
+                intCount = 0;
+                foreach (var strFileName in aryFileNameList)
                 {
-                    Name = strFileName,
-                    Link = strNewFileLinks
-                };
+                    if (intCount == 0)
+                        strNewFileLinks += strNewFilePath + "\\" + strFileName;
+                    else
+                        strNewFileLinks += "," + strNewFilePath + "\\" + strFileName;
+
+                    lstFileNameList.Add(strFileName);
+
+                    var TheFileInfo = new
+                    {
+                        Name = strFileName,
+                        Link = strNewFileLinks
+                    };
 
 
-                if (intCount == 0)
-                    strFileLinks += JsonConvert.SerializeObject(TheFileInfo);
-                else
-                    strFileLinks += "," + JsonConvert.SerializeObject(TheFileInfo);
-                intCount++;
+                    if (intCount == 0)
+                        strFileLinks += JsonConvert.SerializeObject(TheFileInfo);
+                    else
+                        strFileLinks += "," + JsonConvert.SerializeObject(TheFileInfo);
+                    intCount++;
+                }
+                //logger.Debug("strNewFileLinks = " + strNewFileLinks);
+                strFileLinks = "[" + strFileLinks + "]";
+                logger.Debug("strFileLinks = " + strFileLinks);
             }
-            //logger.Debug("strNewFileLinks = " + strNewFileLinks);
-            strFileLinks = "[" + strFileLinks + "]";
-            logger.Debug("strFileLinks = " + strFileLinks);
-
             
             logger.Debug("Got the info we need, now to reassign the event and update the link...");
 
@@ -1041,7 +1048,12 @@ namespace services.Controllers
             {
                 con.Open();
 
-                var query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + ", FileAttach = '" + strFileLinks + "' where [Id] = " + intCurrentEventId;
+                var query = "";
+                if (!string.IsNullOrEmpty(strFileNames))
+                    query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + ", FileAttach = '" + strFileLinks + "' where [Id] = " + intCurrentEventId;
+                else
+                    query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + " where [Id] = " + intCurrentEventId;
+
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     logger.Debug(query);
@@ -1049,17 +1061,20 @@ namespace services.Controllers
                 }
 
                 string strfLink = "";
-
-                foreach (var strFileName in aryFileNameList)
+                if (!string.IsNullOrEmpty(strFileNames))
                 {
-                    strfLink = strNewFilePath + "\\" + strFileName;
-                    
-                    query = "UPDATE dbo.Files set Subproject_CrppId = " + intMoveToSubprojectId + ", Link = '" + strfLink + "' where Subproject_CrppId = " + sId + " AND [Name] = '" + strFileName + "'";
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    //foreach (var strFileName in aryFileNameList)
+                    foreach (var strFileName in lstFileNameList)
                     {
-                        logger.Debug(query);
-                        cmd.ExecuteNonQuery();
-                        //logger.Debug("Executed sql command...");
+                        strfLink = strNewFilePath + "\\" + strFileName;
+                    
+                        query = "UPDATE dbo.Files set Subproject_CrppId = " + intMoveToSubprojectId + ", Link = '" + strfLink + "' where Subproject_CrppId = " + sId + " AND [Name] = '" + strFileName + "'";
+                        using (SqlCommand cmd = new SqlCommand(query, con))
+                        {
+                            logger.Debug(query);
+                            cmd.ExecuteNonQuery();
+                            //logger.Debug("Executed sql command...");
+                        }
                     }
                 }
             }
@@ -1067,20 +1082,26 @@ namespace services.Controllers
             logger.Debug("OK, we updated the link, now to move the file from the old subproject folder to the updated...");
 
             HttpResponseMessage resp = new HttpResponseMessage();
-            foreach (var strFileName in aryFileNameList)
+            if (!string.IsNullOrEmpty(strFileNames))
             {
-                strCurrentFilePathWithName = strCurrentFilePath + "\\" + strFileName;
-                strNewFilePathWithName = strNewFilePath + "\\" + strFileName;
-
-                if (System.IO.File.Exists(strNewFilePathWithName))
+                //HttpResponseMessage resp = new HttpResponseMessage();
+                //foreach (var strFileName in aryFileNameList)
+                foreach (var strFileName in lstFileNameList)
                 {
-                    //logger.Debug("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder; skipping...");
-                    throw new Exception("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder");
+                    strCurrentFilePathWithName = strCurrentFilePath + "\\" + strFileName;
+                    strNewFilePathWithName = strNewFilePath + "\\" + strFileName;
+
+                    if (System.IO.File.Exists(strNewFilePathWithName))
+                    {
+                        //logger.Debug("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder; skipping...");
+                        throw new Exception("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder");
+                    }
+                    else
+                        resp = FileController.MoveFile(strCurrentFilePathWithName, strNewFilePathWithName);
                 }
-                else
-                    resp = FileController.MoveFile(strCurrentFilePathWithName, strNewFilePathWithName);
             }
-            
+            else
+                resp = Request.CreateResponse(HttpStatusCode.OK);
 
             //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, olcEvent);
             return resp;
