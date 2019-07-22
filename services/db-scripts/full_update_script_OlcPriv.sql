@@ -510,3 +510,9 @@ SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e
 FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
                          dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
 go
+
+--Update data
+update dbo.MetadataProperties
+set PossibleValues = '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report", "Maps", "Case", "Other"]'
+where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'OLC') and [Name] = 'DocumentType'
+go
