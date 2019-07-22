@@ -41,6 +41,7 @@ namespace services.Models.Data
         public string PLSS2 { get; set; }
         public string PLSS3 { get; set; }
         public string PLSS_Label { get; set; }
+        public string ZoneCode { get; set; }
         public DateTime? Last_Edited_Date { get; set; }
 
     }
