@@ -3,7 +3,7 @@ using NLog;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
-using System.Net.Mail;
+using System.Linq;
 
 namespace services.Resources
 {
@@ -13,9 +13,18 @@ namespace services.Resources
 
         public static void notify(Permit in_permit, PermitEvent in_event, dynamic in_json){
 
-            string PermitURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitURL"]; 
+            string PermitURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitURL"];
+            string PermitProjectId = System.Configuration.ConfigurationManager.AppSettings["PermitProjectId"];
 
-            string recipient = PermitEventNotifier.getEmailContactForEvent(in_event);
+            List<string> recipients = null;
+
+            //if we are a "Review" we should have incoming ReviewersContact because the user has specified the recipients they want. otherwise get from the routes (probably just "Inspection")...
+            if(in_event.EventType == "Review"){
+                JObject in_recipients = (JObject)in_json["ReviewersContact"];
+                recipients = in_recipients.Properties().Select(p => p.Name).ToList();
+            } else {
+                recipients = PermitRouteHelper.getRecipientsForRoute(in_event.EventType, in_event.ItemType);
+            }
 
             string subject = in_event.EventType + " Request from TPO for " + in_event.ItemType;
             if(in_permit.ReviewedBy != null){
@@ -72,8 +81,10 @@ namespace services.Resources
             if(in_event.Comments != null)
                 body += "<hr/><p><b>Comments</b>: "+in_event.Comments;
 
-            if(in_event.EventType == "Review")
-                body += "<hr/>Reference Documents:";
+            if (in_event.EventType == "Review")
+            {
+                body += "<hr/>Reference Documents:";   
+            }
 
             body += "<br/><br/> -- Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
 
@@ -83,14 +94,15 @@ namespace services.Resources
             if(in_event.EventType == "Inspection")
             {
                 attachment = body;
-                body = "Inspection requested. Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
+                body = "Inspection requested for " + in_permit.PermitNumber + ". See attachment for details.<br/>Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
             }
 
 
             try
             {
-                EmailHelper.SendEmail(recipient, "kenburcham@ctuir.org", subject, body, attachment);
-                logger.Debug("Sent an email to " + recipient); 
+                EmailHelper.SendEmail( recipients, "tpo@ctuir.org", subject, body, attachment);
+
+                logger.Debug("Sent an email to " + recipients.ToString()); 
             }
             catch (Exception e)
             {
@@ -98,16 +110,6 @@ namespace services.Resources
                 logger.Debug(e.InnerException);
             }
 
-        }
-
-        private static string getEmailContactForEvent(PermitEvent in_event){
-
-            //return "kenburcham@ctuir.org";
-
-            if (in_event.EventType == "Inspection")
-                return "FAX=5414297444@faxfinder.com";
-            else
-                return "kenburcham@ctuir.org";
         }
 
 

@@ -65,3 +65,5 @@ alter table Leases add GrazingRentalRate [decimal](9, 2);
 alter table LeaseRevisions add GrazingRentalRate [decimal](9, 2);
 
 go
+
+-- above applied to CDMS_TEST already.

@@ -55,6 +55,7 @@ namespace services.Models.Data
         public string FeePaymentReference { get; set; }
         public string FeePaidBy { get; set; }
         public string FeeReceivedBy { get; set; }
+        public DateTime? FeeNotificationDate { get; set; }
 
         public string Zoning { get; set; }
         public bool? GISUpdateRequired { get; set; }

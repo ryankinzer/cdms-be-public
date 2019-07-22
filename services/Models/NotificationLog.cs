@@ -9,6 +9,7 @@ namespace services.Models
     {
         public int Id { get; set; }
         public int ByUser { get; set; }
+        public string Module { get; set; }
         public string Recipient { get; set; }
         public string Sender { get; set; }
         public string Subject { get; set; }

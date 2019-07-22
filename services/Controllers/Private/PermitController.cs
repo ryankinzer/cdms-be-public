@@ -34,9 +34,40 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().OrderByDescending(o => o.ApplicationDate).AsEnumerable(); 
+            //return db.Permit().AsEnumerable(); <-- not as fast as a direct sql... 
+
+
+            var sql = @"select * from Permits order by ApplicationDate desc";
+
+            DataTable requests = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(requests);
+                }
+            }
+
+            return requests;
 
         }
+
+        [HttpGet]
+        public dynamic GetPermitByPermitNumber(string PermitNumber)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.Permit().Where(o => o.PermitNumber == PermitNumber).FirstOrDefault();
+
+        }
+
 
         [HttpGet]
         public dynamic RoutingPermits()
@@ -135,6 +166,18 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpGet]
+        public dynamic GetPermitRoutes()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitRoute().AsEnumerable();
+
+        }
 
         [HttpGet]
         public dynamic GetAllPermitPersons()
@@ -158,7 +201,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
             from permits p
             join permitevents pe on pe.PermitId = p.Id
             where
@@ -181,6 +224,39 @@ namespace services.Controllers.Private
 
         }
 
+        
+        [HttpGet]
+        public dynamic GetPublicHearingPermits()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.RequestDate
+            from permits p 
+	            join permitevents pe on p.Id = pe.PermitId
+            where pe.EventType = 'Public Hearing' and pe.ResponseDate is null";
+
+            DataTable result = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(result);
+                }
+            }
+
+            return result;
+
+        }
+
+
+
         [HttpGet]
         public dynamic GetExpiringPermits()
         {
@@ -190,7 +266,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
+            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
@@ -251,6 +327,22 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
 
             return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == PermitId).AsEnumerable();
+
+        }
+
+        [HttpGet]
+        public dynamic GetPermitRoutes(string ItemType)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            //dynamic json = jsonData;
+
+            //string in_itemtype = json["ItemType"];
+
+            return db.PermitRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
 
         }
 
