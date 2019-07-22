@@ -38,7 +38,7 @@ namespace services.Models.Data
         public string FacilityHoused { get; set; }
         public string Box { get; set; }
         //public string BoxLocation { get; set; }
-        public string CategoryTitle { get; set; }
+        //public string CategoryTitle { get; set; }
         //public string CategoryIndex { get; set; }
         //public string SignatoryTitle { get; set; }
         //public string SignatoryAgency { get; set; }
@@ -50,6 +50,7 @@ namespace services.Models.Data
         public string FileUnit { get; set; }
         public string OtherFacilityHoused { get; set; }
         public string SourceArchiveId { get; set; }
+        public string LitigationCategory { get; set; }
 
 
         public virtual List<OlcEvents> OlcEvents { get; set; }
