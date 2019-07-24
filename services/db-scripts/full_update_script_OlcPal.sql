@@ -58,7 +58,8 @@ FROM            dbo.Subproject_Olc AS sp INNER JOIN
                          dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
 go
 
-
+--Note:  The update above this line has already been put into Prod.
+--However, the data part (below) was not put in yet.
 --Update field name
 ALTER TABLE [dbo].[OlcEvents] ADD [MiscellaneousContext] [nvarchar](max)
 DECLARE @var0 nvarchar(128)
@@ -343,5 +344,31 @@ SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e
                          e.Fullname AS EventByUserFullName, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.CategoryTitle, s.Agency, s.AgencyLocation, s.FileUnit, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, 
                          s.EffDt AS SubprojectEffDt, s.SourceArchiveId, s.Fullname AS SpByUserFullName
 FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
+                         dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
+go
+
+sp_RENAME 'dbo.Subproject_Olc.CategoryTitle', 'LitigationCategory', 'COLUMN'
+
+-- Update views to add User FullName for ByUserId
+drop view dbo.Subproject_Olc_Search_VW
+go
+create view dbo.Subproject_Olc_Search_VW
+AS
+SELECT        sp.Id, sp.RecordGroup, sp.SeriesTitle, sp.FacilityHoused, sp.Box, sp.LitigationCategory, sp.Agency, sp.AgencyLocation, sp.FileUnit, sp.OtherFacilityHoused, sp.ByUserId, sp.EffDt, sp.SourceArchiveId, u.Fullname
+FROM            dbo.Subproject_Olc AS sp INNER JOIN
+                         dbo.Users AS u ON u.Id = sp.ByUserId
+go
+
+
+drop view dbo.OlcSubprojectsAndEvents_vw
+go
+create view dbo.OlcSubprojectsAndEvents_vw
+AS
+SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.EventAgency, e.Boundary, e.SignificantArea, e.Description, e.NumberItems, e.PageNumber, e.DateDiscovered, e.TwnRngSec, 
+                         e.PersonDiscovered, e.Reference, e.FileAttach, e.MiscellaneousContext, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.EventAgencyLocation, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, 
+                         e.SurveyNumber, e.SurveyContractNumber, e.SurveyorName, e.SurveyAuthorizingAgency, e.SurveyDates, e.Tasks, e.OtherBoundary, e.EventArchiveId, e.ByUserId AS EventByUserId, e.EffDt AS EventEffDt, 
+                         e.Fullname AS EventByUserFullName, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.LitigationCategory, s.Agency, s.AgencyLocation, s.FileUnit, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, 
+                         s.EffDt AS SubprojectEffDt, s.SourceArchiveId, s.Fullname AS SpByUserFullName
+FROM            dbo.OlcEvents_Search_VW AS e RIGHT OUTER JOIN
                          dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
 go
