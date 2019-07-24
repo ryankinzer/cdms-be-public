@@ -307,7 +307,7 @@ namespace services.Controllers
         public DataTable QueryOlcSubprojectsForSearch(JObject jsonData)
         {
             var db = ServicesContext.Current;
-            logger.Info("Inside OlcSubProjectController, getting OLC subprojects...");
+            logger.Info("Inside OlcSubProjectController, QueryOlcSubprojectsForSearch...");
 
             //List<Subproject_Olc> s = (from item in db.Subproject_Olc()
             //                          where item.Id > 1
@@ -317,7 +317,9 @@ namespace services.Controllers
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
-                string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where SubprojectId > 1";
+                //string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where SubprojectId > 1";
+                string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where [Id] > 1";
+                logger.Debug("query = " + query);
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.CommandTimeout = 120; // 2 minutes in seconds.

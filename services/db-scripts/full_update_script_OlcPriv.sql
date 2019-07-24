@@ -399,22 +399,24 @@ ALTER TABLE [dbo].[OlcEvents] ADD [PageNumber] [nvarchar](max)
 go
 
 -- Update the views
-drop view dbo.Subproject_Olc_Search_VW
+drop view dbo.OlcEvents_Search_VW
 go
-create view dbo.Subproject_Olc_Search_VW
+create view dbo.OlcEvents_Search_VW
 AS
-SELECT        Id, RecordGroup, SeriesTitle, FacilityHoused, Box, CategoryTitle, Agency, AgencyLocation, FileUnit, OtherFacilityHoused, ByUserId, EffDt, SourceArchiveId
-FROM            dbo.Subproject_Olc
+SELECT        Id, SubprojectId, DocumentType, DocumentDate, FileName, EventAgency, Boundary, SignificantArea, Description, TwnRngSec, NumberItems, DateDiscovered, PersonDiscovered, Reference, FileAttach, MiscellaneousContext, 
+                         SignatoryTitle, SignatoryName, AgencyDivision, RecipientName, RecipientTitle, RecipientAgency, RecipientLocation, SurveyNumber, SurveyContractNumber, SurveyorName, SurveyAuthorizingAgency, SurveyDates, Tasks, 
+                         EventArchiveId, ByUserId, EffDt, OtherBoundary, EventAgencyLocation, PageNumber
+FROM            dbo.OlcEvents
 go
 
 drop view dbo.OlcSubprojectsAndEvents_vw
 go
 create view dbo.OlcSubprojectsAndEvents_vw
 AS
-SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.EventAgency, e.Boundary, e.SignificantArea, e.Description, e.NumberItems, e.PageNumber, e.DateDiscovered, e.TwnRngSec, e.PersonDiscovered, e.Reference, 
-                         e.FileAttach, e.MiscellaneousContext, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.EventAgencyLocation, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, e.SurveyNumber, e.SurveyContractNumber, 
-                         e.SurveyorName, e.SurveyAuthorizingAgency, e.SurveyDates, e.Tasks, e.OtherBoundary, e.EventArchiveId, e.ByUserId AS EventByUserId, e.EffDt AS EventEffDt, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.CategoryTitle, 
-                         s.Agency, s.AgencyLocation, s.FileUnit, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, s.EffDt AS SubprojectEffDt, s.SourceArchiveId
+SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.EventAgency, e.Boundary, e.SignificantArea, e.Description, e.NumberItems, e.DateDiscovered, e.TwnRngSec, e.PersonDiscovered, e.Reference, 
+                         e.FileAttach, e.MiscellaneousContext, e.SignatoryTitle, e.SignatoryName, e.AgencyDivision, e.RecipientName, e.RecipientTitle, e.RecipientAgency, e.RecipientLocation, e.SurveyNumber, e.SurveyContractNumber, 
+                         e.SurveyorName, e.SurveyAuthorizingAgency, e.SurveyDates, e.Tasks, e.OtherBoundary, e.EventArchiveId, e.EventAgencyLocation, e.PageNumber, e.ByUserId AS EventByUserId, e.EffDt AS EventEffDt, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.CategoryTitle, 
+                         s.Agency, s.AgencyLocation, s.CategorySubtitle, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, s.EffDt AS SubprojectEffDt, s.SourceArchiveId
 FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
                          dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
 go
@@ -507,7 +509,7 @@ SELECT        e.Id AS EventId, e.SubprojectId, e.DocumentType, e.DocumentDate, e
                          e.SurveyNumber, e.SurveyContractNumber, e.SurveyorName, e.SurveyAuthorizingAgency, e.SurveyDates, e.Tasks, e.OtherBoundary, e.EventArchiveId, e.ByUserId AS EventByUserId, e.EffDt AS EventEffDt, 
                          e.Fullname AS EventByUserFullName, s.Id, s.RecordGroup, s.SeriesTitle, s.FacilityHoused, s.Box, s.LitigationCategory, s.Agency, s.AgencyLocation, s.FileUnit, s.OtherFacilityHoused, s.ByUserId AS SubprojectByUserId, 
                          s.EffDt AS SubprojectEffDt, s.SourceArchiveId, s.Fullname AS SpByUserFullName
-FROM            dbo.OlcEvents_Search_VW AS e LEFT OUTER JOIN
+FROM            dbo.OlcEvents_Search_VW AS e RIGHT OUTER JOIN
                          dbo.Subproject_Olc_Search_VW AS s ON e.SubprojectId = s.Id
 go
 
