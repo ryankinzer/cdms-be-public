@@ -8,11 +8,37 @@ CREATE TABLE [dbo].[PermitZones] (
 
 go
 
+-- import from PALUUT_DEV_KEN table
+SET IDENTITY_INSERT PermitZones ON
+insert into PermitZones (Id, ZoneCode)
+select Id, ZoneCode from [GIS-SQL].PALUUT_DEV_KEN.dbo.PermitZones
+SET IDENTITY_INSERT PermitZones OFF
+go
+
+
+-- cadaster view and permit parcels table
+-- NOTE: I created a GIS-SQL linked server on the DMZ-SQL for this and have to use this method to call the query because of:
+-- http://www.sql-server-helper.com/error-messages/msg-7325.aspx
+
+
+-- NOTE ::: There are two versions of this - one that runs on DEV02 and one that runs on PALUUT or PALUUT_TEST
+
+-- NOTE::: when running on DEV02:
 ALTER view PermitCadaster_VW as
 select cad.ObjectId, cad.Allotment, cad.ParcelId, cad.Ownerships, cad.Taxlot, cad.Geosource, cad.Datasource, cad.Comment, cad.Address, cad.Acres_GIS, cad.Acres_cty, cad.PLSS, cad.PLSS2, cad.PLSS3, cad.PLSS_Label, cad.Last_Edited_Date, z.ZoneCode 
 from sdevector.sde.Cadaster_evw cad
-join PermitZones z on cad.ObjectId = z.Id
+left outer join PermitZones z on cad.ObjectId = z.Id
+go
 
+--:: when running on PALUUT or PALUUT_TEST
+ALTER view PermitCadaster_VW as
+-- cadaster view and permit parcels table
+-- NOTE: I created a GIS-SQL linked server on the DMZ-SQL for this and have to use this method to call the query because of:
+-- http://www.sql-server-helper.com/error-messages/msg-7325.aspx
+
+select cad.ObjectId, cad.Allotment, cad.ParcelId, cad.Ownerships, cad.Taxlot, cad.Geosource, cad.Datasource, cad.Comment, cad.Address, cad.Acres_GIS, cad.Acres_cty, cad.PLSS, cad.PLSS2, cad.PLSS3, cad.PLSS_Label, cad.Last_Edited_Date, z.ZoneCode 
+from OPENQUERY([GIS-SQL],'select * from sdevector.sde.Cadaster_evw') cad
+left outer join PermitZones z on cad.ObjectId = z.Id;
 go
 
 -- convert result field to a group
@@ -28,3 +54,5 @@ update DatasetFields set controltype = 'select-group' where dbcolumnname = 'Resu
 
 delete from metadataproperties where name = 'ReviewResult';
 go
+
+--- UPDATED ON TEST 7/26
