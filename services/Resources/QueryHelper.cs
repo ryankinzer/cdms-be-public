@@ -321,7 +321,9 @@ namespace services.Resources
                         case "instrument-select": 
                         case "location-select":
                         case "fisherman-select":
-                            logger.Debug("a location, instrument, or fisherman");
+                        case "select-number":
+                            logger.Debug("a location, instrument, fisherman, number");
+
                             value = filterForSQL(item.Value);
                             if (value.ToString().Contains(","))
                                 conditional = " in ";
