@@ -13,13 +13,13 @@ namespace services.Resources
 {
     public class EmailHelper
     {
-        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message)
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string notification_module)
         {
-            return EmailHelper.SendEmail(in_recipients, in_sender, in_subject, in_message, null);
+            return EmailHelper.SendEmail(in_recipients, in_sender, in_subject, in_message, null, notification_module);
         }
 
         //in_attachment will be converted to a pdf and then attached to the email.
-        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string in_attachment) {
+        public static Boolean SendEmail(List<string> in_recipients, string in_sender, string in_subject, string in_message, string in_attachment, string notification_module) {
 
             string EmailServer = System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
             string EmailLogOnly = System.Configuration.ConfigurationManager.AppSettings["EmailServer_LogOnly"];
@@ -40,7 +40,7 @@ namespace services.Resources
 
             var db = ServicesContext.Current;
 
-            NotificationLog log = buildLog(message);
+            NotificationLog log = buildLog(message, notification_module);
 
             //handle attachment if there is one
             MemoryStream ms = new MemoryStream();
@@ -86,7 +86,7 @@ namespace services.Resources
 
         }
 
-        private static NotificationLog buildLog(MailMessage message){
+        private static NotificationLog buildLog(MailMessage message, string module){
             NotificationLog log = new NotificationLog();
             User me = AuthorizationManager.getCurrentUser();
 
@@ -96,6 +96,7 @@ namespace services.Resources
             log.Body = message.Body;
             log.SentDate = DateTime.Now;
             log.ByUser = me.Id;
+            log.Module = module;
 
             return log;
         }

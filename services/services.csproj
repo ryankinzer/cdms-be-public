@@ -395,6 +395,7 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20190613_paluut.sql" />
     <Content Include="db-scripts\20190613_cdms.sql" />
+    <Content Include="db-scripts\20190725_paluut.sql" />
     <Content Include="db-scripts\archive\cdms_2019-05-08_lease_updates.sql" />
     <Content Include="db-scripts\archive\cdms_2019-05-24_add_production_fields.sql" />
     <Content Include="db-scripts\archive\full_update_script.sql" />
