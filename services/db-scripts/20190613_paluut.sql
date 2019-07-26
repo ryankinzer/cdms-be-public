@@ -500,3 +500,4 @@ update NotificationLogs set Module = 'Permits'
 go
 
 -- updated on PALUUT_TEST 7/19
+

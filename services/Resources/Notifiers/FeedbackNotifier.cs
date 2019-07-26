@@ -29,7 +29,7 @@ namespace services.Resources
 
             try
             {
-                EmailHelper.SendEmail(recipients, "noreply@ctuir.org", subject, body);
+                EmailHelper.SendEmail(recipients, "noreply@ctuir.org", subject, body, null, "Feedback");
                 logger.Debug("Sent an email to " + recipients.ToString()); //TODO: save in the notification log
             }
             catch (Exception e)
