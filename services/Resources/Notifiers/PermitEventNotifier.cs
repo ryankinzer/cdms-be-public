@@ -100,7 +100,7 @@ namespace services.Resources
 
             try
             {
-                EmailHelper.SendEmail( recipients, "tpo@ctuir.org", subject, body, attachment);
+                EmailHelper.SendEmail( recipients, "tpo@ctuir.org", subject, body, attachment, "Permits");
 
                 logger.Debug("Sent an email to " + recipients.ToString()); 
             }

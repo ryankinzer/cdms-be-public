@@ -518,3 +518,5 @@ update dbo.MetadataProperties
 set PossibleValues = '["Correspondence", "Survey", "Federal Acts", "Appropriation", "Book", "Journal", "Report", "Maps", "Case", "Other"]'
 where MetadataEntityId in (select Id from dbo.MetadataEntities where [Name] = 'OLC') and [Name] = 'DocumentType'
 go
+
+insert into dbo.Departments(OrganizationId, [Name], [Description]) values (1, 'OLC', 'Office of Legal Counsel')
