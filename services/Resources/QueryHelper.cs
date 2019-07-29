@@ -160,12 +160,6 @@ namespace services.Resources
             if (datafieldsource is Dataset)
                 query += " AND DatasetId = " + datafieldsource.Id;
 
-            var aryConditions = conditions.ToArray();
-
-            //foreach(var item in aryConditions){
-            //    logger.Debug("item = " + item.toString());
-            //}
-
             var criteria_string = string.Join(" AND ", conditions.ToArray());
 
             if (criteria_string != "")
@@ -269,7 +263,7 @@ namespace services.Resources
             logger.Debug("Inside QueryHelper, getQueryConditions...");
             //logger.Debug(json.Fields);
             //logger.Debug(json.Fields.ToString());
-            logger.Debug("jsonFields = " + jsonFields);
+            //logger.Debug("jsonFields = " + jsonFields);
 
             var conditions = new List<string>();
 
