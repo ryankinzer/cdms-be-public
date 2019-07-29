@@ -160,6 +160,12 @@ namespace services.Resources
             if (datafieldsource is Dataset)
                 query += " AND DatasetId = " + datafieldsource.Id;
 
+            var aryConditions = conditions.ToArray();
+
+            //foreach(var item in aryConditions){
+            //    logger.Debug("item = " + item.toString());
+            //}
+
             var criteria_string = string.Join(" AND ", conditions.ToArray());
 
             if (criteria_string != "")
@@ -260,9 +266,10 @@ namespace services.Resources
         // then you might say: var criteria_string = string.Join(" AND ", conditions.ToArray());
         public static List<string> getQueryConditions(IEnumerable<DatasetField> fields, dynamic jsonFields)
         {
+            logger.Debug("Inside QueryHelper, getQueryConditions...");
             //logger.Debug(json.Fields);
             //logger.Debug(json.Fields.ToString());
-            //logger.Debug("json = " + json);
+            logger.Debug("jsonFields = " + jsonFields);
 
             var conditions = new List<string>();
 
@@ -289,6 +296,8 @@ namespace services.Resources
                     //    throw new Exception("Field not configured properly: " + item.Value);
 
                     string ControlType = field.ControlType.ToString(); //hmm, can't use directly in a switch.
+                    logger.Debug("ControlType = " + ControlType);
+
                     var conditional = " = ";
                     var value = "";
 
@@ -311,11 +320,15 @@ namespace services.Resources
                             break;
                         case "instrument-select": 
                         case "location-select":
-                            logger.Debug("a location");
+                        case "fisherman-select":
+                        case "select-number":
+                            logger.Debug("a location, instrument, fisherman, number");
+
                             value = filterForSQL(item.Value);
                             if (value.ToString().Contains(","))
                                 conditional = " in ";
-                            conditions.Add(field.DbColumnName + conditional + "(" + filterForSQL(item.Value) +")"); //>100
+                            //conditions.Add(field.DbColumnName + conditional + "(" + filterForSQL(item.Value) +")"); //>100
+                            conditions.Add(field.DbColumnName + conditional + "(" + value + ")"); //>100
                             break;
 
                         case "text":
