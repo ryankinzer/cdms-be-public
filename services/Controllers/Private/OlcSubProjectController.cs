@@ -250,7 +250,7 @@ namespace services.Controllers
         public IEnumerable<Subproject_Olc> GetOlcSubprojects()
         {
             var db = ServicesContext.Current;
-            logger.Info("Inside DatastoreController, getting OLC subprojects...");
+            logger.Info("Inside OlcSubProjectController, getting OLC subprojects...");
 
             /*  These are the results we want...
              *  Subproject records sorted in descending order by EffDt (most recent update on top).
@@ -273,7 +273,7 @@ namespace services.Controllers
 
             foreach (var olce in s)
             {
-                logger.Debug("olce = " + olce.CatalogNumber);
+                //logger.Debug("olce = " + olce.CatalogNumber);
                 olce.OlcEvents = olce.OlcEvents.OrderByDescending(x => x.EffDt).ToList();
             }
 
@@ -300,6 +300,36 @@ namespace services.Controllers
             return sp.AsEnumerable();
             */
             /******************************************/
+        }
+
+        // POST /api/v1/olcsubproject/queryolcsubprojectsforsearch
+        [HttpPost]
+        public DataTable QueryOlcSubprojectsForSearch(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            logger.Info("Inside OlcSubProjectController, QueryOlcSubprojectsForSearch...");
+
+            //List<Subproject_Olc> s = (from item in db.Subproject_Olc()
+            //                          where item.Id > 1
+            //                          orderby item.EffDt descending
+            //                          select item).ToList();
+
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where SubprojectId > 1";
+                string query = "SELECT * FROM dbo.OlcSubprojectsAndEvents_vw where [Id] > 1";
+                logger.Debug("query = " + query);
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.CommandTimeout = 120; // 2 minutes in seconds.
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.SelectCommand.CommandTimeout = 120;
+                da.Fill(dt);
+            }
+
+            return dt;
         }
 
         // POST /api/v1/olcsubproject/deleteolceventfile
@@ -496,7 +526,7 @@ namespace services.Controllers
                     {
                         con.Open();
 
-                        var query = "DELETE FROM dbo.Files WHERE ProjectId = " + p.Id + " AND Subproject_CrppId = " + subproject.Id + " AND Name = " + file.Name;
+                        var query = "DELETE FROM dbo.Files WHERE ProjectId = " + p.Id + " AND Subproject_CrppId = " + subproject.Id + " AND Name = '" + file.Name + "'";
                         using (SqlCommand cmd = new SqlCommand(query, con))
                         {
                             logger.Debug(query);
@@ -527,7 +557,7 @@ namespace services.Controllers
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            //logger.Debug("json = " + json);
+            logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             logger.Debug("me = " + me);
@@ -550,17 +580,24 @@ namespace services.Controllers
 
 
             logger.Debug(
-                "s.CatalogNumber = " + s.CatalogNumber + "\n" +
+                //"s.CatalogNumber = " + s.CatalogNumber + "\n" +
+                "s.Agency = " + s.Agency + "\n" +
+                "s.AgencyLocation = " + s.AgencyLocation + "\n" +
                 "s.RecordGroup = " + s.RecordGroup + "\n" +
                 "s.SeriesTitle = " + s.SeriesTitle + "\n" +
                 "s.FacilityHoused = " + s.FacilityHoused + "\n" +
+                "s.OtherFacilityHoused = " + s.OtherFacilityHoused + "\n" +
                 "s.Box = " + s.Box + "\n" +
-                "s.BoxLocation = " + s.BoxLocation + "\n" +
-                "s.CategoryTitle = " + s.CategoryTitle + "\n" +
-                "s.CategoryIndex = " + s.CategoryIndex + "\n" +
-                "s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
-                "s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
-                "s.SignatoryName = " + s.SignatoryName + "\n" +
+                //"s.BoxLocation = " + s.BoxLocation + "\n" +
+                //"s.CategoryTitle = " + s.CategoryTitle + "\n" +
+                "s.LitigationCategory = " + s.LitigationCategory + "\n" +
+                //"s.CategoryIndex = " + s.CategoryIndex + "\n" +
+                //"s.CategorySubtitle = " + s.CategorySubtitle + "\n" +
+                "s.FileUnit = " + s.FileUnit + "\n" +
+                //"s.SignatoryTitle = " + s.SignatoryTitle + "\n" +
+                //"s.SignatoryAgency = " + s.SignatoryAgency + "\n" +
+                //"s.SignatoryName = " + s.SignatoryName + "\n" +
+                "s.SourceArchiveId = " + s.SourceArchiveId + "\n" +
                 "s.EffDt = " + s.EffDt + "\n" +
                 "s.ByUserId = " + s.ByUserId + "\n"
                 );
@@ -597,17 +634,24 @@ namespace services.Controllers
                 {
                     Subproject_Olc s2 = db.Subproject_Olc().Find(s.Id);
 
-                    s2.CatalogNumber = s.CatalogNumber;
+                    //s2.CatalogNumber = s.CatalogNumber;
+                    s2.Agency = s.Agency;
+                    s2.AgencyLocation = s.AgencyLocation;
                     s2.RecordGroup = s.RecordGroup;
                     s2.SeriesTitle = s.SeriesTitle;
                     s2.FacilityHoused = s.FacilityHoused;
+                    s2.OtherFacilityHoused = s.OtherFacilityHoused;
                     s2.Box = s.Box;
-                    s2.BoxLocation = s.BoxLocation;
-                    s2.CategoryTitle = s.CategoryTitle;
-                    s2.CategoryIndex = s.CategoryIndex;
-                    s2.SignatoryTitle = s.SignatoryTitle;
-                    s2.SignatoryAgency = s.SignatoryAgency;
-                    s2.SignatoryName = s.SignatoryName;
+                    //s2.BoxLocation = s.BoxLocation;
+                    //s2.CategoryTitle = s.CategoryTitle;
+                    s2.LitigationCategory = s.LitigationCategory;
+                    //s2.CategoryIndex = s.CategoryIndex;
+                    //s2.CategorySubtitle = s.CategorySubtitle;
+                    s2.FileUnit = s.FileUnit;
+                    //s2.SignatoryTitle = s.SignatoryTitle;
+                    //s2.SignatoryAgency = s.SignatoryAgency;
+                    //s2.SignatoryName = s.SignatoryName;
+                    s2.SourceArchiveId = s.SourceArchiveId;
                     s2.EffDt = s.EffDt;
                     s2.ByUserId = s.ByUserId;
 
@@ -651,14 +695,14 @@ namespace services.Controllers
         public HttpResponseMessage SaveOlcEvent(JObject jsonData)
         {
             logger.Debug("Inside SaveOlcEvent...");
-            string strId = null;  // Delare this up here, so that all if/try blocks can see it.
-            string strTmp = "";
+            //string strId = null;  // Delare this up here, so that all if/try blocks can see it.
+            //string strTmp = "";
 
             var db = ServicesContext.Current;
             logger.Debug("db = " + db);
 
             dynamic json = jsonData;
-            //logger.Debug("json = " + json);
+            logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
             //logger.Debug("me = " + me); // getCurrentUser displays the username; this is just machinestuff.
@@ -709,7 +753,7 @@ namespace services.Controllers
                 //}
 
                 dynamic subproject_json = prop.Value;
-                //logger.Debug("Property value = " + subproject_json);
+                logger.Debug("Property value = " + subproject_json);
 
                 //if (prop.Name == "SubprojectId")
                 //    olcEvent.SubprojectId = sId;
@@ -721,16 +765,41 @@ namespace services.Controllers
                     olcEvent.DocumentDate = subproject_json;
                 else if (prop.Name == "FileName")
                     olcEvent.FileName = subproject_json;
-                else if (prop.Name == "Author")
-                    olcEvent.Author = subproject_json;
-                else if (prop.Name == "AuthorAgency")
-                    olcEvent.AuthorAgency = subproject_json;
+                //else if (prop.Name == "Author")
+                //    olcEvent.Author = subproject_json;
+                else if (prop.Name == "EventAgency")
+                    olcEvent.EventAgency = subproject_json;
+                //else if (prop.Name == "AuthorAgency")
+                //    olcEvent.AuthorAgency = subproject_json;
+                else if (prop.Name == "AgencyDivision")
+                    olcEvent.AgencyDivision = subproject_json;
+                else if (prop.Name == "EventAgencyLocation")
+                    olcEvent.EventAgencyLocation = subproject_json;
+                else if (prop.Name == "SignatoryName")
+                    olcEvent.SignatoryName = subproject_json;
+                else if (prop.Name == "SignatoryTitle")
+                    olcEvent.SignatoryTitle = subproject_json;
+                else if (prop.Name == "RecipientName")
+                    olcEvent.RecipientName = subproject_json;
+                else if (prop.Name == "RecipientTitle")
+                    olcEvent.RecipientTitle = subproject_json;
+                else if (prop.Name == "RecipientAgency")
+                    olcEvent.RecipientAgency = subproject_json;
+                else if (prop.Name == "RecipientLocation")
+                    olcEvent.RecipientLocation = subproject_json;
                 else if (prop.Name == "Boundary")
                 {
                     logger.Debug("Boundary = " + subproject_json);
 
                     olcEvent.Boundary = subproject_json;
                     logger.Debug("olcEvent.Boundary = " + olcEvent.Boundary);
+                }
+                else if (prop.Name == "OtherBoundary")
+                {
+                    logger.Debug("OtherBoundary = " + subproject_json);
+
+                    olcEvent.OtherBoundary = subproject_json;
+                    logger.Debug("olcEvent.OtherBoundary = " + olcEvent.OtherBoundary);
                 }
                 else if (prop.Name == "SignificantArea")
                 {
@@ -739,27 +808,43 @@ namespace services.Controllers
                     olcEvent.SignificantArea = subproject_json;
                     logger.Debug("olcEvent.SignificantArea = " + olcEvent.SignificantArea);
                 }
-                else if (prop.Name == "MiscelleneousContext")
+                else if (prop.Name == "MiscellaneousContext")
                 {
-                    logger.Debug("MiscelleneousContext = " + subproject_json);
+                    logger.Debug("MiscellaneousContext = " + subproject_json);
 
-                    olcEvent.MiscelleneousContext = subproject_json;
-                    logger.Debug("olcEvent.MiscelleneousContext = " + olcEvent.MiscelleneousContext);
+                    olcEvent.MiscellaneousContext = subproject_json;
+                    logger.Debug("olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext);
                 }
+                else if (prop.Name == "SurveyNumber")
+                    olcEvent.SurveyNumber = subproject_json;
+                else if (prop.Name == "SurveyContractNumber")
+                    olcEvent.SurveyContractNumber = subproject_json;
+                else if (prop.Name == "SurveyorName")
+                    olcEvent.SurveyorName = subproject_json;
+                else if (prop.Name == "SurveyAuthorizingAgency")
+                    olcEvent.SurveyAuthorizingAgency = subproject_json;
+                else if (prop.Name == "SurveyDates")
+                    olcEvent.SurveyDates = subproject_json;
                 else if (prop.Name == "Description")
                     olcEvent.Description = subproject_json;
                 else if (prop.Name == "TwnRngSec")
                     olcEvent.TwnRngSec = subproject_json;
                 else if (prop.Name == "NumberItems")
                     olcEvent.NumberItems = subproject_json;
+                else if (prop.Name == "PageNumber")
+                    olcEvent.PageNumber = subproject_json;
                 else if (prop.Name == "DateDiscovered")
                     olcEvent.DateDiscovered = subproject_json;
                 else if (prop.Name == "PersonDiscovered")
                     olcEvent.PersonDiscovered = subproject_json;
                 else if (prop.Name == "Reference")
                     olcEvent.Reference = subproject_json;
-                else if (prop.Name == "EventComments")
-                    olcEvent.EventComments = subproject_json;
+                //else if (prop.Name == "EventComments")
+                //    olcEvent.EventComments = subproject_json;
+                else if (prop.Name == "Tasks")
+                    olcEvent.Tasks = subproject_json;
+                else if (prop.Name == "EventArchiveId")
+                    olcEvent.EventArchiveId = subproject_json;
                 else if (prop.Name == "FileAttach")
                 {
                         olcEvent.FileAttach = subproject_json;
@@ -780,18 +865,36 @@ namespace services.Controllers
                 "olcEvent.DocumentType = " + olcEvent.DocumentType + "\n" +
                 "olcEvent.DocumentDate = " + olcEvent.DocumentDate + "\n" +
                 "olcEvent.FileName = " + olcEvent.FileName + "\n" +
-                "olcEvent.Author = " + olcEvent.Author + "\n" +
-                "olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
+                //"olcEvent.Author = " + olcEvent.Author + "\n" +
+                "olcEvent.EventAgency = " + olcEvent.EventAgency + "\n" +
+                //"olcEvent.AuthorAgency = " + olcEvent.AuthorAgency + "\n" +
+                "olcEvent.AgencyDivision = " + olcEvent.AgencyDivision + "\n" +
+                "olcEvent.EventAgencyLocation = " + olcEvent.EventAgencyLocation + "\n" +
+                "olcEvent.SignatoryName = " + olcEvent.SignatoryName + "\n" +
+                "olcEvent.SignatoryTitle = " + olcEvent.SignatoryTitle + "\n" +
+                "olcEvent.RecipientName = " + olcEvent.RecipientName + "\n" +
+                "olcEvent.RecipientTitle = " + olcEvent.RecipientTitle + "\n" +
+                "olcEvent.RecipientAgency = " + olcEvent.RecipientAgency + "\n" +
+                "olcEvent.RecipientLocation = " + olcEvent.RecipientLocation + "\n" +
                 "olcEvent.Boundary = " + olcEvent.Boundary + "\n" +
+                "olcEvent.OtherBoundary = " + olcEvent.OtherBoundary + "\n" +
                 "olcEvent.SignificantArea = " + olcEvent.SignificantArea + "\n" +
-                "olcEvent.MiscelleneousContext = " + olcEvent.MiscelleneousContext + "\n" +
+                "olcEvent.MiscellaneousContext = " + olcEvent.MiscellaneousContext + "\n" +
+                "olcEvent.SurveyNumber = " + olcEvent.SurveyNumber + "\n" +
+                "olcEvent.SurveyContractNumber = " + olcEvent.SurveyContractNumber + "\n" +
+                "olcEvent.SurveyorName = " + olcEvent.SurveyorName + "\n" +
+                "olcEvent.SurveyAuthorizingAgency = " + olcEvent.SurveyAuthorizingAgency + "\n" +
+                "olcEvent.SurveyDates = " + olcEvent.SurveyDates + "\n" +
                 "olcEvent.Description = " + olcEvent.Description + "\n" +
                 "olcEvent.TwnRngSec = " + olcEvent.TwnRngSec + "\n" +
                 "olcEvent.NumberItems = " + olcEvent.NumberItems + "\n" +
+                "olcEvent.PageNumber = " + olcEvent.PageNumber + "\n" +
                 "olcEvent.DateDiscovered = " + olcEvent.DateDiscovered + "\n" +
                 "olcEvent.PersonDiscovered = " + olcEvent.PersonDiscovered + "\n" +
                 "olcEvent.Reference = " + olcEvent.Reference + "\n" +
-                "olcEvent.EventComments = " + olcEvent.EventComments + "\n" +
+                //"olcEvent.EventComments = " + olcEvent.EventComments + "\n" +
+                "olcEvent.Tasks = " + olcEvent.Tasks + "\n" +
+                "olcEvent.EventArchiveId = " + olcEvent.EventArchiveId + "\n" +
                 "olcEvent.EffDt = " + olcEvent.EffDt + "\n" +
                 "olcEvent.ByUserId = " + olcEvent.ByUserId + "\n"
                 );
@@ -826,10 +929,191 @@ namespace services.Controllers
 
         }
 
+        // POST /api/v1/olcsubproject/migrateolcevent
+        [HttpPost]
+        public HttpResponseMessage MigrateOlcEvent(JObject jsonData)
+        {
+            logger.Debug("Inside MigrateOlcEvent...");
+
+            var db = ServicesContext.Current;
+            logger.Debug("db = " + db);
+
+            dynamic json = jsonData;
+            logger.Debug("json = " + json);
+
+            User me = AuthorizationManager.getCurrentUser();
+            //logger.Debug("me = " + me); // getCurrentUser displays the username; this is just machinestuff.
+
+            int pId = json.ProjectId.ToObject<int>();
+            logger.Debug("pId = " + pId);
+
+            Project p = db.Projects.Find(pId);
+            logger.Debug("p = " + p);
+            if (p == null)
+                throw new System.Exception("Configuration error.  Please try again.");
+
+            logger.Debug("p.isOwnerOrEditor(me) = " + p.isOwnerOrEditor(me));
+            if (!p.isOwnerOrEditor(me))
+                throw new System.Exception("Authorization error.");
+
+            int sId = json.SubprojectId.ToObject<int>();
+            logger.Debug("sId = " + sId);
+
+            string strFileNames = json.FileNames.ToObject<string>();
+            logger.Debug("strFileNames = " + strFileNames);
+
+            int intCurrentEventId = -1;
+            //int intNewEventId = -1;
+            int intMoveToSubprojectId = -1;
+            //string strFileAttach = "";
+
+            // Spin through the fields passed in; as we find the fields, we will capture the data.
+            foreach (var item in json.OlcEvent)
+            {
+                //logger.Debug("Inside foreach loop");
+
+                if (!(item is JProperty))
+                {
+                    throw new System.Exception("There is a problem with your request. Format error.");
+                }
+
+                var prop = item as JProperty;
+                //logger.Debug("Property name = " + prop.Name);
+
+                dynamic event_json = prop.Value;
+                //logger.Debug("Property value = " + event_json);
+                //logger.Debug("Property type = " + prop.Type);
+
+                if (prop.Name == "Id")
+                {
+                    intCurrentEventId = event_json;
+                    logger.Debug("Got the current event Id:  " + intCurrentEventId);
+                }
+                else if (prop.Name == "ToSourceId")
+                {
+                    intMoveToSubprojectId = event_json;
+                    logger.Debug("Got the subproject Id that we are moving this event to:  " + intMoveToSubprojectId);
+                }
+
+            }
+
+            string strCurrentFilePath = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\" + pId + "\\S\\" + sId;
+            string strCurrentFilePathWithName = "";
+
+            string strNewFilePath = System.Configuration.ConfigurationManager.AppSettings["UploadsDirectory"] + "\\P\\" + pId + "\\S\\" + intMoveToSubprojectId;
+            logger.Debug("The new path for the new subproject is:  " + strNewFilePath);
+            string strNewFilePathWithName = "";
+
+            string strNewFileLinks = "";
+
+            int intCount = 0;
+            string strFileLinks = "";
+            List<string> lstFileNameList = new List<string>();
+            if (!string.IsNullOrEmpty(strFileNames))
+            {
+                string[] aryFileNameList = strFileNames.Split(',');
+
+                strFileLinks = "";
+                intCount = 0;
+                foreach (var strFileName in aryFileNameList)
+                {
+                    if (intCount == 0)
+                        strNewFileLinks += strNewFilePath + "\\" + strFileName;
+                    else
+                        strNewFileLinks += "," + strNewFilePath + "\\" + strFileName;
+
+                    lstFileNameList.Add(strFileName);
+
+                    var TheFileInfo = new
+                    {
+                        Name = strFileName,
+                        Link = strNewFileLinks
+                    };
+
+
+                    if (intCount == 0)
+                        strFileLinks += JsonConvert.SerializeObject(TheFileInfo);
+                    else
+                        strFileLinks += "," + JsonConvert.SerializeObject(TheFileInfo);
+                    intCount++;
+                }
+                //logger.Debug("strNewFileLinks = " + strNewFileLinks);
+                strFileLinks = "[" + strFileLinks + "]";
+                logger.Debug("strFileLinks = " + strFileLinks);
+            }
+            
+            logger.Debug("Got the info we need, now to reassign the event and update the link...");
+
+            intCount = 0;
+            //open a raw database connection...
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                var query = "";
+                if (!string.IsNullOrEmpty(strFileNames))
+                    query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + ", FileAttach = '" + strFileLinks + "' where [Id] = " + intCurrentEventId;
+                else
+                    query = "UPDATE dbo.OlcEvents set SubprojectId = " + intMoveToSubprojectId + " where [Id] = " + intCurrentEventId;
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    logger.Debug(query);
+                    cmd.ExecuteNonQuery();
+                }
+
+                string strfLink = "";
+                if (!string.IsNullOrEmpty(strFileNames))
+                {
+                    //foreach (var strFileName in aryFileNameList)
+                    foreach (var strFileName in lstFileNameList)
+                    {
+                        strfLink = strNewFilePath + "\\" + strFileName;
+                    
+                        query = "UPDATE dbo.Files set Subproject_CrppId = " + intMoveToSubprojectId + ", Link = '" + strfLink + "' where Subproject_CrppId = " + sId + " AND [Name] = '" + strFileName + "'";
+                        using (SqlCommand cmd = new SqlCommand(query, con))
+                        {
+                            logger.Debug(query);
+                            cmd.ExecuteNonQuery();
+                            //logger.Debug("Executed sql command...");
+                        }
+                    }
+                }
+            }
+
+            logger.Debug("OK, we updated the link, now to move the file from the old subproject folder to the updated...");
+
+            HttpResponseMessage resp = new HttpResponseMessage();
+            if (!string.IsNullOrEmpty(strFileNames))
+            {
+                //HttpResponseMessage resp = new HttpResponseMessage();
+                //foreach (var strFileName in aryFileNameList)
+                foreach (var strFileName in lstFileNameList)
+                {
+                    strCurrentFilePathWithName = strCurrentFilePath + "\\" + strFileName;
+                    strNewFilePathWithName = strNewFilePath + "\\" + strFileName;
+
+                    if (System.IO.File.Exists(strNewFilePathWithName))
+                    {
+                        //logger.Debug("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder; skipping...");
+                        throw new Exception("File move error:  The file - " + strNewFilePathWithName + " - already exists in the new destination folder");
+                    }
+                    else
+                        resp = FileController.MoveFile(strCurrentFilePathWithName, strNewFilePathWithName);
+                }
+            }
+            else
+                resp = Request.CreateResponse(HttpStatusCode.OK);
+
+            //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, olcEvent);
+            return resp;
+
+            //return new HttpResponseMessage(HttpStatusCode.OK);
+        }
 
         //private void SendEmailToProjectLead(string projectLeadUsername, string projectLeadFullName, string projectName, string updatingPerson)
         private void SendEmailToProjectLead(string projectLeadUsername, string projectLeadFullName, string projectName, string updatingPerson,
-            DateTime? responseDate, int numberOfDays)
+        DateTime? responseDate, int numberOfDays)
         {
             logger.Debug("**********Inside SendEmailToProjectLead...**********");
             logger.Debug("projectLeadUsername = " + projectLeadUsername);

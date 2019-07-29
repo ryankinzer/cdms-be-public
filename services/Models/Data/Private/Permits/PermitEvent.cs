@@ -1,4 +1,5 @@
-﻿using services.Models;
+﻿using Newtonsoft.Json;
+using services.Models;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace services.ExtensionMethods
     public static class PermitEventExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<PermitEvent> PermitEvent(this ServicesContext ctx)
+        public static DbSet<PermitEvent> PermitEvents(this ServicesContext ctx)
         {
             return ctx.GetDbSet("PermitEvent").Cast<PermitEvent>();
         }
@@ -36,7 +37,6 @@ namespace services.Models.Data
         public string Reference { get; set; }
         public string Comments { get; set; }
         public string Files { get; set; }
-
 
 
     }

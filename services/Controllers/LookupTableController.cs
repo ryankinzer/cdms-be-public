@@ -21,6 +21,9 @@ namespace services.Controllers
         [System.Web.Http.HttpGet]
         public dynamic GetItems(int Id)
         {
+            // Expects:  Id of table in LookupTables.
+            // Returns:  The contents of that table.
+
             var ndb = ServicesContext.Current;
             LookupTable lookuptable = ndb.LookupTables.Find(Id);
     
@@ -45,9 +48,72 @@ namespace services.Controllers
 
         }
 
-/*
- * { DatastoreId: 7, Item: { item } } 
-*/ 
+        //GET /api/v1/lookuptable/getitemsbydatasetid/5
+        [System.Web.Http.HttpGet]
+        public dynamic GetItemsByDatasetId(int id)
+        {
+            // Expects:  DatesetId of a table in LookupTables.
+            // Returns:  The contents of that table.
+            // Assumption:  The dataset uses only one LoopTable.  
+            //  If a dataset ends up using multiple LookupTables, this method will need reworking...
+
+            logger.Debug("Inside GetItemsByDatasetId, id = " + id);
+
+            var ndb = ServicesContext.Current;
+            logger.Debug("Set ndb...");
+            // We don't have an Id, we have a dataset Id.
+            //LookupTable lookuptable = ndb.LookupTables.Find(Id);
+
+            List<LookupTable> result = (from item in ndb.LookupTables
+                                       where item.DatasetId == id
+                                       select item).ToList();
+
+            logger.Debug("result.Count = " + result.Count);
+
+            int intLookuptableId = 0;
+
+            // There should be only one.
+            foreach (var item in result)
+            {
+                intLookuptableId = item.Id;
+            }
+            logger.Debug("intLookuptableId = " + intLookuptableId);
+
+            LookupTable lookuptable = ndb.LookupTables.Find(intLookuptableId);
+            logger.Debug("lookuptable = " + lookuptable);
+
+            if (lookuptable == null)
+                throw new System.Exception("LookupTable not found.");
+
+            var sql = "SELECT * FROM " + lookuptable.Name;
+            logger.Debug("sql = " + sql);
+
+            DataTable items = new DataTable();
+            logger.Debug("Created items...");
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    logger.Debug("Opened con...");
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    logger.Debug("Opened da...");
+
+                    da.Fill(items);
+                    logger.Debug("Filled da...");
+                }
+            }
+
+            return items;
+
+        }
+
+        /*
+         * { DatastoreId: 7, Item: { item } } 
+        */
 
 
         // POST /api/v1/item/saveitem
