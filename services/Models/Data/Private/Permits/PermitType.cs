@@ -33,6 +33,8 @@ namespace services.Models.Data
         public bool StampRequired { get; set; }
         public string InspectionsRequired { get; set; }
         public string ApprovalsRequired { get; set; }
+        public int CurrentPermitYear { get; set; }
+        public int CurrentPermitNumber { get; set; }
 
     }
 }
