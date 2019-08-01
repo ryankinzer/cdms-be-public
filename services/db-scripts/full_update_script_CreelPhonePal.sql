@@ -474,3 +474,8 @@ inner join dbo.Locations as l on l.Id = lp.Location_Id
 where Project_Id in (select Id from dbo.Projects where [Name] = 'Harvest') and LocationTypeId in (select Id from dbo.LocationTypes where [Name] = 'Primary Project Location')
 ) as r
 where dbo.Locations.[Id] = r.Location_Id
+
+-- All the above are on Paluuttest 20190731
+
+-- Adjustments
+update dbo.Fields set PossibleValues = '["M","F","UNK"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Sex'
