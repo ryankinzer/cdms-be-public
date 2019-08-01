@@ -55,7 +55,6 @@ go
 
 --- ABOVE UPDATED ON TEST 7/29
 
-ALTER TABLE [dbo].[PermitTypes] ADD [CurrentPermitYear] [int];
 ALTER TABLE [dbo].[PermitTypes] ADD [CurrentPermitNumber] [int];
 go
 UPDATE PermitTypes set CurrentPermitYear = 2019;
@@ -67,8 +66,41 @@ update metadataproperties set possiblevalues = '["Active","Inactive","Ready to A
 
 go
 
---DECLARE @filetypesmd int = 0;
+
 insert into metadataproperties (metadataentityid, Name, Description, DataType, PossibleValues, controltype) 
 values
 (9, 'FileTypes','Description of the File Type', 'string','["Site Plan","Inspection Report","Email Message","Other Document"]', 'select');
---select @filetypesmd = scope_identity();
+go
+
+
+
+-- update the city/state/zip dropdowns
+DECLARE @filetypesmd int = 0;
+
+insert into metadataproperties (metadataentityid, Name, Description, DataType, PossibleValues, controltype) 
+values
+(9, 'SiteCities','Possible cities in site location', 'string','["Adams","Athena","Cayuse","La Grande","Meacham","Pendleton","Pilot Rock","Weston","Unknown"]', 'select');
+select @filetypesmd = scope_identity();
+
+update Fields set datasource = concat('select possiblevalues from metadataproperties where id = ', @filetypesmd) where DatastoreId =  33 and dbcolumnname = 'SiteCity';
+update DatasetFields set controltype = 'select' where dbcolumnname = 'SiteCity' and datasetid = 1281;
+
+
+insert into metadataproperties (metadataentityid, Name, Description, DataType, PossibleValues, controltype) 
+values
+(9, 'SiteStates','Possible states in site location', 'string','["OR"]', 'select');
+select @filetypesmd = scope_identity();
+
+update Fields set datasource = concat('select possiblevalues from metadataproperties where id = ', @filetypesmd), controltype = 'select' where DatastoreId =  33 and dbcolumnname = 'SiteState';
+update DatasetFields set controltype = 'select' where dbcolumnname = 'SiteState' and datasetid = 1281;
+
+
+insert into metadataproperties (metadataentityid, Name, Description, DataType, PossibleValues, controltype) 
+values
+(9, 'SiteZips','Possible zips in site location', 'string','["97801","97810","97813","97821","97850","97856","97868","97886","Unknown"]', 'select');
+select @filetypesmd = scope_identity();
+
+update Fields set datasource = concat('select possiblevalues from metadataproperties where id = ', @filetypesmd) where DatastoreId =  33 and dbcolumnname = 'SiteZip';
+update DatasetFields set controltype = 'select' where dbcolumnname = 'SiteZip' and datasetid = 1281;
+
+go

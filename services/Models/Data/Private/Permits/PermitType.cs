@@ -33,7 +33,7 @@ namespace services.Models.Data
         public bool StampRequired { get; set; }
         public string InspectionsRequired { get; set; }
         public string ApprovalsRequired { get; set; }
-        public int CurrentPermitYear { get; set; }
+        //public int CurrentPermitYear { get; set; } -- don't think we need this.
         public int CurrentPermitNumber { get; set; }
 
         public string generatePermitNumber(){
