@@ -104,3 +104,5 @@ update Fields set datasource = concat('select possiblevalues from metadataproper
 update DatasetFields set controltype = 'select' where dbcolumnname = 'SiteZip' and datasetid = 1281;
 
 go
+
+-- ABOVE UPDATED ON TEST 8/1/19
