@@ -463,3 +463,14 @@ LEFT OUTER JOIN dbo.CreelPhone_Detail_VW AS d ON h.ActivityId = d.ActivityId
 INNER JOIN dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId 
 INNER JOIN dbo.Locations AS l ON a.LocationId = l.Id 
 GO
+
+-- Update ProjectId for Harvest Primary Project Location.
+update dbo.Locations
+set ProjectId = r.Project_Id
+from
+(
+select Location_Id, Project_Id, Id from dbo.LocationProjects lp
+inner join dbo.Locations as l on l.Id = lp.Location_Id
+where Project_Id in (select Id from dbo.Projects where [Name] = 'Harvest') and LocationTypeId in (select Id from dbo.LocationTypes where [Name] = 'Primary Project Location')
+) as r
+where dbo.Locations.[Id] = r.Location_Id
