@@ -109,9 +109,22 @@ namespace services.Controllers.Private
             return db.PermitCadasterView().OrderBy(o => o.ParcelId).AsEnumerable();
 
         }
-        
 
-                [HttpGet]
+        [HttpGet]
+        public dynamic GetPermitTypes()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.PermitType().AsEnumerable();
+
+        }
+
+
+        [HttpGet]
         public dynamic GetPermitContacts(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
@@ -359,7 +372,15 @@ namespace services.Controllers.Private
             Permit permit = json.Permit.ToObject<Permit>();
 
             if(permit.Id == 0) {
+                //check and increment the permit number based on the PermitType
+                PermitType the_type = db.PermitType().Find(permit.PermitType);
+                the_type.CurrentPermitNumber++;
+                permit.PermitNumber = the_type.generatePermitNumber(); //ignore the incoming permitnumber
+                db.Entry(the_type).State = EntityState.Modified;
+
+                //save the permit
                 db.Permit().Add(permit);
+
                 db.SaveChanges();
             }
             else{
@@ -833,4 +854,6 @@ namespace services.Controllers.Private
         }
 
     }
+
+
 }
