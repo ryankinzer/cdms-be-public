@@ -487,3 +487,5 @@ insert into dbo.Fishermen(FirstName, LastName, DateAdded, FullName, StatusId, Ok
 values 
 ('Jesse', 'Bevis Sr', CONVERT(VARCHAR(23), GETDATE(), 121), 'Jesse Bevis Sr', 0, 0),
 ('Eugena', 'Stacona', CONVERT(VARCHAR(23), GETDATE(), 121), 'Eugena Stacona', 0, 0)
+
+-- All the above are on Paluuttest 20190802
