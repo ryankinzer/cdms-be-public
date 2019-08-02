@@ -479,3 +479,11 @@ where dbo.Locations.[Id] = r.Location_Id
 
 -- Adjustments
 update dbo.Fields set PossibleValues = '["M","F","UNK"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Sex'
+update dbo.Fields set PossibleValues = '["Kept","Released", "NC"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Disposition'
+update dbo.Fields set PossibleValues = '["HL","GAFF","DN","HN","SPEAR","Fly","Gill"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'MethodCaught'
+update dbo.Fields set PossibleValues = '["STS","CHF","CHS","CO","BUT","RBT","PL","MWF","SUCKER","NPM","SCK","Other"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Species'
+
+insert into dbo.Fishermen(FirstName, LastName, DateAdded, FullName)
+values 
+('Jesse', 'Bevis Sr', CONVERT(VARCHAR(23), GETDATE(), 121), 'Jesse Bevis Sr'),
+('Eugena', 'Stacona', CONVERT(VARCHAR(23), GETDATE(), 121), 'Eugena Stacona')
