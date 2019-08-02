@@ -483,7 +483,7 @@ update dbo.Fields set PossibleValues = '["Kept","Released", "NC"]' where Datasto
 update dbo.Fields set PossibleValues = '["HL","GAFF","DN","HN","SPEAR","Fly","Gill"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'MethodCaught'
 update dbo.Fields set PossibleValues = '["STS","CHF","CHS","CO","BUT","RBT","PL","MWF","SUCKER","NPM","SCK","Other"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Species'
 
-insert into dbo.Fishermen(FirstName, LastName, DateAdded, FullName)
+insert into dbo.Fishermen(FirstName, LastName, DateAdded, FullName, StatusId, OkToCallId)
 values 
-('Jesse', 'Bevis Sr', CONVERT(VARCHAR(23), GETDATE(), 121), 'Jesse Bevis Sr'),
-('Eugena', 'Stacona', CONVERT(VARCHAR(23), GETDATE(), 121), 'Eugena Stacona')
+('Jesse', 'Bevis Sr', CONVERT(VARCHAR(23), GETDATE(), 121), 'Jesse Bevis Sr', 0, 0),
+('Eugena', 'Stacona', CONVERT(VARCHAR(23), GETDATE(), 121), 'Eugena Stacona', 0, 0)
