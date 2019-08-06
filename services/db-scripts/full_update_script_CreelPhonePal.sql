@@ -463,3 +463,29 @@ LEFT OUTER JOIN dbo.CreelPhone_Detail_VW AS d ON h.ActivityId = d.ActivityId
 INNER JOIN dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId 
 INNER JOIN dbo.Locations AS l ON a.LocationId = l.Id 
 GO
+
+-- Update ProjectId for Harvest Primary Project Location.
+update dbo.Locations
+set ProjectId = r.Project_Id
+from
+(
+select Location_Id, Project_Id, Id from dbo.LocationProjects lp
+inner join dbo.Locations as l on l.Id = lp.Location_Id
+where Project_Id in (select Id from dbo.Projects where [Name] = 'Harvest') and LocationTypeId in (select Id from dbo.LocationTypes where [Name] = 'Primary Project Location')
+) as r
+where dbo.Locations.[Id] = r.Location_Id
+
+-- All the above are on Paluuttest 20190731
+
+-- Adjustments
+update dbo.Fields set PossibleValues = '["M","F","UNK"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Sex'
+update dbo.Fields set PossibleValues = '["Kept","Released","NC"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Disposition'
+update dbo.Fields set PossibleValues = '["HL","GAFF","DN","HN","SPEAR","Fly","Gill"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'MethodCaught'
+update dbo.Fields set PossibleValues = '["STS","CHF","CHS","CO","BUT","RBT","PL","MWF","SUCKER","NPM","SCK","Other"]' where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'CreelPhone') and DbColumnName = 'Species'
+
+insert into dbo.Fishermen(FirstName, LastName, DateAdded, FullName, StatusId, OkToCallId)
+values 
+('Jesse', 'Bevis Sr', CONVERT(VARCHAR(23), GETDATE(), 121), 'Jesse Bevis Sr', 0, 0),
+('Eugena', 'Stacona', CONVERT(VARCHAR(23), GETDATE(), 121), 'Eugena Stacona', 0, 0)
+
+-- All the above are on Paluuttest 20190802
