@@ -21,10 +21,12 @@ namespace services.Controllers
         [HttpPost]
         public DataTable QueryDatasetActivities(JObject jsonData)
         {
+            logger.Debug("Inside QueryController, QueryDatasetActivities...");
             var db = ServicesContext.Current;
             DataTable datatable = null;
 
             dynamic json = jsonData;
+            logger.Debug("json = " + json);
 
             //let's see if we're dealing with a dataset 
             if (json["DatasetId"] is JToken)

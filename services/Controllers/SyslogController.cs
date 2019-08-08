@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using services.Models;
+using services.Resources;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Http;
 
 namespace services.Controllers
@@ -26,6 +28,14 @@ namespace services.Controllers
             return "{Message: 'Success'}";
         }
 
+        [HttpGet]
+        public dynamic GetNotificationsByModule(string Module)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            var db = ServicesContext.Current;
 
+            return db.NotificationLog.Where(o => o.Module == Module).OrderByDescending(o => o.SentDate).Take(50).AsEnumerable();
+
+        }
     }
 }

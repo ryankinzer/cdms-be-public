@@ -1,4 +1,5 @@
-﻿using services.Models;
+﻿using Newtonsoft.Json;
+using services.Models;
 using services.Models.Data;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,7 @@ namespace services.Models.Data
         public string FeePaymentReference { get; set; }
         public string FeePaidBy { get; set; }
         public string FeeReceivedBy { get; set; }
+        public DateTime? FeeNotificationDate { get; set; }
 
         public string Zoning { get; set; }
         public bool? GISUpdateRequired { get; set; }
@@ -85,7 +87,16 @@ namespace services.Models.Data
         public string COConditions { get; set; }
 
 
+        public string ReviewsRequired { get; set; }
+        public string ScopeOfWork { get; set; }
 
+        public string Route_BldgCode { get; set; }
+        public string Route_WRP { get; set; }
+        public string Route_Env { get; set; }
+        public string Route_PubWrks { get; set; }
+        public string Route_TERO { get; set; }
+        public string Route_CRPP { get; set; }
+        public string Route_Roads { get; set; }
 
 
     }

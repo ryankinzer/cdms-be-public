@@ -69,3 +69,14 @@ AND col_name(parent_object_id, parent_column_id) = 'MiscelleneousContext';
 IF @var0 IS NOT NULL
     EXECUTE('ALTER TABLE [dbo].[OlcEvents] DROP CONSTRAINT [' + @var0 + ']')
 ALTER TABLE [dbo].[OlcEvents] DROP COLUMN [MiscelleneousContext]
+
+--Update the views
+drop view OlcEvents_vw
+go
+create view OlcEvents_vw
+AS
+SELECT        e.Id, e.SubprojectId, e.DocumentType, e.DocumentDate, e.FileName, e.Author, e.AuthorAgency, e.Boundary, e.SignificantArea, e.MiscellaneousContext, e.Description, e.TwnRngSec, e.NumberItems, e.DateDiscovered, 
+                         e.PersonDiscovered, e.Reference
+FROM            dbo.Subproject_Olc AS sp INNER JOIN
+                         dbo.OlcEvents AS e ON sp.Id = e.SubprojectId
+go

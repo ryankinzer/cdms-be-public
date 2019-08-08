@@ -359,6 +359,19 @@ namespace services.Controllers
             return new_filename;
         }
 
+        public static HttpResponseMessage MoveFile(string sourceFile, string destinationFile)
+        {
+            try
+            {
+                System.IO.File.Move(sourceFile, destinationFile);
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
+            catch
+            {
+                return new HttpResponseMessage(HttpStatusCode.Forbidden);
+            }
+        }
+
         // GET /api/v1/file/getprojectfiles/5
         //returns the files for this projectid (empty list if none found...)
         //

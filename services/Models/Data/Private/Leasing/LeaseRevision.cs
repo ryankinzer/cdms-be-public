@@ -83,8 +83,8 @@ namespace services.Models.Data
 
         public Boolean? OptionalAlternativeCrop { get; set; }
         public Boolean? HEL { get; set; }
-        public DateTime? GrazeStart { get; set; }
-        public DateTime? GrazeEnd { get; set; }
+        public string GrazeStart { get; set; }
+        public string GrazeEnd { get; set; }
 
         public int? AUMs { get; set; }
         public string GrazeAnimal { get; set; }
@@ -100,9 +100,8 @@ namespace services.Models.Data
 
         public string PaymentUnit { get; set; }
 
-
-        //public string LeaseLength { get; set; }
-
+        [DecimalPrecision(9, 2)]
+        public decimal? GrazingRentalRate { get; set; }
 
     }
 

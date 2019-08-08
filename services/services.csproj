@@ -65,6 +65,12 @@
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.0.6\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -94,9 +100,16 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -160,6 +173,7 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
@@ -179,6 +193,7 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InstrumentController.cs" />
     <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\Private\ExpandoController.cs" />
     <Compile Include="Controllers\Private\LeaseController.cs" />
     <Compile Include="Controllers\Private\OlcSubProjectController.cs" />
     <Compile Include="Controllers\Private\PermitController.cs" />
@@ -195,9 +210,9 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201906172100188_reset.cs" />
-    <Compile Include="Migrations\201906172100188_reset.Designer.cs">
-      <DependentUpon>201906172100188_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201906282055113_reset.cs" />
+    <Compile Include="Migrations\201906282055113_reset.Designer.cs">
+      <DependentUpon>201906282055113_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -220,10 +235,15 @@
     <Compile Include="Models\Data\Private\Permits\PermitCadasterView.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitContact.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitRoute.cs" />
+    <Compile Include="Models\NotificationLog.cs" />
+    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
+    <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitParcel.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitType.cs" />
     <Compile Include="Models\Data\Private\Subproject_Olc.cs" />
+    <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -351,8 +371,10 @@
     <Compile Include="Resources\AuthorizationManager.cs" />
     <Compile Include="Resources\CipherHelper.cs" />
     <Compile Include="Resources\DateTimeHelper.cs" />
+    <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
+    <Compile Include="Resources\PermitRouteHelper.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
@@ -373,10 +395,30 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20190613_paluut.sql" />
     <Content Include="db-scripts\20190613_cdms.sql" />
+    <Content Include="db-scripts\20190725_cdms.sql" />
+    <Content Include="db-scripts\20190725_paluut.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-08_lease_updates.sql" />
+    <Content Include="db-scripts\archive\cdms_2019-05-24_add_production_fields.sql" />
+    <Content Include="db-scripts\archive\full_update_script.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPaluut.sql" />
+    <Content Include="db-scripts\archive\full_update_script_BiomNewDs4ForPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_CrppAddPropPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_OlcPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_OlcPriv.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPal.sql" />
+    <Content Include="db-scripts\archive\full_update_script_SgsAddFldsPriv.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScript.sql" />
+    <Content Include="db-scripts\archive\Leasing_FullUpgradeScriptForPaluutWithoutViews.sql" />
+    <Content Include="db-scripts\archive\paluut_2019-05-07_permits_paluut.sql" />
+    <Content Include="db-scripts\archive\paluut_2019-05-07_permits_cdms.sql" />
+    <Content Include="db-scripts\archive\paluut_2019-05-07_permits_core.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePal.sql" />
     <Content Include="db-scripts\full_update_script_CreelPhonePriv.sql" />
     <Content Include="db-scripts\full_update_script_HabProjLeadPal.sql" />
     <Content Include="db-scripts\full_update_script_HabProjLeadPriv.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPal.sql" />
+    <Content Include="db-scripts\full_update_script_OlcPriv.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -417,8 +459,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906172100188_reset.resx">
-      <DependentUpon>201906172100188_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906282055113_reset.resx">
+      <DependentUpon>201906282055113_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
