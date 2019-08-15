@@ -917,6 +917,9 @@ namespace services.Controllers
         //public int SaveSubproject(JObject jsonData)
         {
             logger.Debug("Inside SaveHabSubproject...");
+            decimal decEasting = 0;
+            decimal decNorthing = 0;
+
             var db = ServicesContext.Current;
             logger.Debug("db = " + db);
 
@@ -942,7 +945,8 @@ namespace services.Controllers
 
             logger.Debug("About to check incoming data for Subproject...");
             Subproject_Hab s = new Subproject_Hab();
-            logger.Debug("Found Subproject in incoming data...");
+            Location l;
+            //logger.Debug("Found Subproject in incoming data...");
 
 
             // Spin through the fields passed in; as we find the fields, we will capture the data.
@@ -1039,6 +1043,10 @@ namespace services.Controllers
                 //    s.OtherFundingAgency = subproject_json.ToString();
                 //else if (prop.Name == "OtherCollaborators")
                 //    s.OtherCollaborators = subproject_json.ToString();
+                else if (prop.Name == "GPSEasting")
+                    decEasting = subproject_json;
+                else if (prop.Name == "GPSNorthing")
+                    decNorthing = subproject_json;
             }
 
             s.ProjectId = pId;
@@ -1071,7 +1079,10 @@ namespace services.Controllers
                 //"s.OtherCollaborator = " + s.OtherCollaborators + "\n" +
                 "s.EffDt = " + s.EffDt + "\n" +
                 "s.ByUserId = " + s.ByUserId + "\n" +
-                "s.Comments = " + s.Comments + "\n"
+                "s.Comments = " + s.Comments + "\n" +
+                "\n" +
+                "decEasting = " + decEasting + "\n" +
+                "decNorthing = " + decNorthing + "\n"
                 );
 
             if (s.Id == 0)
@@ -1105,12 +1116,33 @@ namespace services.Controllers
                 //logger.Debug("Located the item...X" + spLocationId + "X");
 
                 Location spLocation = db.Location.Find(Convert.ToInt32(spLocationId.ToString()));
-                logger.Debug("spLocation Id = " + spLocation.Id);
+                logger.Debug("spLocation Id = " + spLocation.Id + "\n" +
+                    "spLocation.GPSEasting = " + spLocation.GPSEasting + "\n" +
+                    "spLocation.GPSNorthing = " + spLocation.GPSNorthing + "\n"
+                    );
 
                 if (s.ProjectName != spLocation.Label)
                 {
                     logger.Debug("Updating Location.Label also...");
                     spLocation.Label = s.ProjectName;
+
+                    db.Entry(spLocation).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                if ((decEasting > 0) && (decEasting != spLocation.GPSEasting))
+                {
+                    spLocation.GPSEasting = decEasting;
+                    logger.Debug("Updated easting...");
+
+                    db.Entry(spLocation).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                if ((decNorthing > 0) && (decNorthing != spLocation.GPSNorthing))
+                {
+                    spLocation.GPSNorthing = decNorthing;
+                    logger.Debug("Updated northing...");
 
                     db.Entry(spLocation).State = EntityState.Modified;
                     db.SaveChanges();
