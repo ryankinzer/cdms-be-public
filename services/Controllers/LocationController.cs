@@ -103,5 +103,31 @@ namespace services.Controllers
             }
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
+
+        // POST /api/v1/location/updatelocation
+        [HttpPost]
+        public HttpResponseMessage UpdateLocation(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            User me = AuthorizationManager.getCurrentUser();
+
+            Location loc = db.Location.Find(json.LocationId.ToObject<int>());
+
+            int intSdeObjectId = json.SdeObjectId.ToObject<int>();
+
+            if (loc == null)
+                throw new System.Exception("Configuration error.");
+
+            int intOldSdeObjectId = 0;
+            if (loc.SdeObjectId.HasValue)
+                intOldSdeObjectId = (int)loc.SdeObjectId;
+
+            loc.SdeObjectId = intSdeObjectId;
+            db.SaveChanges();
+            logger.Debug("Updated location " + loc.Id + "; old SdeObjectId = " + intOldSdeObjectId + "; new SdeObjectId = " + loc.SdeObjectId);
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
     }
 }
