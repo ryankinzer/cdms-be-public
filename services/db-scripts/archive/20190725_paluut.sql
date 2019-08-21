@@ -57,6 +57,8 @@ go
 
 ALTER TABLE [dbo].[PermitTypes] ADD [CurrentPermitNumber] [int];
 go
+alter table dbo.PermitTypes add CurrentPermitYear int
+go
 UPDATE PermitTypes set CurrentPermitYear = 2019;
 go
 
