@@ -58,6 +58,7 @@ go
 ALTER TABLE [dbo].[PermitTypes] ADD [CurrentPermitNumber] [int];
 go
 
+
 update datasetfields set controltype = 'date' where datasetid = 1281 and controltype = 'datetime';
 delete from datasetfields where id in (5473, 5474, 5475, 5476, 5477);
 update metadataproperties set possiblevalues = '["Active","Inactive","Ready to Archive","Archived","Deleted"]' where metadataentityid = 9 and name = 'FileStatus';
