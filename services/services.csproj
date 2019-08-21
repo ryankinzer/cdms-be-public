@@ -393,6 +393,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\20190821_WqAddDataSource_priv.sql" />
+    <Content Include="db-scripts\20190821_WqAddDataSource_paluut.sql" />
     <Content Include="db-scripts\archive\20190815_HabLocUpd_paluut.sql" />
     <Content Include="db-scripts\archive\20190819_WaterChemUpd_paluut.sql" />
     <Content Include="db-scripts\archive\20190725_cdms.sql" />
