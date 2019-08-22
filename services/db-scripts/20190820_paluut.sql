@@ -51,3 +51,58 @@ select
 FROM Fields where DatastoreId = @newdsid;
 
 go
+
+-- above ran on TEST 8/21/2019
+-- NOTE: needed to update the ossible values query in the datasource fields above.
+
+DECLARE @newdsid int = 0;
+DECLARE @projid int = 0;
+DECLARE @fieldid int = 0;
+DECLARE @datastoreid int = 0;
+
+set @newdsid = (select Id from Datasets where Name = 'Permit Contacts');
+set @projid = (select Id from Projects where Name = 'Permit Project');
+set @datastoreid = (select Id from Datastores where Name = 'Permit Contacts');
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('IsMailingDifferent','Is Mailing Different','Is Mailing Different','checkbox',@datastoreid,1,null,'string',null,null);
+
+select @fieldid = scope_identity();
+
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select
+@newdatasetid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
+FROM Fields where Id = @fieldid;
+
+
+UPDATE DatasetFields set OrderIndex = 10, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'Organization';
+UPDATE DatasetFields set OrderIndex = 30, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'FirstName';
+UPDATE DatasetFields set OrderIndex = 40, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'LastName';
+UPDATE DatasetFields set OrderIndex = 60, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'FullName';
+UPDATE DatasetFields set OrderIndex = 20, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'Prefix';
+UPDATE DatasetFields set OrderIndex = 50, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'Suffix';
+
+UPDATE DatasetFields set OrderIndex = 70, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'PhysicalAddress1';
+UPDATE DatasetFields set OrderIndex = 80, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'PhysicalAddress2';
+UPDATE DatasetFields set OrderIndex = 90, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'PhysicalCity';
+UPDATE DatasetFields set OrderIndex = 100, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'PhysicalState';
+UPDATE DatasetFields set OrderIndex = 110, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'PhysicalZip';
+
+UPDATE DatasetFields set OrderIndex = 120, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'MailingAddress1';
+UPDATE DatasetFields set OrderIndex = 130, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'MailingAddress2';
+UPDATE DatasetFields set OrderIndex = 140, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'MailingCity';
+UPDATE DatasetFields set OrderIndex = 150, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'MailingState';
+UPDATE DatasetFields set OrderIndex = 160, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'MailingZip';
+
+UPDATE DatasetFields set OrderIndex = 115, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'IsMailingDifferent';
+UPDATE DatasetFields set OrderIndex = 170, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'HomePhone';
+UPDATE DatasetFields set OrderIndex = 180, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'WorkPhone';
+UPDATE DatasetFields set OrderIndex = 190, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'CellPhone';
+UPDATE DatasetFields set OrderIndex = 200, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'Fax';
+UPDATE DatasetFields set OrderIndex = 210, ColumnIndex = 1 WHERE DatasetId = @newdsid and DbColumnName = 'Email';
+
+update fields set [rule] = '{"OnChange": "event.scope.toggleMailingAddress()"}' where DbColumnName = 'IsMailingDifferent' and DatastoreId = @datastoreid;
+
+-- above ran on TEST 8/21/2019 to set the field orderindexes
