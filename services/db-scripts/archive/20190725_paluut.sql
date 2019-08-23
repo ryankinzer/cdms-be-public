@@ -57,10 +57,7 @@ go
 
 ALTER TABLE [dbo].[PermitTypes] ADD [CurrentPermitNumber] [int];
 go
-alter table dbo.PermitTypes add CurrentPermitYear int
-go
-UPDATE PermitTypes set CurrentPermitYear = 2019;
-go
+
 
 update datasetfields set controltype = 'date' where datasetid = 1281 and controltype = 'datetime';
 delete from datasetfields where id in (5473, 5474, 5475, 5476, 5477);
