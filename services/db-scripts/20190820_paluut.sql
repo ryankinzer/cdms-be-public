@@ -105,4 +105,7 @@ UPDATE DatasetFields set OrderIndex = 210, ColumnIndex = 1 WHERE DatasetId = @ne
 
 update fields set [rule] = '{"OnChange": "event.scope.toggleMailingAddress()"}' where DbColumnName = 'IsMailingDifferent' and DatastoreId = @datastoreid;
 
+update datasetfields set orderindex = 115 where DbColumnName = 'ScopeOfWork' and datasetid = 1281;
+delete from datasetfields where datasetid = 1281 and DbColumnName = 'IsVoid'
+
 -- above ran on TEST 8/21/2019 to set the field orderindexes
