@@ -80,6 +80,9 @@ SELECT
     [Rule]         = f.[Rule]
 FROM #DatasetIdList as d, #NewFieldInfo as f
 
+-- Do cleanup
+drop table #DatasetIdList
+drop table #NewFieldInfo
 
 -- Down **********
 /*
