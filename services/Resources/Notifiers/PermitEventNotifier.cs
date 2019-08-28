@@ -26,6 +26,10 @@ namespace services.Resources
                 recipients = PermitRouteHelper.getRecipientsForRoute(in_event.EventType, in_event.ItemType);
             }
 
+            //if no recipients, no notification needed
+            if (recipients.Count == 0)
+                return;
+
             string subject = in_event.EventType + " Request from TPO for " + in_event.ItemType;
             if(in_permit.ReviewedBy != null){
                 subject += " (" + in_permit.ReviewedBy + ")";
@@ -35,7 +39,8 @@ namespace services.Resources
 
             if (in_event.EventType == "Review")
             {
-                body += "<p><b>Permit</b>: <a href='" + PermitURL + in_permit.Id + "'>" + in_permit.PermitNumber + "</a></p>";
+                //body += "<p><b>Permit</b>: <a href='" + PermitURL + in_permit.Id + "'>" + in_permit.PermitNumber + "</a></p>"; //TODO: Phase 2 will provide a link to reviewers
+                body += "<p><b>Permit Number</b>: " + in_permit.PermitNumber + "</p>";
                 body += "<p><b>Project Name</b>: " + in_permit.ProjectName + "</p>";
                 body += "<p><b>TPO Reviewer</b>: " + in_permit.ReviewedBy + "</p>";
                 body += "<p><b>Request Date</b>: " + in_event.RequestDate + "</p>";
@@ -78,12 +83,19 @@ namespace services.Resources
 
             }
 
-            if(in_event.Comments != null)
+            if (in_event.Comments != null)
                 body += "<hr/><p><b>Comments</b>: "+in_event.Comments;
 
             if (in_event.EventType == "Review")
             {
-                body += "<hr/>Reference Documents:";   
+                body += "<hr/><p><b>Reference Documents</b>: <br/>";
+                foreach (dynamic file in in_json.FilesToInclude)
+                {
+                    body += "<a href='" + file.Link + "'>" + file.Name;
+                    if (file.Description != null && file.Description != "")
+                        body += " (" + file.Description + ")";
+                    body += "</a><br/>";
+                }
             }
 
             body += "<br/><br/> -- Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
