@@ -108,4 +108,29 @@ update fields set [rule] = '{"OnChange": "event.scope.toggleMailingAddress()"}' 
 update datasetfields set orderindex = 115 where DbColumnName = 'ScopeOfWork' and datasetid = 1281;
 delete from datasetfields where datasetid = 1281 and DbColumnName = 'IsVoid'
 
+go
+
 -- above ran on TEST 8/21/2019 to set the field orderindexes
+
+--reorder a column
+UPDATE DatasetFields set OrderIndex = 150, ColumnIndex = 1 WHERE DatasetId = 1281 and DbColumnName = 'BuildingUse';
+
+--change plss fields to dropdowns
+update fields set controltype = 'select' where datastoreid = 33 and dbcolumnname in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+update datasetfields set controltype = 'select' where datasetid = 1281 and dbcolumnname in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+
+UPDATE fields set possiblevalues = '["1N","1S","2N","2S","3N","3S","4N"]' where dbcolumnname = 'SiteTownship' and datastoreid = 33;
+UPDATE fields set possiblevalues = '["32E","33E","34E","35E","36E"]' where dbcolumnname = 'SiteRange' and datastoreid = 33;
+UPDATE fields set possiblevalues = '["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]' where dbcolumnname = 'SiteSection' and datastoreid = 33;
+UPDATE fields set possiblevalues = '["NE","NW","SW","SE"]' where dbcolumnname in ('SiteQuarter','SiteSixteenth') and datastoreid = 33;
+
+go
+
+-- above ran on TEST 8/28/2019
+
+update fields set controltype = 'currency' where datastoreid = 33 and dbcolumnname in( 'Valuation', 'Fee','FeePaymentAmount');
+update datasetfields set controltype = 'currency' where datasetid = 1281 and dbcolumnname in ( 'Valuation', 'Fee','FeePaymentAmount');
+go
+
+--above ran on TEST 8/29
+
