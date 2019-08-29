@@ -127,3 +127,7 @@ UPDATE fields set possiblevalues = '["NE","NW","SW","SE"]' where dbcolumnname in
 go
 
 -- above ran on TEST 8/28/2019
+
+update fields set controltype = 'currency' where datastoreid = 33 and dbcolumnname in( 'Valuation', 'Fee','FeePaymentAmount');
+update datasetfields set controltype = 'currency' where datasetid = 1281 and dbcolumnname in ( 'Valuation', 'Fee','FeePaymentAmount');
+go
