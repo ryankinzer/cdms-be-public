@@ -47,17 +47,10 @@ namespace services.Controllers
             //dynamic json = jsonData;
             //logger.Debug("json = " + json);
 
-            //var aryInstrumentIdList = json.InstrumentIds.ToObject<JArray>(); //instrumentIdList
-            //logger.Debug("Built array...");
-
-            //List<int> lstInstrumentIdList = aryInstrumentIdList.ToList();
-            //logger.Debug("Converted to array to a list...");
-
             List<InstrumentAccuracyCheck> ac = (from item in db.AccuracyChecks
                                                 //where lstInstrumentIdList.Contains(item.InstrumentId)
                                                 orderby item.Id
                                                 select item).ToList();
-            //logger.Debug("Selected the the stuff...");
 
             return ac.AsEnumerable();
         }
