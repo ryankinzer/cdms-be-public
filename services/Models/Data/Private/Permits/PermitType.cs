@@ -37,7 +37,7 @@ namespace services.Models.Data
         public int CurrentPermitNumber { get; set; }
 
         public string generatePermitNumber(){
-            return PermitNumberPrefix + "-" + DateTime.Now.ToString("yy") + "-" + CurrentPermitNumber;
+            return PermitNumberPrefix + "-" + DateTime.Now.ToString("yy") + "-" + (CurrentPermitNumber.ToString()).PadLeft(3,'0');
         }
 
     }
