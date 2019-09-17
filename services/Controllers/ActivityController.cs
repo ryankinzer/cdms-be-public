@@ -406,255 +406,136 @@ AND a.datasetid = " + Id;
             if (!project.isOwnerOrEditor(me))
                 throw new Exception("Authorization error.");
 
-            //setup our generic data stuff
-            var data_header_name = dataset.Datastore.TablePrefix + "_Header";
-            var data_detail_name = dataset.Datastore.TablePrefix + "_Detail";
-            var dbset_header = db.GetDbSet(data_header_name);
-            var dbset_detail = db.GetDbSet(data_detail_name);
-            var dbset_header_type = db.GetTypeFor(data_header_name);
-            var dbset_detail_type = db.GetTypeFor(data_detail_name);
 
-            //update the Activity with all of the incoming values
+            //1 - update the Activity with all of the incoming values
             dynamic activity_json = json.Activity;
+            Activity activity = DatasetDataHelper.updateActivity(activity_json, me);
 
-            logger.Debug("Updating activity id: " + activity_json.Id);
 
-            Activity activity = db.Activities.Find(activity_json.Id.ToObject<int>());
-            if (activity == null)
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
-                throw new Exception("Invalid Activity.");
-            }
+                con.Open();
 
-            activity.LocationId = activity_json.LocationId;
-            try
-            {
-                activity.ActivityDate = activity_json.ActivityDate;
-            }
-            catch (Exception e)
-            {
-                logger.Debug("Ooops had an error converting date: " + activity_json.ActivityDate);
-                logger.Debug(e.ToString());
-                throw (e);
-            }
+                //each activity in its own transaction 
+                var trans = con.BeginTransaction();
 
-            //activity.DatasetId = json.DatasetId;
-            activity.UserId = me.Id;
-            activity.SourceId = activity_json.SourceId;
-            activity.ActivityTypeId = activity_json.ActivityTypeId;
-            activity.InstrumentId = activity_json.InstrumentId;
-            activity.AccuracyCheckId = activity_json.AccuracyCheckId;
-            activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
-            activity.Timezone = activity_json.Timezone;
+                //2 - insert new header row from incoming data
+                //    NOTE: we insert a new row (not actually update the old row) to track changes 
+                DatasetDataHeaderHelper header = new DatasetDataHeaderHelper(dataset, dataset.Datastore.TablePrefix, json.header);
 
-            db.Entry(activity).State = EntityState.Modified;
-            db.SaveChanges();
+                var header_query = header.getInsertQuery(activity.Id, me.Id);  
+                logger.Debug(header_query);
 
-            logger.Debug("Updated an activity: ");
-            logger.Debug(" LocationID = " + activity_json.LocationId);
-            logger.Debug(" ActivityDate = " + activity_json.ActivityDate);
-            logger.Debug("  ID = " + activity.Id);
-
-            //now check our activity status -- update it if we've changed.
-            dynamic activityqastatus = activity_json.ActivityQAStatus;
-
-            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.Comments != activityqastatus.Comments.ToString())
-            {
-                QAStatus new_qastatus = db.QAStatuses.Find(activityqastatus.QAStatusId.ToObject<int>());
-
-                //logger.Debug(activity_json.ActivityQAStatus);
-                //logger.Debug(activityqastatus.QAStatusId.ToObject<int>());
-
-                ActivityQA newQA = new ActivityQA();
-                newQA.ActivityId = activity.Id;
-                newQA.QAStatusId = activityqastatus.QAStatusId.ToObject<int>();
-                newQA.Comments = (activityqastatus.Comments != null) ? activityqastatus.Comments.ToString() : null;
-                newQA.EffDt = DateTime.Now;
-                newQA.UserId = activity.UserId;
-                newQA.QAStatusName = new_qastatus.Name;
-                newQA.QAStatusDescription = new_qastatus.Description;
-
-                db.ActivityQAs.Add(newQA);
-                db.SaveChanges();
-
-            }
-
-
-
-            //get our last header and then check against incoming header field values to see if anything has changed.
-            var last_header_list = dbset_header.SqlQuery("SELECT * FROM " + data_header_name + " WHERE ActivityId = " + activity.Id + " ORDER BY EffDt DESC");
-            //.SqlQuery("SELECT * FROM " + data_header_name + " WHERE ActivityId = " + activity.Id + " ORDER BY EffDt DESC").AsQueryable().f; 
-            //db.AdultWeir_Header.Where(o => o.ActivityId == activity.Id).OrderByDescending(d => d.EffDt).FirstOrDefault();
-
-            var last_header = LookupFieldHelper.getFirstItem(last_header_list);
-
-            logger.Debug("Ok -- here we are with our lastheader:");
-            logger.Debug(last_header);
-
-
-            if (last_header == null)
-                throw new Exception("Somehow there is no previous header even though we are trying to update.");
-
-            bool header_updated = false;
-
-            //spin through and check the header fields for changes...
-            foreach (JProperty header_field in json.header)
-            {
-                logger.Debug("Checking last header value of field : '" + header_field.Name + "' with incoming value + '" + header_field.Value + "'");
-
-                var headerobj = last_header.GetType().GetProperty(header_field.Name);
-
-                if (headerobj == null)
-                    continue;
-
-                var objval = headerobj.GetValue(last_header, null);
-                logger.Debug("Got the value from the header field.");
-
-                if (objval != null)
+                using (SqlCommand cmd = new SqlCommand(header_query, con, trans))
                 {
-                    logger.Debug("objval not null. header_field.Name: " + header_field.Name + ", value: " + objval + ", with incoming value: " + header_field.Value);
-
-                    if (objval.ToString() != header_field.Value.ToString())
-                    {
-                        logger.Debug("a different value! we'll save a header then...");
-                        header_updated = true;
-                        break;
-                    }
-                }
-                else
-                {
-                    if (header_field.Value.ToString() != "")
-                    {
-                        logger.Debug("Dunno why, but objval was null." + header_field + " we are going to save a new one.");
-                        header_updated = true;
-                        break;
-                    }
-                    else
-                        logger.Debug("objval is empty ''");
-                }
-            }
-
-            if (header_updated)
-            {
-                logger.Debug("Saving a new header then");
-                var header = json.header.ToObject(dbset_header_type);
-
-                //now do the saving! -- this works the exact same way for update as it does for new
-                header.ActivityId = activity.Id;
-                header.ByUserId = activity.UserId;
-                header.EffDt = DateTime.Now;
-                dbset_header.Add(header);
-                db.SaveChanges();
-            }
-
-            //there are three possible cases of changes:
-            //  1) updated row (has ID and is in "editedRowIds" list)
-            //  2) new row (has no ID)
-            //  3) deleted row (is not in the list, ID is in "deletedRowIds" list)
-
-            //we ALWAYS make such indication by INSERTING a new row with a matching rowid + activityid + new current effective date.
-            //  exception is NEW row which gets and incremented rowid
-
-            //first, lets lookup our last row id so we have a place to start if we add rows.                    
-            int rowid = 1;
-
-            var last_row_list = dbset_detail.SqlQuery("SELECT * FROM " + data_detail_name + " WHERE ActivityId = " + activity.Id + " AND RowStatusId = " + DataDetail.ROWSTATUS_ACTIVE + " ORDER BY RowId DESC");
-            //db.AdultWeir_Detail.Where(o => o.ActivityId == activity.Id).Where(o => o.RowStatusId == DataDetail.ROWSTATUS_ACTIVE).OrderByDescending(d => d.RowId).FirstOrDefault();
-
-            var last_row = LookupFieldHelper.getFirstItem(last_row_list);
-            if (last_row != null)
-            {
-                rowid = last_row.RowId + 1;
-            }
-            else
-                logger.Debug("Hmm there were no previous details rows for activity : " + activity.Id + " so we are starting at 1.");
-
-            //now lets iterate our incoming rows and see what we've got.
-            var details = new List<DataDetail>();
-
-            List<int> updated_rows = new List<int>();
-            foreach (var updated_row in json.editedRowIds)
-            {
-                logger.Debug("Found an updated row: " + updated_row);
-                updated_rows.Add(updated_row.ToObject<int>());
-            }
-
-            List<int> deleted_rows = new List<int>();
-            foreach (var deleted_row in json.deletedRowIds)
-            {
-                logger.Debug("Found a deleted row: " + deleted_row);
-                deleted_rows.Add(deleted_row.ToObject<int>());
-                if (updated_rows.Contains(deleted_row.ToObject<int>()))
-                    updated_rows.Remove(deleted_row.ToObject<int>());
-            }
-
-
-            foreach (var detailitem in json.details)
-            {
-                var adw = detailitem.ToObject(dbset_detail_type);
-
-                //logger.Debug("spinning through incoming details: " + adw.Id);
-
-                if (adw.Id == 0)
-                {
-                    //new record
-                    adw.RowId = rowid; rowid++;
-                    details.Add(adw);
-                }
-                else
-                {
-                    //deleted or updated?
-                    if (updated_rows.Contains(adw.Id))
-                    {
-                        //updated
-                        adw.Id = 0;
-                        details.Add(adw);
-                    }
-                    else if (deleted_rows.Contains(adw.Id))
-                    {
-                        //deleted
-                        adw.Id = 0;
-                        adw.RowStatusId = DataDetail.ROWSTATUS_DELETED;
-                        details.Add(adw);
-
-                        //delete any files associated with this detail item
-                        Resources.ActivitiesFileHelper.DeleteAllFilesForDetail(adw, dataset);
-                    }
-                    //otherwise nothing.
+                    cmd.ExecuteNonQuery();
                 }
 
-            }
+                //3 - insert detail rows from incoming data
+                DatasetDataDetailHelper detail = null; 
 
-            //logger.Debug(JsonConvert.SerializeObject(grids, Formatting.Indented));
-            //logger.Debug(JsonConvert.SerializeObject(details, Formatting.Indented));
+                //there are three possible cases of incoming changes:
+                //  1) updated row (has ID and is in "editedRowIds" list)
+                //  2) new row (has no ID)
+                //  3) deleted row (is not in the list, ID is in "deletedRowIds" list)
 
-            foreach (var detail in details)
-            {
-                detail.ActivityId = activity.Id;
-                detail.ByUserId = activity.UserId;
-                detail.EffDt = DateTime.Now;
+                //we ALWAYS make such indication by INSERTING a new row with a matching rowid + activityid + new current effective date.
+                //  exception is NEW row which gets and incremented rowid
 
-                dbset_detail.Add(detail);
+                
+                //now lets iterate our incoming rows and see what we've got.
+                var details = new List<DataDetail>();
 
-            }
-
-            db.SaveChanges();
-
-            //If there is a ReadingDateTime field in use, set the activity description to be the range of reading dates for this activity.
-            if (dataset.Datastore.TablePrefix == "WaterTemp") // others with readingdatetime?
-            {
-                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                List<int> updated_rows = new List<int>();
+                foreach (var updated_row in json.editedRowIds)
                 {
-                    con.Open();
-                    var query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + activity.Id + ") where Id = " + activity.Id;
+                    logger.Debug("Found an updated row: " + updated_row);
+                    updated_rows.Add(updated_row.ToObject<int>());
+                }
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                List<int> deleted_rows = new List<int>();
+                foreach (var deleted_row in json.deletedRowIds)
+                {
+                    logger.Debug("Found a deleted row: " + deleted_row);
+                    deleted_rows.Add(deleted_row.ToObject<int>());
+                    if (updated_rows.Contains(deleted_row.ToObject<int>()))
+                        updated_rows.Remove(deleted_row.ToObject<int>());
+                }
+
+                int nextRowId = 1;
+
+                //iterate all the incoming details
+                foreach (var detailitem in json.details)
+                {
+
+                    //detail helper setup -- only once
+                    if(detail == null)
+                    {
+                        detail = new DatasetDataDetailHelper(dataset, dataset.Datastore.TablePrefix, detailitem);
+
+                        //get the next rowid
+                        var row_query = DatasetDataHelper.getMaxRowIdSQL(dataset.Datastore.TablePrefix, activity.Id);
+                        using (SqlCommand cmd = new SqlCommand(row_query, con, trans))
+                        {
+                            nextRowId = (int)cmd.ExecuteScalar() + 1;
+                        }
+
+                    }
+
+                    if (detailitem["Id"] != null && deleted_rows.Contains(detailitem.Id.ToObject<int>()))
+                    {
+                        logger.Debug("aha ok so we are marking a row as deleted");
+                        logger.Debug("before: " + detailitem["RowStatusId"]);
+                        detailitem["RowStatusId"] = DataDetail.ROWSTATUS_DELETED;
+                        logger.Debug("after: " + detailitem["RowStatusId"]);
+                    }
+
+                    //if we are inserting a new row, use the next RowId otherwise use the existing RowId since we're updating
+                    var thisRowId = nextRowId;
+                    if (detailitem["Id"] != null && detailitem.Id.ToObject<int>() != 0) {
+                        thisRowId = detailitem.RowId.ToObject<int>(); //use the row's RowId
+                    } else {
+                        nextRowId++; //use the next one and increment it
+                    }
+
+                    var insert_detail_query = detail.getInsertQuery(activity.Id, me.Id, detailitem, thisRowId);
+                    logger.Debug(insert_detail_query);
+
+                    using (SqlCommand cmd = new SqlCommand(insert_detail_query, con, trans))
+                    {
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            logger.Debug("Problem executing: " + insert_detail_query);
+                            throw new Exception("Failed to execute detail query!");
+                        }
+                    }
+
+                    if (detailitem["Id"] != null && deleted_rows.Contains(detailitem.Id.ToObject<int>()))
+                    {
+                        //delete any files associated with this detail item if it is deleted.
+                        //TODO ------------------------- 8******  Resources.ActivitiesFileHelper.DeleteAllFilesForDetail(detailitem, dataset);
+
+                    }
+
+                }
+
+                //some special cases to set the activity description to be a more user friendly date range for this activity.
+                if (activity.Id != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic"))
+                {
+                    var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, activity.Id);
+                    using (SqlCommand cmd = new SqlCommand(query, con, trans))
                     {
                         logger.Debug(query);
                         cmd.ExecuteNonQuery();
                     }
-
                 }
+
+                trans.Commit();
+
+
+
             }
+            
             
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
@@ -703,6 +584,8 @@ AND a.datasetid = " + Id;
 
             DatasetDataHeaderHelper header = null;
             DatasetDataDetailHelper detail = null;
+
+            int rowId = 1;
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
@@ -783,7 +666,7 @@ AND a.datasetid = " + Id;
                             detail = new DatasetDataDetailHelper(dataset, dataset.Datastore.TablePrefix, detail_row);
                         }
 
-                        string the_detail_query = detail.getInsertQuery(newActivityId, me.Id, detail_row);
+                        string the_detail_query = detail.getInsertQuery(newActivityId, me.Id, detail_row, rowId);
                         logger.Debug(the_detail_query);
 
                         using (SqlCommand cmd = new SqlCommand(the_detail_query, con, trans))
@@ -793,33 +676,14 @@ AND a.datasetid = " + Id;
                                 logger.Debug("Problem executing: " + the_detail_query);
                                 throw new Exception("Failed to execute detail query!");
                             }
+                            rowId++;
                         }
                     }//foreach detail
 
                     //some special cases to set the activity description to be a more user friendly date range for this activity.
                     if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic")) 
                     {
-                        var query = "";
-
-                        if (dataset.Datastore.TablePrefix == "WaterTemp")
-                            query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
-                        else if (dataset.Datastore.TablePrefix == "WaterQuality")
-                            query = "update Activities set Description = (select concat(convert(varchar,min(SampleDate),111), ' - ', convert(varchar,max(SampleDate),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
-                        else if (dataset.Datastore.TablePrefix == "Genetic")
-                            query = @"update Activities set Description = (
-                                        select 
-	                                        case
-		                                        when MinSampleYear = MaxSampleYear then MinSampleYear
-		                                        else MinSampleYear + '-' + MaxSampleYear
-	                                        end as SampleYearRange
-                                        from
-	                                        (select 
-		                                        convert(varchar,min(SampleYear),111) as MinSampleYear, 
-		                                        convert(varchar,max(SampleYear),111) as MaxSampleYear
-	                                        from Genetic_Detail_VW 
-	                                        where ActivityId = " + newActivityId + @") a
-                                    ) where Id = " + newActivityId;
-
+                        var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, newActivityId);
                         using (SqlCommand cmd = new SqlCommand(query, con, trans))
                         {
                             logger.Debug(query);

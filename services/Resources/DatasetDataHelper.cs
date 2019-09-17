@@ -1,6 +1,8 @@
-﻿using services.Models;
+﻿using NLog;
+using services.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -8,6 +10,8 @@ namespace services.Resources
 {
     public class DatasetDataHelper
     {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static string getHeaderQuery(string tableName)
         {
@@ -27,7 +31,9 @@ namespace services.Resources
                                WHERE        (dd.ActivityId = d.ActivityId) AND (dd.RowId = d.RowId))) AND (d.RowStatusId = 0)";
         }
 
-    
+        public static string getMaxRowIdSQL(string tableName, int activityId){
+            return "select max(RowId) from " + tableName + "_Detail where ActivityId = " + activityId + " and RowStatusId = 0 ";
+        }
 
         // creates a sql insert statement from a json object representing an activity
         public static string getInsertActivitySQL(Dataset dataset, dynamic activity_json, int user_id){
@@ -108,6 +114,103 @@ namespace services.Resources
 
 
             return newQA_query;
+        }
+
+
+        //update an activity + activityQA with an incoming activity json
+        public static Activity updateActivity(dynamic activity_json, User me){
+
+            logger.Debug("Updating activity id: " + activity_json.Id);
+
+            var db = ServicesContext.Current;
+
+            Activity activity = db.Activities.Find(activity_json.Id.ToObject<int>());
+            if (activity == null)
+            {
+                throw new Exception("Invalid Activity.");
+            }
+
+            activity.LocationId = activity_json.LocationId;
+            try
+            {
+                activity.ActivityDate = activity_json.ActivityDate;
+            }
+            catch (Exception e)
+            {
+                logger.Debug("Ooops had an error converting date: " + activity_json.ActivityDate);
+                logger.Debug(e.ToString());
+                throw (e);
+            }
+
+            //activity.DatasetId = json.DatasetId;
+            activity.UserId = me.Id;
+            activity.SourceId = activity_json.SourceId;
+            activity.ActivityTypeId = activity_json.ActivityTypeId;
+            activity.InstrumentId = activity_json.InstrumentId;
+            activity.AccuracyCheckId = activity_json.AccuracyCheckId;
+            activity.PostAccuracyCheckId = activity_json.PostAccuracyCheckId;
+            activity.Timezone = activity_json.Timezone;
+
+            db.Entry(activity).State = EntityState.Modified;
+            db.SaveChanges();
+
+            logger.Debug("Updated an activity: ");
+            logger.Debug(" LocationID = " + activity_json.LocationId);
+            logger.Debug(" ActivityDate = " + activity_json.ActivityDate);
+            logger.Debug("  ID = " + activity.Id);
+
+            //now check our activity status -- update it if we've changed.
+            dynamic activityqastatus = activity_json.ActivityQAStatus;
+
+            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.Comments != activityqastatus.Comments.ToString())
+            {
+                QAStatus new_qastatus = db.QAStatuses.Find(activityqastatus.QAStatusId.ToObject<int>());
+
+                //logger.Debug(activity_json.ActivityQAStatus);
+                //logger.Debug(activityqastatus.QAStatusId.ToObject<int>());
+
+                ActivityQA newQA = new ActivityQA();
+                newQA.ActivityId = activity.Id;
+                newQA.QAStatusId = activityqastatus.QAStatusId.ToObject<int>();
+                newQA.Comments = (activityqastatus.Comments != null) ? activityqastatus.Comments.ToString() : null;
+                newQA.EffDt = DateTime.Now;
+                newQA.UserId = activity.UserId;
+                newQA.QAStatusName = new_qastatus.Name;
+                newQA.QAStatusDescription = new_qastatus.Description;
+
+                db.ActivityQAs.Add(newQA);
+                db.SaveChanges();
+
+            }
+
+            return activity;
+
+        }
+
+        //our special case sql that needs to run after inserting a new detail
+        public static string getPostDetailInsertQuerySQL(string tableName, int newActivityId) {
+            var query = "";
+
+            if (tableName == "WaterTemp")
+                query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + tableName + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
+            else if (tableName == "WaterQuality")
+                query = "update Activities set Description = (select concat(convert(varchar,min(SampleDate),111), ' - ', convert(varchar,max(SampleDate),111)) from " + tableName + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
+            else if (tableName == "Genetic")
+                query = @"update Activities set Description = (
+                                        select 
+	                                        case
+		                                        when MinSampleYear = MaxSampleYear then MinSampleYear
+		                                        else MinSampleYear + '-' + MaxSampleYear
+	                                        end as SampleYearRange
+                                        from
+	                                        (select 
+		                                        convert(varchar,min(SampleYear),111) as MinSampleYear, 
+		                                        convert(varchar,max(SampleYear),111) as MaxSampleYear
+	                                        from "+ tableName + @"_Detail_VW 
+	                                        where ActivityId = " + newActivityId + @") a
+                                    ) where Id = " + newActivityId;
+
+            return query;
         }
 
     }

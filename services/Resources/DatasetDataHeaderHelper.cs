@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace services.Resources
-{
+{    
+    /**
+    * Used for inserting new header rows into a dataset header table
+    */
     public class DatasetDataHeaderHelper
     {
         private string targetTable;
@@ -13,7 +16,7 @@ namespace services.Resources
         private List<string> headerFields;
         private List<DatasetField> headerDatasetFields = new List<DatasetField>();
 
-        //create an object that will store our header information and can generate SQL from it
+        //constructor - called once with the header row to introspect the fields so we can generate SQL from it
         public DatasetDataHeaderHelper(Dataset dataset, string table_prefix, JObject header_data)
         {
             targetTable = table_prefix + "_Header";
@@ -60,5 +63,39 @@ namespace services.Resources
             return "INSERT INTO " + targetTable + " (" + string.Join(",", headerFields) + ") VALUES (" + string.Join(",", headerValues) + ")";
 
         }
+
+
+        //bah! to update we insert... because of point-in-time effective dating
+        public string getUpdateQuery(int activityId, int userId){
+
+            var query = "UPDATE " + targetTable + " SET" + 
+                " ActivityId = " + activityId.ToString() + 
+                " ByUserId = " + userId.ToString() +
+                " EffDt = '" + DateTime.Now.ToString() + "'";
+
+            List<string> query_fields = new List<string>();
+
+            foreach (DatasetField prop_field in headerDatasetFields)
+            {
+                if (prop_field.DbColumnName != "ActivityId" && prop_field.DbColumnName != "ByUserId" && prop_field.DbColumnName != "EffDt") //these are already done.
+                {
+                    var objVal = headerData.GetValue(prop_field.DbColumnName);
+
+                    if (objVal == null || objVal.Type == JTokenType.Null)
+                        objVal = "null";
+                    else
+                        objVal = QueryHelper.getStringValueByControlType(prop_field.ControlType, objVal.ToString());
+
+                    query_fields.Add(" " + prop_field.DbColumnName + " = " + objVal);
+
+                }
+            }
+
+            var header_id = ((dynamic)headerData).Id.ToObject<int>();
+
+            return query + string.Join(",", query_fields) + " WHERE Id = " + header_id;
+
+        }
+
     }
 }

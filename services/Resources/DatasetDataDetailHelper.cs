@@ -8,16 +8,18 @@ using System.Linq;
 
 namespace services.Resources
 {
+    /**
+     * Used for inserting new detail rows into a dataset detail table
+    */
     public class DatasetDataDetailHelper
     {
-
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string targetTable;
         private List<string> detailFields;
         private List<DatasetField> detailDatasetFields = new List<DatasetField>();
-        private int rowId;
 
+        //constructor - called once with the first detail row to introspect the fields so we can generate SQL from it
         public DatasetDataDetailHelper(Dataset dataset, string table_prefix, JObject detail_row){
             targetTable = table_prefix + "_Detail";
             detailFields = new List<string> { "ActivityId", "ByUserId", "EffDt","RowStatusId","RowId","QAStatusId" };
@@ -35,26 +37,21 @@ namespace services.Resources
                     detailDatasetFields.Add(the_field);
                 }
             }
-
-            rowId = 1;
-
         }
 
-        public void resetRowId(){
-            rowId = 1;
-        }
-
-        //get an SQL query for inserting a header with these values.
-        public string getInsertQuery(int activityId, int userId, JObject detail)
+        //get an SQL query for inserting a detail record with the incoming values for the row.
+        public string getInsertQuery(int activityId, int userId, JObject detail, int rowId)
         {
             List<string> detailValues = new List<string>();
 
             var QAStatusId = (detail.GetValue("QAStatusId") != null) ? detail.GetValue("QAStatusId") : "1"; //1=ok
+            var RowStatusId = (detail.GetValue("RowStatusId") != null) ? detail.GetValue("RowStatusId") : DataDetail.ROWSTATUS_ACTIVE;
+
 
             detailValues.Add(activityId.ToString());
             detailValues.Add(userId.ToString());
             detailValues.Add("'" + DateTime.Now.ToString() + "'");
-            detailValues.Add(DataDetail.ROWSTATUS_ACTIVE.ToString());
+            detailValues.Add(RowStatusId.ToString());
             detailValues.Add(rowId.ToString());
             detailValues.Add(QAStatusId.ToString());
 
@@ -72,10 +69,8 @@ namespace services.Resources
                     
                 }
             }
-            rowId++;
+
             return "INSERT INTO " + targetTable + " (" + string.Join(",", detailFields) + ") VALUES ( " + string.Join(",", detailValues) + ")";
-
         }
-
     }
 }
