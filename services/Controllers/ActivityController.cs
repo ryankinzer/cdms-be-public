@@ -468,6 +468,12 @@ AND a.datasetid = " + Id;
                 foreach (var detailitem in json.details)
                 {
 
+                    var incomingDetailId = (detailitem["Id"] == null) ? null : detailitem["Id"].ToObject<int>();
+
+                    //if this row isn't new, updated, or deleted then skip it...
+                    if ((incomingDetailId != null) && (!updated_rows.Contains(incomingDetailId) && (!deleted_rows.Contains(incomingDetailId))))
+                        continue;
+
                     //detail helper setup -- only once
                     if(detail == null)
                     {
@@ -482,17 +488,14 @@ AND a.datasetid = " + Id;
 
                     }
 
-                    if (detailitem["Id"] != null && deleted_rows.Contains(detailitem.Id.ToObject<int>()))
+                    if (incomingDetailId != null && deleted_rows.Contains(incomingDetailId))
                     {
-                        logger.Debug("aha ok so we are marking a row as deleted");
-                        logger.Debug("before: " + detailitem["RowStatusId"]);
                         detailitem["RowStatusId"] = DataDetail.ROWSTATUS_DELETED;
-                        logger.Debug("after: " + detailitem["RowStatusId"]);
                     }
 
                     //if we are inserting a new row, use the next RowId otherwise use the existing RowId since we're updating
                     var thisRowId = nextRowId;
-                    if (detailitem["Id"] != null && detailitem.Id.ToObject<int>() != 0) {
+                    if (incomingDetailId != null && incomingDetailId != 0) {
                         thisRowId = detailitem.RowId.ToObject<int>(); //use the row's RowId
                     } else {
                         nextRowId++; //use the next one and increment it
@@ -510,7 +513,7 @@ AND a.datasetid = " + Id;
                         }
                     }
 
-                    if (detailitem["Id"] != null && deleted_rows.Contains(detailitem.Id.ToObject<int>()))
+                    if (incomingDetailId != null && deleted_rows.Contains(incomingDetailId))
                     {
                         //delete any files associated with this detail item if it is deleted.
                         //TODO ------------------------- 8******  Resources.ActivitiesFileHelper.DeleteAllFilesForDetail(detailitem, dataset);

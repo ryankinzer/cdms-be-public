@@ -115,6 +115,7 @@ namespace services.Resources
                 case "select":
                 case "date":
                 case "datetime":
+                case "time":
                     retval = "'" + in_val.Replace("'", "''") + "'";
                     break;
                 default:

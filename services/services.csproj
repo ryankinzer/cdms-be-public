@@ -188,6 +188,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
     <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Controllers\FileController.cs" />

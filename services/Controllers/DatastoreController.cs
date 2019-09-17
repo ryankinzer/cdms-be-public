@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -195,11 +196,17 @@ namespace services.Controllers
 
             User me = AuthorizationManager.getCurrentUser();
 
-            Field df = db.Fields.Find(json.Id.ToObject<int>());
+            Field df = null;
+
+            if (json["Id"] == null)
+                df = new Field();
+            else
+                df = db.Fields.Find(json.Id.ToObject<int>());
 
             if (df == null || me == null)
                 throw new System.Exception("Configuration error. Please try again.");
-            
+
+            df.DatastoreId = json.DatastoreId;
             df.Name = json.Name;
             df.Validation = json.Validation;
             df.Rule = json.Rule;
@@ -211,6 +218,17 @@ namespace services.Controllers
             df.PossibleValues = json.PossibleValues;
             df.Description = json.Description;
             df.DataSource = json.DataSource;
+            df.FieldRoleId = json.FieldRoleId;
+
+            if (json["Id"] == null)
+            {
+                DatabaseColumnHelper.addFieldToDatabase(df);
+                db.Fields.Add(df);
+            }
+            else
+            {
+                db.Entry(df).State = EntityState.Modified;
+            }
 
             db.SaveChanges();
 
