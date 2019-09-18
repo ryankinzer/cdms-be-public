@@ -263,8 +263,6 @@ namespace services.Controllers
             //first let's make sure we can create the tables...
             DatabaseTableHelper.addTablesToDatabase(datastore);
 
-            //TODO add the fields we need...
-
             db.LocationType.Add(loctype);
             db.SaveChanges();
 
