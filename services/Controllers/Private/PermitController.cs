@@ -431,6 +431,13 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
 
             PermitPerson person = db.PermitPerson().Find(json.Id.ToObject<int>());
+
+            var num_permits_with_contact = db.PermitContacts().Where(o => o.PermitPersonId == person.Id).Count();
+            if(num_permits_with_contact > 0)
+            {
+                throw new Exception("There are " + num_permits_with_contact + " Permit records with this person as a contact. You cannot delete this person before removing them.");
+            }
+            
             db.PermitPerson().Remove(person);
             db.SaveChanges();
 
