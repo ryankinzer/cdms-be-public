@@ -508,6 +508,11 @@ namespace services.Controllers.Private
             db.PermitParcels().Add(incoming_parcel);
             db.SaveChanges();
 
+            //update the legal description of the permit with the new list of parcels
+            var permit = db.Permit().Find(incoming_parcel.PermitId);
+            permit.LegalDescription = (permit.LegalDescription != null) ? permit.LegalDescription + "," + incoming_parcel.ParcelId : incoming_parcel.ParcelId;
+            db.Entry(permit).State = EntityState.Modified;
+            db.SaveChanges();
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_parcel);
             return response;

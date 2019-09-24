@@ -134,3 +134,16 @@ go
 
 --above ran on TEST 8/29
 
+-- add rules for fullname concatenation function
+DECLARE @datastoreid int = 0;
+set @datastoreid = (select Id from Datastores where Name = 'Permit Contacts');
+
+update fields set [Rule] = '{"OnChange": "event.scope.updateFullname();"}' 
+where datastoreid = @datastoreid and Name in ('FirstName', 'LastName','Prefix','Suffix')
+
+
+-- update parcel number field label
+update fields set Name = 'Parcel Number(s)', Description = 'The parcel number(s) related to this permit.' where datastoreid = 33 and Name = 'Legal Description';
+update datasetfields set Label = 'Parcel Number(s)' where datasetid = 1281 and Label = 'Legal Description'
+
+--above ran on test 9/23
