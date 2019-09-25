@@ -121,7 +121,7 @@ update datasetfields set controltype = 'select' where datasetid = 1281 and dbcol
 
 UPDATE fields set possiblevalues = '["1N","1S","2N","2S","3N","3S","4N"]' where dbcolumnname = 'SiteTownship' and datastoreid = 33;
 UPDATE fields set possiblevalues = '["32E","33E","34E","35E","36E"]' where dbcolumnname = 'SiteRange' and datastoreid = 33;
-UPDATE fields set possiblevalues = '["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]' where dbcolumnname = 'SiteSection' and datastoreid = 33;
+UPDATE fields set possiblevalues = '["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]' where dbcolumnname = 'SiteSection' and datastoreid = 33;
 UPDATE fields set possiblevalues = '["NE","NW","SW","SE"]' where dbcolumnname in ('SiteQuarter','SiteSixteenth') and datastoreid = 33;
 
 go
@@ -134,3 +134,16 @@ go
 
 --above ran on TEST 8/29
 
+-- add rules for fullname concatenation function
+DECLARE @datastoreid int = 0;
+set @datastoreid = (select Id from Datastores where Name = 'Permit Contacts');
+
+update fields set [Rule] = '{"OnChange": "event.scope.updateFullname();"}' 
+where datastoreid = @datastoreid and Name in ('FirstName', 'LastName','Prefix','Suffix')
+
+
+-- update parcel number field label
+update fields set Name = 'Parcel Number(s)', Description = 'The parcel number(s) related to this permit.' where datastoreid = 33 and Name = 'Legal Description';
+update datasetfields set Label = 'Parcel Number(s)' where datasetid = 1281 and Label = 'Legal Description'
+
+--above ran on test 9/23

@@ -424,8 +424,12 @@ namespace services.Controllers.Private
             dynamic json = jsonData;
 
             Lease lease = json.Lease.ToObject<Lease>();
-            List<int> cropsharestoremove = json.CropShareRemove.ToObject<List<int>>();
-            List<LeaseCropShare> cropshares = json.LeaseCropShares.ToObject<List<LeaseCropShare>>();
+
+            var in_cropsharestoremove = json.GetValue("CropShareRemove");
+            var in_cropshares = json.GetValue("LeaseCropShares");
+
+            List<int> cropsharestoremove = (in_cropsharestoremove == null || in_cropsharestoremove.Type == JTokenType.Null) ? new List<int>() : json.CropShareRemove.ToObject<List<int>>();
+            List<LeaseCropShare> cropshares = (in_cropshares == null || in_cropshares.Type == JTokenType.Null) ? new List<LeaseCropShare>() : json.LeaseCropShares.ToObject<List<LeaseCropShare>>();
 
             string changed_reason = "";
             JToken jt_changed_reason = json.SelectToken("Lease.ChangedReason");
