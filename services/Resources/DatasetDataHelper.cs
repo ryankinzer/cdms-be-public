@@ -51,7 +51,7 @@ namespace services.Resources
             activity.InstrumentId = (activity_json.InstrumentId != null) ? (activity_json.InstrumentId) : null;
             activity.AccuracyCheckId = (activity_json.AccuracyCheckId != null) ? activity_json.AccuracyCheckId : null;
             activity.PostAccuracyCheckId = (activity_json.PostAccuracyCheckId != null) ? activity_json.PostAccuracyCheckId : null;
-            activity.Timezone = (activity_json.Timezone != null) ? activity_json.Timezone.Replace("'", "''") : "";
+            activity.Timezone = (activity_json.Timezone != null) ? activity_json.Timezone : "";
 
             var activity_query = "INSERT INTO Activities (LocationId, ActivityDate, DatasetId, UserId, SourceId, ActivityTypeId, CreateDate, ";
 
