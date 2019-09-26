@@ -147,3 +147,10 @@ update fields set Name = 'Parcel Number(s)', Description = 'The parcel number(s)
 update datasetfields set Label = 'Parcel Number(s)' where datasetid = 1281 and Label = 'Legal Description'
 
 --above ran on test 9/23
+
+-- changes per dani
+update datasetfields set orderindex = 27 where datasetid = 1281 and DbColumnName = 'SiteAddress';
+update datasetfields set orderindex = 28 where datasetid = 1281 and DbColumnName = 'LegalDescription';
+delete from datasetfields where datasetid = 1281 and DbColumnName in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+
+-- above ran on test 9/26
