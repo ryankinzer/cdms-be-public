@@ -1371,50 +1371,6 @@ namespace services.Controllers
             Subproject_Hab spH1 = db.Subproject_Hab().Find(spId);
             Subproject_Hab spH2 = db.Subproject_Hab().Find(spId);
             HabitatItem hi = new HabitatItem();
-            logger.Debug("Created hi...");
-
-
-            /* Per this article:  http://stackoverflow.com/questions/24233104/extract-data-from-json-string
-            *  the cause was that CorrespondenceEvent is an object, within the object.
-            *  Usually, we are dealing with an object with several properties (like ProjectId and SubprojectId).
-            *  This case is different, so we must access the "sub-object differently."
-            *  In this case, we use the SelectToken technique seen below.
-            *  Can we do this more dynamically using a dictionary?  Something to consider down the road...
-            */
-
-            // CorrespondenceDate is required.
-            // First get the date as a string, so that we can easily check if it blank (null or empty).
-            //string strCorrespondenceDate = jsonData.SelectToken(@"CorrespondenceEvent.CorrespondenceDate").Value<string>();
-            //logger.Debug("strCorrespondenceDate = " + strCorrespondenceDate);
-            /*string strCorrespondenceDate = null;
-            try
-            {
-                strCorrespondenceDate = jsonData.SelectToken(@"CorrespondenceEvent.CorrespondenceDate", true).Value<string>();
-                // We know we have a date, so we just process it.
-                try
-                {
-                    DateTime dtCorrespondenceDate = jsonData.SelectToken(@"CorrespondenceEvent.CorrespondenceDate").Value<DateTime>();
-                    ce.CorrespondenceDate = dtCorrespondenceDate;
-
-                    logger.Debug("ce.CorrespondenceDate = " + ce.CorrespondenceDate);
-                }
-                catch (Exception setdateException)
-                {
-                    logger.Debug("Ooops had an error setting the CorrespondenceDate: " + strCorrespondenceDate);
-                    logger.Debug(setdateException.ToString());
-
-                    throw setdateException;
-                }
-            }
-            catch (Exception tokenException)
-            {
-                logger.Debug("Could not find the CorrespondenceDate in the JSON data: " + strCorrespondenceDate);
-                logger.Debug(tokenException.ToString());
-
-                throw tokenException;
-            }
-             */
-
 
             // Spin through the fields passed in; as we find the fields, we will capture the data.
             foreach (var item in json.HabitatItem)
@@ -1469,7 +1425,11 @@ namespace services.Controllers
                 }
             }
 
-            hi.SharingLevel = json.HabitatItem.SharingLevel.ToObject<int>();
+            if (json.HabitatItem.SharingLevel != null)
+                hi.SharingLevel = json.HabitatItem.SharingLevel.ToObject<int>();
+            else
+                hi.SharingLevel = Models.File.SHARINGLEVEL_PRIVATE;
+
             hi.SubprojectId = spId;
             hi.ByUserId = me.Id;
             hi.EffDt = DateTime.Now;
@@ -1512,7 +1472,7 @@ namespace services.Controllers
                 //hi.SubprojectId = spId;
                 //hi.ByUserId = me.Id;
                 //hi.EffDt = DateTime.Now;
-                // Now let's try to save the Habita Item.
+                // Now let's try to save the Habitat Item.
                 if (hi.Id == 0)
                 {
                     // The Id field auto-increments and will not accept a 0; therefore, let's just leave it blank.
@@ -1551,6 +1511,10 @@ namespace services.Controllers
                     db.SaveChanges();
                     logger.Debug("Just saved the DB changes.");
 
+                    if(hi.ItemType == "Geographic File"){
+                        Resources.HabSitesGeospatialFileNotifier.notify(hi,p);
+                    }
+
                     // Now let's save the documents.
 
                     //string root = System.Web.HttpContext.Current.Server.MapPath("~/uploads/subprojects");
@@ -1579,32 +1543,7 @@ namespace services.Controllers
                     //logger.Debug("filepaths = " + filepaths);
 
                     // Get yesterday's date.
-                    DateTime dtYesterday = DateTime.Now.AddDays(-1);
-
-                    /*foreach (string filePath in filepaths)
-                    {
-                        try
-                        {
-                            // It is possible for two or more people to be uploading a file at the same time.
-                            // So they could both have a bodypart showing.
-                            // If the file's LastWriteTime <= yesterday's date, no one is working on it anymore,
-                            // so we can delete it.  Basically, we let the file hang around for a day, 
-                            // so we DO NOT delete a large file that someone is in the process of uploading.
-                            FileInfo aFile = new FileInfo(filePath);
-                            if (aFile.LastWriteTime <= dtYesterday)
-                            {
-                                logger.Debug("Cleaning out (deleting) file: " + filePath);
-                                System.IO.File.Delete(filePath);
-                            }
-                        }
-                        catch (IOException ioException)
-                        {
-                            logger.Debug("Had a problem cleaning out files...");
-                            logger.Debug("Exception Message:  " + ioException.Message);
-                            logger.Debug("Inner Exception Message:  " + ioException.InnerException.Message);
-                        }
-                    }
-                    */
+                    //DateTime dtYesterday = DateTime.Now.AddDays(-1);
                 }
                 catch (System.Exception dbSave)
                 {
