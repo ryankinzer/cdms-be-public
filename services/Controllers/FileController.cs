@@ -838,7 +838,7 @@ namespace services.Controllers
                 //logger.Debug("Starting task setup...");
 
                 if (!Request.Content.IsMimeMultipartContent())
-                    return error("Uploaded filed does not look like a waypoints file");
+                    return error("Uploaded file does not look like a waypoints file");
 
                 var data = new Dictionary<string, Dictionary<string, string>>();
 
