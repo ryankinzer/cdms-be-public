@@ -212,12 +212,12 @@ where p.MetadataEntityId = " + EntityTypeId;
                 var mv = jmv.ToObject<MetadataValue>();
                 mv.UserId = me.Id;
                 metadata.Add(mv);
-                //logger.Debug("Found new metadata: " + mv.MetadataPropertyId + " + + " + mv.Values);
+                logger.Debug("Found new metadata: " + mv.MetadataPropertyId + " + + " + mv.Values);
             }
 
             //fire setMetdata which will handle persisting the metadata
             dataset.Metadata = metadata;
-
+            //db.Entry(dataset).State = EntityState.Modified;
             db.SaveChanges();
 
             return new HttpResponseMessage(HttpStatusCode.OK);

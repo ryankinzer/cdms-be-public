@@ -53,7 +53,7 @@ FROM Fields where DatastoreId = @newdsid;
 go
 
 -- above ran on TEST 8/21/2019
--- NOTE: needed to update the ossible values query in the datasource fields above.
+-- NOTE: needed to update the possible values query in the datasource fields above.
 
 DECLARE @newdsid int = 0;
 DECLARE @projid int = 0;
@@ -141,7 +141,7 @@ set @datastoreid = (select Id from Datastores where Name = 'Permit Contacts');
 update fields set [Rule] = '{"OnChange": "event.scope.updateFullname();"}' 
 where datastoreid = @datastoreid and Name in ('FirstName', 'LastName','Prefix','Suffix')
 
-
+go
 -- update parcel number field label
 update fields set Name = 'Parcel Number(s)', Description = 'The parcel number(s) related to this permit.' where datastoreid = 33 and Name = 'Legal Description';
 update datasetfields set Label = 'Parcel Number(s)' where datasetid = 1281 and Label = 'Legal Description'
@@ -153,4 +153,35 @@ update datasetfields set orderindex = 27 where datasetid = 1281 and DbColumnName
 update datasetfields set orderindex = 28 where datasetid = 1281 and DbColumnName = 'LegalDescription';
 delete from datasetfields where datasetid = 1281 and DbColumnName in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
 
+go
+
 -- above ran on test 9/26
+
+
+-- add ReportingLevel to Metrics_Detail (and all Metrics datasets)
+
+ALTER TABLE [dbo].[Metrics_Detail] ADD ReportingLevel nvarchar(max);
+go
+
+
+-- add the field + dataset field to all existing Metrics datasets
+DECLARE @metricsdatastoreid int = 0;
+DECLARE @fieldid int = 0;
+
+set @metricsdatastoreid = (select Id from Datastores where Name = 'Metrics');
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ReportingLevel','Reporting Level','Reporting Level for this Metric','select',@metricsdatastoreid,2,null,'string','["Primary","Secondary"]',null);
+
+select @fieldid = scope_identity();
+
+-- add the field to each dataset in Metrics
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select d.Id as DatasetId, f.Id as FieldId, f.FieldRoleId, getDate(), f.Name, f.DbColumnName, f.ControlType,  null, 1
+from datasets d join fields f on f.Id = @fieldid
+where d.datastoreid = @metricsdatastoreid
+
+go
+

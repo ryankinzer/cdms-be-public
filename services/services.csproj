@@ -243,6 +243,7 @@
     <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
+    <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitParcel.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitPerson.cs" />
