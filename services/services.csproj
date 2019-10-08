@@ -188,10 +188,10 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
-    <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FishermenController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
@@ -241,6 +241,7 @@
     <Compile Include="Models\Data\Private\Permits\PermitEvent.cs" />
     <Compile Include="Models\Data\Private\Permits\PermitRoute.cs" />
     <Compile Include="Models\NotificationLog.cs" />
+    <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
@@ -385,6 +386,7 @@
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
     <Compile Include="Resources\SubprojectFileHelper.cs" />
+    <Compile Include="Resources\TableDataHelper.cs" />
     <Compile Include="Resources\TSVReader.cs" />
     <Compile Include="Resources\CSVReader.cs" />
     <Compile Include="Resources\EFFileRepository.cs" />

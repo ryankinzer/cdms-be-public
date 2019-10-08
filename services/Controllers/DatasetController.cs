@@ -192,37 +192,6 @@ join datastores ds on d.DatastoreId = ds.Id
             base.Dispose(disposing);
         }
 
-
-        [HttpGet]
-        public dynamic GetTableData(int Id){
-            logger.Debug("Inside GetTableData...");
-            logger.Debug("DatasetId = " + Id);
-
-            var db = ServicesContext.Current;
-
-            var dataset = db.Datasets.Find(Id);
-            if (dataset == null)
-                throw new System.Exception("Dataset could not be found: " + Id);
-
-            var data_table = dataset.Datastore.TablePrefix;
-
-            var sql = @"select * from " + data_table;
-            logger.Debug(sql);
-            DataTable data = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(sql, con))
-                {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(data);
-                }
-            }
-
-            return data;
-        }
-        
         // GET /api/v1/dataset/getheadersdatafordataset/5
         public DataTable GetHeadersDataForDataset(int id)
         {
