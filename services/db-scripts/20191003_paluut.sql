@@ -133,3 +133,7 @@ where d.datastoreid = @metricsdatastoreid
 go
 
 -- ABOVE ran on 10/3 on PALUUT_TEST
+
+-- set default for inactive column
+alter table permitpersons add constraint df_inactive default 0 for inactive
+

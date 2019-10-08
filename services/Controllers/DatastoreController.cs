@@ -252,16 +252,23 @@ namespace services.Controllers
 
             datastore.Name = json.Datastore.Name;
             datastore.Description = json.Datastore.Description;
-            datastore.TablePrefix = json.Datastore.TablePrefix.ToString().Replace(" ","");
+            datastore.TablePrefix = UppercaseFirst(json.Datastore.TablePrefix.ToString().Replace(" ", ""));
             datastore.OwnerUserId = me.Id;
             datastore.DefaultConfig = "{}";
+            datastore.TableType = json.Datastore.TableType;
 
             LocationType loctype = new LocationType();
             loctype.Name = datastore.Name;
             loctype.Description = datastore.Description;
 
             //first let's make sure we can create the tables...
-            DatabaseTableHelper.addTablesToDatabase(datastore);
+            if (json.Datastore.TableType == "Single")
+            {
+                datastore.DefaultConfig = "{'ActivitiesPage':{'Route':'table'}}";
+                DatabaseTableHelper.addSingleToDatabase(datastore);
+            } else {
+                DatabaseTableHelper.addDatasetTablesToDatabase(datastore);
+            }
 
             db.LocationType.Add(loctype);
             db.SaveChanges();
@@ -274,7 +281,16 @@ namespace services.Controllers
             return Request.CreateResponse(HttpStatusCode.Created, datastore);
         }
 
-        
+        static string UppercaseFirst(string s)
+        {
+            // Check for empty string.
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+            // Return char and concat substring.
+            return char.ToUpper(s[0]) + s.Substring(1);
+        }
 
     }
 }

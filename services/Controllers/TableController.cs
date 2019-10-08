@@ -73,7 +73,7 @@ namespace services.Controllers
             if (!project.isOwnerOrEditor(me))
                 throw new Exception("Authorization error.");
 
-            int RecordId = json.TableData.Id.ToObject<int>();
+            int RecordId = (json.TableData.Id == null) ? 0 : json.TableData.Id.ToObject<int>();
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
@@ -132,6 +132,51 @@ namespace services.Controllers
 
             return data;
         }
+
+
+        [HttpPost]
+        public HttpResponseMessage DeleteTableData(JObject jsonData)
+        {
+            logger.Debug("Inside DeleteTableData ");
+
+            var db = ServicesContext.Current;
+
+            dynamic json = jsonData;
+
+            User me = AuthorizationManager.getCurrentUser();
+
+            Dataset dataset = db.Datasets.Find(json.DatasetId.ToObject<int>());
+            if (dataset == null)
+                throw new Exception("Configuration Error.");
+
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (project == null)
+                throw new Exception("Configuration Error.");
+
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
+            if (json.TableData.Id == null)
+                throw new Exception("Configuration Error.");
+
+            int RecordId = json.TableData.Id.ToObject<int>();
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                var query = "DELETE FROM " + dataset.Datastore.TablePrefix + " WHERE ID = " + RecordId;
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
 
     }
 }

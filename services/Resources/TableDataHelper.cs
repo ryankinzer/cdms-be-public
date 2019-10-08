@@ -53,7 +53,7 @@ namespace services.Resources
                     headerValues.Add(QueryHelper.getStringValueByControlType(prop_field.ControlType, objVal.ToString()));
             }
 
-            return "INSERT INTO " + targetTable + " (" + string.Join(",", headerFields) + ") VALUES (" + string.Join(",", headerValues) + "); SELECT SCOPE_IDENTITY;";
+            return "INSERT INTO " + targetTable + " (" + string.Join(",", headerFields) + ") VALUES (" + string.Join(",", headerValues) + "); SELECT SCOPE_IDENTITY();";
 
         }
 
