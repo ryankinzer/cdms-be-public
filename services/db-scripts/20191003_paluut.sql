@@ -332,3 +332,22 @@ INSERT INTO Metrics_CBFishMetrics (CBFishId, MetricName) VALUES
 go
 
 -- create metric field for cb fish metrics dropdown --------------------------------------- END
+
+
+-- update possible values for Permit Events ItemType 
+update fields set possiblevalues = '[{"Id":"CRPP","Label":"CRPP","Group":"Review"},{"Id":"WRP","Label":"WRP","Group":"Review"},{"Id":"BldgCode","Label":"Bldg Code","Group":"Review"},{"Id":"Env","Label":"Env. Health","Group":"Review"},{"Id":"PubWrks","Label":"Pub. Works","Group":"Review"},{"Id":"TERO","Label":"TERO","Group":"Review"},{"Id":"Roads","Label":"County","Group":"Review"},{"Id":"Fire","Label":"Fire Dept.","Group":"Review"},{"Id":"SitePlan","Label":"Site Plan","Group":"Document"},{"Id":"OwnerAuth","Label":"Owner Auth","Group":"Document"},{"Id":"Survey","Label":"Survey","Group":"Document"},{"Id":"PhoneCall","Label":"Phone Call","Group":"Correspondence"},{"Id":"Email","Label":"Email","Group":"Correspondence"},{"Id":"InPerson","Label":"In Person","Group":"Correspondence"},{"Id":"Finance","Label":"Finance","Group":"Finance"},{"Id":"Structural","Label":"Structural","Group":"Inspection"},{"Id":"Electrical","Label":"Electrical","Group":"Inspection"},{"Id":"Plumbing","Label":"Plumbing","Group":"Inspection"},{"Id":"Mechanical","Label":"Mechanical","Group":"Inspection"},{"Id":"Final","Label":"Final","Group":"Inspection"},{"Id":"Other","Label":"Other","Group":"Other"}]' where datastoreid =34 and dbcolumnname = 'ItemType';
+
+-- change FeeReceivedBy to a dropdown from metadata
+DECLARE @entityid int = 0;
+DECLARE @propertyid int = 0;
+
+set @entityid = (select Id from metadataentities where [Name] = 'Permit Fields');
+
+insert into metadataproperties (metadataentityid, [Name], description, Datatype, possiblevalues) VALUES
+(@entityid, 'FeeReceivedBy', 'Fee Received By', 'string','["Leslie Cain","Dani Schulte"]');
+
+set @propertyid = scope_identity();
+
+update fields set controltype = 'select', datasource = concat('select possiblevalues from metadataproperties where id = ',@propertyid) where dbcolumnname = 'FeeReceivedBy' and DatastoreId = 33;
+update datasetfields set controltype = 'select' where dbcolumnname = 'FeeReceivedBy' and datasetid = 1281
+go

@@ -119,7 +119,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.PermitType().AsEnumerable();
+            return db.PermitType().OrderBy(o => o.Name).AsEnumerable();
 
         }
 
