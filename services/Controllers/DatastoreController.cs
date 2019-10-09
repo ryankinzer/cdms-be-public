@@ -264,7 +264,7 @@ namespace services.Controllers
             //first let's make sure we can create the tables...
             if (json.Datastore.TableType == "Single")
             {
-                datastore.DefaultConfig = "{'ActivitiesPage':{'Route':'table'}}";
+                datastore.DefaultConfig = "{\"ActivitiesPage\":{\"Route\":\"table\"}}";
                 DatabaseTableHelper.addSingleToDatabase(datastore);
             } else {
                 DatabaseTableHelper.addDatasetTablesToDatabase(datastore);

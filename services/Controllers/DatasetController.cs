@@ -246,7 +246,7 @@ join datastores ds on d.DatastoreId = ds.Id
             new_ds.CreateDateTime = DateTime.Now;
             new_ds.DefaultActivityQAStatusId = 6;
             new_ds.DatastoreId = ds.Id;
-            new_ds.Config = null;
+            new_ds.Config = (ds.DefaultConfig == null) ? "{}" : ds.DefaultConfig;
 
             //TODO: this should be configured somewhere not hardcoded... ***
 
