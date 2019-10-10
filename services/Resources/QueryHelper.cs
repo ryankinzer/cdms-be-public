@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
+
 namespace services.Resources
 {
     public class QueryHelper
@@ -23,7 +24,6 @@ namespace services.Resources
          */
 
         
-
         //dataset, json, "Query"
         public static DataTable getQueryResults(dynamic datafieldsource, dynamic json, string productTarget) // productTarget is set by the calling method.
         {
@@ -124,24 +124,39 @@ namespace services.Resources
             }
 
             return retval;
-        }
+		}
 
-        //returns an SQL query with conditions for each of the fields in jsonFields
-        // list = getQueryConditions(dataset.Fields, json.Fields) where json.Fields is { DbColumnName: "FieldName", Value: "Value" }
-        // then you might say: var criteria_string = string.Join(" AND ", conditions.ToArray());
-        public static List<string> getQueryConditions(IEnumerable<DatasetField> fields, dynamic jsonFields)
+
+
+		//TRIBAL CDMS EDIT
+		//Checks dynamic object for a key name passed as string
+		public static bool isPropertyExists(dynamic item, string key_name)
+		{
+				
+			string val = (string)item.SelectToken(key_name);
+			if (val == null)
+			{
+				logger.Debug("Nope--property " + key_name + " was not found");
+				return false;
+			}
+				logger.Debug("Yep--property " + key_name + " was found");
+				return true;
+			}
+
+
+
+
+		//returns an SQL query with conditions for each of the fields in jsonFields
+		// list = getQueryConditions(dataset.Fields, json.Fields) where json.Fields is { DbColumnName: "FieldName", Value: "Value" }
+		// then you might say: var criteria_string = string.Join(" AND ", conditions.ToArray());
+		public static List<string> getQueryConditions(IEnumerable<DatasetField> fields, dynamic jsonFields)
         {
-            logger.Debug("Inside QueryHelper, getQueryConditions...");
-            //logger.Debug(json.Fields);
-            //logger.Debug(json.Fields.ToString());
-            //logger.Debug("jsonFields = " + jsonFields);
-
-            var conditions = new List<string>();
+			var conditions = new List<string>();
 
             //fields in the criteria
             foreach (var item in jsonFields)
             {
-                logger.Debug(item);
+                //logger.Debug(item);
                 logger.Debug("Colname!: " + item.DbColumnName);
 
                 //spin through each of our dataset/datastore fields and find a match, adding it to our criteria...
@@ -156,9 +171,10 @@ namespace services.Resources
                         continue;
 
                     logger.Debug("Have a field: " + field.DbColumnName);
+					logger.Debug("Control type: " + field.ControlType.ToString());
 
-                    //if (field == null)
-                    //    throw new Exception("Field not configured properly: " + item.Value);
+					//if (field == null)
+					//    throw new Exception("Field not configured properly: " + item.Value);
 
                     string ControlType = field.ControlType.ToString(); //hmm, can't use directly in a switch.
                     logger.Debug("ControlType = " + ControlType);
@@ -166,9 +182,12 @@ namespace services.Resources
                     var conditional = " = ";
                     var value = "";
 
-                    //now add field criteria to our list...
-                    switch (ControlType)
+					
+
+					//now add field criteria to our list...
+					switch (ControlType)
                     {
+				
                         case "number":
                             value = filterForSQL(item.Value);
                             if (value.ToString().Contains(">") || value.ToString().Contains("<"))
@@ -178,7 +197,10 @@ namespace services.Resources
                             break;
                         case "currency":
                         case "time":
-                        case "easting":
+							//JN - Tribal CDMS 2.0 edit to handle time values
+							conditions.Add(field.DbColumnName + " = '" + item.Value + "'");
+							break;
+						case "easting":
                         case "northing":
                             logger.Debug("A currency, time, northing, or easting");
                             conditions.Add(field.DbColumnName + "=" + filterForSQL(item.Value)); //>100
@@ -242,16 +264,37 @@ namespace services.Resources
                         case "date":
                         case "datetime":
                             logger.Debug("A date!: ");
+
                             if (item.Value.ParamFieldDateType == "between") //otherwise, do nothing with this criteria
                             {
                                 conditions.Add(field.DbColumnName + " between '" + filterForSQL(item.Value.BetweenFromFieldDate, true) + "' and '" + filterForSQL(item.Value.BetweenToFieldDate, true) + "'");
                             }
+
                             break;
-                        case "activity-date": 
-                            conditions.Add("CONVERT(date,'" + filterForSQL(item.Value, true) + "') = CONVERT(date,ActivityDate)");
-                            break;
-                    }
-                }
+                        case "activity-date":
+							logger.Debug("An activity-date!");
+						
+							if (isPropertyExists(item, "Value.ParamFieldDateType"))
+							{
+
+								conditions.Add(field.DbColumnName + " between '" + filterForSQL(item.Value.BetweenFromFieldDate, true) + "' and '" + filterForSQL(item.Value.BetweenToFieldDate, true) + "'");
+								logger.Debug("format as date range query request");
+								break;
+							}
+							else
+							{
+
+								conditions.Add("CONVERT(date,'" + filterForSQL(item.Value, true) + "') = CONVERT(date,ActivityDate)");
+								logger.Debug("format for duplicate checking!");
+								break;
+							}
+
+							//CDMS 2.0 Original code 
+							//Commented out because this only works for duplicate checking and not on the query page
+							//conditions.Add("CONVERT(date,'" + filterForSQL(item.Value, true) + "') = CONVERT(date,ActivityDate)");
+							//break;
+					}
+				}
 
             }
 
