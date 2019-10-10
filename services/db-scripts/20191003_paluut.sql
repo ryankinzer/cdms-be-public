@@ -351,3 +351,10 @@ set @propertyid = scope_identity();
 update fields set controltype = 'select', datasource = concat('select possiblevalues from metadataproperties where id = ',@propertyid) where dbcolumnname = 'FeeReceivedBy' and DatastoreId = 33;
 update datasetfields set controltype = 'select' where dbcolumnname = 'FeeReceivedBy' and datasetid = 1281
 go
+
+--fix an error in some possible values I noticed: 
+update fields set possiblevalues = '["Yes", "No"]' where possiblevalues = '["Yes", "No]';
+
+-- create rule for address length
+update fields set [rule] = '{"OnValidate":"if (value.length>32) row_errors.push(''[SiteAddress] Address must be less than 32 characters'')"}' where datastoreid = 33 and DbColumnName = 'SiteAddress';
+go
