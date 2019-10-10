@@ -50,6 +50,7 @@ namespace services.Models
         [JsonIgnore]
         public virtual FieldRole FieldRole { get; set; }
 
+        [JsonIgnore]
         public virtual Datastore Datastore { get; set; }
 
     }

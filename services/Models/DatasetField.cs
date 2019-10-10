@@ -27,6 +27,7 @@ namespace services.Models
         public int? SourceId { get; set; }
         public int? InstrumentId { get; set; }
         public int? OrderIndex { get; set; }
+        public int? ColumnIndex { get; set; }
 
         public virtual Field Field { get; set; }
 

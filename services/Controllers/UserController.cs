@@ -243,6 +243,23 @@ namespace services.Controllers
             return resp;
         }
 
+        [HttpPost]
+        public Feedback SaveFeedback(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+            Feedback feedback = json.Feedback.ToObject<Feedback>();
+
+            db.Feedback.Add(feedback);
+            db.SaveChanges();
+
+            Resources.FeedbackNotifier.notify(feedback);
+
+            return feedback;
+
+        }
+
+
         // GET /api/v1/user/getmydatasets
         [HttpGet]
         public IEnumerable<Dataset> GetMyDatasets()
@@ -389,6 +406,19 @@ namespace services.Controllers
                                    select u).ToList();
 
             //return userAsEnumerable();
+            return userList.AsEnumerable();
+        }
+
+        // GET api/v1/user/getolcstaff
+        public IEnumerable<User> GetOlcStaff()
+        {
+            logger.Debug("Inside UserController.cs, GetOlcStaff...");
+            var db = ServicesContext.Current;
+            List<User> userList = (from u in db.User
+                                   where u.Inactive == null && u.Roles.Contains("OLC")
+                                   orderby u.Fullname
+                                   select u).ToList();
+
             return userList.AsEnumerable();
         }
 

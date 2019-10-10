@@ -15,5 +15,6 @@ namespace services.Models.Data
         public double? ActualValue { get; set; }
         public string Comments { get; set; }
         public string RVTouchstone { get; set; }
+        public string ReportingLevel  { get; set; }
     }
 }
