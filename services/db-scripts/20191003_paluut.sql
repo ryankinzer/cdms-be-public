@@ -20,7 +20,7 @@ select @fieldid = scope_identity();
 insert into DatasetFields 
 (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
 select
-@newdatasetid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
+@newdsid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
 FROM Fields where Id = @fieldid;
 
 
