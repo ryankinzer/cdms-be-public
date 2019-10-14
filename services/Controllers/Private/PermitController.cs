@@ -283,7 +283,7 @@ namespace services.Controllers.Private
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
-            where p.ExpireDate < dateadd(dd,30,getDate())";
+            where p.ExpireDate < dateadd(dd,30,getDate()) and p.PermitStatus != 'Archived'";
 
             DataTable expires = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -431,6 +431,13 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
 
             PermitPerson person = db.PermitPerson().Find(json.Id.ToObject<int>());
+
+            var num_permits_with_contact = db.PermitContacts().Where(o => o.PermitPersonId == person.Id).Count();
+            if(num_permits_with_contact > 0)
+            {
+                throw new Exception("There are " + num_permits_with_contact + " Permit records with this person as a contact. You cannot delete this person before removing them.");
+            }
+            
             db.PermitPerson().Remove(person);
             db.SaveChanges();
 
@@ -508,6 +515,11 @@ namespace services.Controllers.Private
             db.PermitParcels().Add(incoming_parcel);
             db.SaveChanges();
 
+            //update the legal description of the permit with the new list of parcels
+            var permit = db.Permit().Find(incoming_parcel.PermitId);
+            permit.LegalDescription = (permit.LegalDescription != null) ? permit.LegalDescription + "," + incoming_parcel.ParcelId : incoming_parcel.ParcelId;
+            db.Entry(permit).State = EntityState.Modified;
+            db.SaveChanges();
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_parcel);
             return response;

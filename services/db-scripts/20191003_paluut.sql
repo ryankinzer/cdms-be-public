@@ -1,59 +1,6 @@
-﻿-- Create bona fide "Contacts" dataset for Permits
+﻿-- THIS FILE IS ALREADY RUN ON PALUUT_TEST but not on PALUUT_PROD
+-- archive once it is run on test and commit/merge :)
 
-DECLARE @newdsid int = 0;
-DECLARE @newprojectid int = 0;
-DECLARE @newdatasetid int = 0;
-
-set @newprojectid = (select id from projects where name = 'Permit Project');
-
-
-INSERT into Datastores (Name, Description, OwnerUserId, DefaultConfig)
-values ('Permit Contacts', 'Permit contact fields', 1, '{}');
-select @newdsid = scope_identity();
-
-insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
-values 
-('Organization','Organization','Organization','text',@newdsid,1,null,'string',null,null),
-('FirstName','First Name','First Name','text',@newdsid,1,null,'string',null,null),
-('LastName','Last Name','Last Name','text',@newdsid,1,null,'string',null,null),
-('FullName','Full Name','Full Name','text',@newdsid,1,null,'string',null,null),
-('Prefix','Prefix','Prefix','text',@newdsid,1,null,'string',null,null),
-('Suffix','Suffix','Suffix','text',@newdsid,1,null,'string',null,null),
-('MailingAddress1','Mailing Address1','Mailing Address1','text',@newdsid,1,null,'string',null,null),
-('MailingAddress2','Mailing Address2','Mailing Address2','text',@newdsid,1,null,'string',null,null),
-('MailingCity','Mailing City','Mailing City','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 80','string',null,null),
-('MailingState','Mailing State','Mailing State','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 81','string',null,null),
-('MailingZip','Mailing Zip','MailingZip','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 82','string',null,null),
-('PhysicalAddress1','Physical Address1','Physical Address1','text',@newdsid,1,null,'string',null,null),
-('PhysicalAddress2','Physical Address2','Physical Address2','text',@newdsid,1,null,'string',null,null),
-('PhysicalCity','Physical City','Physical City','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 80','string',null,null),
-('PhysicalState','Physical State','Physical State','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 81','string',null,null),
-('PhysicalZip','Physical Zip','Physical Zip','select',@newdsid,1,'select possiblevalues from metadataproperties where id = 82','string',null,null),
-('HomePhone','Home Phone','Home Phone','text',@newdsid,1,null,'string',null,null),
-('CellPhone','Cell Phone','Cell Phone','text',@newdsid,1,null,'string',null,null),
-('WorkPhone','Work Phone','Work Phone','text',@newdsid,1,null,'string',null,null),
-('Fax','Fax','Fax','text',@newdsid,1,null,'string',null,null),
-('Email','Email','Email','text',@newdsid,1,null,'string',null,null);
-
-
-insert into datasets 
-(ProjectId, DefaultRowQAStatusId, DefaultActivityQAStatusId, StatusId, CreateDateTime, Name, Description, DatastoreId) 
-values 
-(@newprojectid, 1, 5, 1,getdate(),'Permit Contacts','Permit Contacts Form',@newdsid );
-
-select @newdatasetid = scope_identity();
-
-
-insert into DatasetFields 
-(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
-select
-@newdatasetid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
-FROM Fields where DatastoreId = @newdsid;
-
-go
-
--- above ran on TEST 8/21/2019
--- NOTE: needed to update the ossible values query in the datasource fields above.
 
 DECLARE @newdsid int = 0;
 DECLARE @projid int = 0;
@@ -73,7 +20,7 @@ select @fieldid = scope_identity();
 insert into DatasetFields 
 (DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
 select
-@newdatasetid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
+@newdsid, Id, FieldRoleId, getDate(), Name, DbColumnName, ControlType, null ,1
 FROM Fields where Id = @fieldid;
 
 
@@ -121,7 +68,7 @@ update datasetfields set controltype = 'select' where datasetid = 1281 and dbcol
 
 UPDATE fields set possiblevalues = '["1N","1S","2N","2S","3N","3S","4N"]' where dbcolumnname = 'SiteTownship' and datastoreid = 33;
 UPDATE fields set possiblevalues = '["32E","33E","34E","35E","36E"]' where dbcolumnname = 'SiteRange' and datastoreid = 33;
-UPDATE fields set possiblevalues = '["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]' where dbcolumnname = 'SiteSection' and datastoreid = 33;
+UPDATE fields set possiblevalues = '["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"]' where dbcolumnname = 'SiteSection' and datastoreid = 33;
 UPDATE fields set possiblevalues = '["NE","NW","SW","SE"]' where dbcolumnname in ('SiteQuarter','SiteSixteenth') and datastoreid = 33;
 
 go
@@ -134,3 +81,55 @@ go
 
 --above ran on TEST 8/29
 
+-- add rules for fullname concatenation function
+DECLARE @datastoreid int = 0;
+set @datastoreid = (select Id from Datastores where Name = 'Permit Contacts');
+
+update fields set [Rule] = '{"OnChange": "event.scope.updateFullname();"}' 
+where datastoreid = @datastoreid and Name in ('FirstName', 'LastName','Prefix','Suffix')
+
+go
+-- update parcel number field label
+update fields set Name = 'Parcel Number(s)', Description = 'The parcel number(s) related to this permit.' where datastoreid = 33 and Name = 'Legal Description';
+update datasetfields set Label = 'Parcel Number(s)' where datasetid = 1281 and Label = 'Legal Description'
+
+--above ran on test 9/23
+
+-- changes per dani
+update datasetfields set orderindex = 27 where datasetid = 1281 and DbColumnName = 'SiteAddress';
+update datasetfields set orderindex = 28 where datasetid = 1281 and DbColumnName = 'LegalDescription';
+delete from datasetfields where datasetid = 1281 and DbColumnName in ('SiteTownship','SiteRange','SiteSection','SiteQuarter','SiteSixteenth')
+
+go
+
+-- above ran on test 9/26
+
+
+-- add ReportingLevel to Metrics_Detail (and all Metrics datasets)
+
+ALTER TABLE [dbo].[Metrics_Detail] ADD ReportingLevel nvarchar(max);
+go
+
+
+-- add the field + dataset field to all existing Metrics datasets
+DECLARE @metricsdatastoreid int = 0;
+DECLARE @fieldid int = 0;
+
+set @metricsdatastoreid = (select Id from Datastores where Name = 'Metrics');
+
+insert into Fields (DbColumnName, Name, Description, ControlType, DatastoreId, FieldRoleId, DataSource, DataType,PossibleValues,Validation) 	
+values 
+('ReportingLevel','Reporting Level','Reporting Level for this Metric','select',@metricsdatastoreid,2,null,'string','["Primary","Secondary"]',null);
+
+select @fieldid = scope_identity();
+
+-- add the field to each dataset in Metrics
+insert into DatasetFields 
+(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, ControlType,InstrumentId,SourceId) 
+select d.Id as DatasetId, f.Id as FieldId, f.FieldRoleId, getDate(), f.Name, f.DbColumnName, f.ControlType,  null, 1
+from datasets d join fields f on f.Id = @fieldid
+where d.datastoreid = @metricsdatastoreid
+
+go
+
+-- ABOVE ran on 10/3 on PALUUT_TEST

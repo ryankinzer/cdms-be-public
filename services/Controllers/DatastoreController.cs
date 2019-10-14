@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -185,7 +186,7 @@ namespace services.Controllers
         /*
          * update a master field's information (a field on a datastore)
          */ 
-         // POST /api/v1/datastore/savemasterfield
+        // POST /api/v1/datastore/savemasterfield
         [HttpPost]
         public HttpResponseMessage SaveMasterField(JObject jsonData)
         {
@@ -195,11 +196,17 @@ namespace services.Controllers
 
             User me = AuthorizationManager.getCurrentUser();
 
-            Field df = db.Fields.Find(json.Id.ToObject<int>());
+            Field df = null;
+
+            if (json["Id"] == null)
+                df = new Field();
+            else
+                df = db.Fields.Find(json.Id.ToObject<int>());
 
             if (df == null || me == null)
                 throw new System.Exception("Configuration error. Please try again.");
-            
+
+            df.DatastoreId = json.DatastoreId;
             df.Name = json.Name;
             df.Validation = json.Validation;
             df.Rule = json.Rule;
@@ -211,14 +218,63 @@ namespace services.Controllers
             df.PossibleValues = json.PossibleValues;
             df.Description = json.Description;
             df.DataSource = json.DataSource;
+            df.FieldRoleId = json.FieldRoleId;
+
+            if (json["Id"] == null)
+            {
+                DatabaseColumnHelper.addFieldToDatabase(df);
+                db.Fields.Add(df);
+            }
+            else
+            {
+                db.Entry(df).State = EntityState.Modified;
+            }
 
             db.SaveChanges();
 
             return Request.CreateResponse(HttpStatusCode.Created, df);
         }
 
+        // POST /api/v1/datastore/savemasterfield
+        [HttpPost]
+        public HttpResponseMessage SaveNewDatastore(JObject jsonData)
+        {
+            var db = ServicesContext.Current;
 
+            dynamic json = jsonData;
 
+            User me = AuthorizationManager.getCurrentUser();
+
+            if(me == null)
+                throw new System.Exception("Configuration error. Please try again.");
+
+            Datastore datastore = new Datastore();
+
+            datastore.Name = json.Datastore.Name;
+            datastore.Description = json.Datastore.Description;
+            datastore.TablePrefix = json.Datastore.TablePrefix.ToString().Replace(" ","");
+            datastore.OwnerUserId = me.Id;
+            datastore.DefaultConfig = "{}";
+
+            LocationType loctype = new LocationType();
+            loctype.Name = datastore.Name;
+            loctype.Description = datastore.Description;
+
+            //first let's make sure we can create the tables...
+            DatabaseTableHelper.addTablesToDatabase(datastore);
+
+            db.LocationType.Add(loctype);
+            db.SaveChanges();
+
+            datastore.LocationTypeId = loctype.Id.ToString();
+
+            db.Datastores.Add(datastore);
+            db.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.Created, datastore);
+        }
+
+        
 
     }
 }
