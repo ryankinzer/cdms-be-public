@@ -407,6 +407,7 @@
     <Content Include="db-scripts\20190829_WtInstAccCheck_paluut.sql" />
     <Content Include="db-scripts\20191003_paluut.sql" />
     <Content Include="db-scripts\20191008_all.sql" />
+    <Content Include="db-scripts\20191010_paluut.sql" />
     <Content Include="db-scripts\archive\20190815_HabLocUpd_paluut.sql" />
     <Content Include="db-scripts\archive\20190819_WaterChemUpd_paluut.sql" />
     <Content Include="db-scripts\archive\20190725_cdms.sql" />
