@@ -1,4 +1,4 @@
-﻿-- NOT Run on TEST as of 10/10/2019
+﻿-- Run on PALUUT_TEST as of 10/15/19
 
 -- set default for inactive column
 alter table permitpersons add constraint df_inactive default 0 for inactive
@@ -219,4 +219,8 @@ update fields set possiblevalues = '["Yes", "No"]' where possiblevalues = '["Yes
 
 -- create rule for address length
 update fields set [rule] = '{"OnValidate":"if (value.length>32) row_errors.push(''[SiteAddress] Address must be less than 32 characters'')"}' where datastoreid = 33 and DbColumnName = 'SiteAddress';
+go
+
+--remove Legal Description field
+delete from datasetfields where dbcolumnname = 'LegalDescription' and datasetid = 1281;
 go
