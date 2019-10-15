@@ -1,6 +1,4 @@
-﻿-- THIS FILE IS ALREADY RUN ON PALUUT_TEST but not on PALUUT_PROD
--- archive once it is run on test and commit/merge :)
-
+﻿-- THIS FILE IS ALREADY RUN on PALUUT_PROD
 
 DECLARE @newdsid int = 0;
 DECLARE @projid int = 0;

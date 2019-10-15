@@ -13,7 +13,7 @@ namespace services.Resources
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static void addTablesToDatabase(Datastore in_datastore)
+        public static void addDatasetTablesToDatabase(Datastore in_datastore)
         {
             var db = ServicesContext.Current;
 
@@ -77,6 +77,36 @@ namespace services.Resources
                 }
             }
         }
+
+
+        public static void addSingleToDatabase(Datastore in_datastore)
+        {
+            var db = ServicesContext.Current;
+
+            var tableName = in_datastore.TablePrefix;
+
+            var table_query = @"
+                CREATE TABLE [dbo].[" + tableName + @"] (
+                    [Id] [int] NOT NULL IDENTITY,
+                    CONSTRAINT [PK_dbo." + tableName + @"] PRIMARY KEY ([Id])
+                )";
+
+            logger.Debug(table_query);
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand(table_query, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + table_query);
+                        throw new Exception("Failed to execute table create query!");
+                    }
+                }
+            }
+        }
+
 
     }
 }

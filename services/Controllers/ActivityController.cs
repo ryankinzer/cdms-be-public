@@ -20,7 +20,7 @@ namespace services.Controllers
     /**
      * ActivityController - Handles any api requests dealing with activities.
      * 
-     * Any data in a dataset will have belong to an "activity".
+     * Any data in a dataset will belong to an "activity".
      * 
 * **************
 *                NOTE: we have an active feature toggle to switch between EF and SQL versions of saving: Toggle_EFSQL_SaveMode
