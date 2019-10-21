@@ -31,6 +31,10 @@ values
 
 go
 
+ALTER TABLE [dbo].[Metrics_Detail] ADD ReportingMetric nvarchar(max);
+go
+
+
 -- now add the ReportingMetric field to the metrics datastore and all existing metrics datasets
 DECLARE @metricsdatastoreid int = 0;
 DECLARE @fieldid int = 0;
