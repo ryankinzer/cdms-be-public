@@ -33,6 +33,8 @@ namespace services.Models.Data
         public int ObjectId { get; set; }
 
         public string ParcelId { get; set; }
+        public string PLSS { get; set; }
+        public DateTime CreateDate { get; set; }
 
         //relationships
 
@@ -40,6 +42,11 @@ namespace services.Models.Data
         public virtual Permit Permit { get; set; }
 
         public virtual PermitCadasterView Object { get; set; }
+
+        public PermitParcel(){
+            CreateDate = DateTime.Now;
+        }
+
     }
 }
 
