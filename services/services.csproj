@@ -188,6 +188,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Models\Feedback.cs" />
+    <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
@@ -210,27 +212,10 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
-    <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
-    <Compile Include="Models\Data\BiomChannelUnitMetrics_Detail.cs" />
-    <Compile Include="Models\Data\BiomChannelUnitMetrics_Header.cs" />
-    <Compile Include="Models\Data\BiomTier1Metrics.cs" />
-    <Compile Include="Models\Data\BiomTier1Metrics_Detail.cs" />
-    <Compile Include="Models\Data\BiomTier1Metrics_Header.cs" />
-    <Compile Include="Models\Data\BiomTier2Metrics.cs" />
-    <Compile Include="Models\Data\BiomTier2Metrics_Detail.cs" />
-    <Compile Include="Models\Data\BiomTier2Metrics_Header.cs" />
-    <Compile Include="Models\Data\BiomVisitMetrics.cs" />
-    <Compile Include="Models\Data\BiomVisitMetrics_Detail.cs" />
-    <Compile Include="Models\Data\BiomVisitMetrics_Header.cs" />
     <Compile Include="Models\Data\CreelPhone.cs" />
     <Compile Include="Models\Data\CreelPhone_Detail.cs" />
     <Compile Include="Models\Data\CreelPhone_Header.cs" />
-    <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
-    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
-    <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
-    <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
-    <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -344,7 +329,7 @@
     <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
-    <Compile Include="Resources\PermitRouteHelper.cs" />
+    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
@@ -381,11 +366,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906282055113_reset.resx">
-      <DependentUpon>201906282055113_reset.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

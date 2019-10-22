@@ -28,14 +28,14 @@ namespace services.Controllers
             return "{Message: 'Success'}";
         }
 
-        [HttpGet]
-        public dynamic GetNotificationsByModule(string Module)
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            var db = ServicesContext.Current;
+		[HttpGet]
+		public dynamic GetNotificationsByModule(string Module)
+		{
+			User me = AuthorizationManager.getCurrentUser();
+			var db = ServicesContext.Current;
 
-            return db.NotificationLog.Where(o => o.Module == Module).OrderByDescending(o => o.SentDate).Take(50).AsEnumerable();
+			return db.NotificationLog.Where(o => o.Module == Module).OrderByDescending(o => o.SentDate).Take(50).AsEnumerable();
 
-        }
-    }
+		}
+	}
 }
