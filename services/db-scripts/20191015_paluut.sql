@@ -11,3 +11,5 @@ ALTER TABLE [dbo].[PermitParcels]
     ADD CreateDate datetime not null DEFAULT (GETDATE());
 
 go
+
+-- RAN on test 10/22

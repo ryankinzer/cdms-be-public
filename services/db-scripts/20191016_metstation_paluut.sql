@@ -1,4 +1,5 @@
 ﻿-- create MetStation dataset
+-- RAN on test 10/22
 
 CREATE TABLE [dbo].[MetStation_Detail] (
     [Id] [int] NOT NULL IDENTITY,
