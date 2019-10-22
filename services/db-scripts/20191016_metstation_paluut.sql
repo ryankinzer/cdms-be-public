@@ -274,7 +274,7 @@ UNION ALL SELECT
 -- Add in the activity system fields
 INSERT INTO dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, Validation, SourceId, InstrumentId, OrderIndex, ControlType, [Rule])
 SELECT
-    DatasetId       = 1290,
+    DatasetId       = @datasetid,
     FieldId        = f.Id,
     FieldRoleId    = f.FieldRoleId,
     CreateDateTime = GETDATE(),
@@ -288,8 +288,8 @@ SELECT
     [Rule]         = f.[Rule]
 FROM Fields as f WHERE DatastoreId = 23 AND DbColumnName in ('QAStatus','QAComments','LocationId','QAStatusId');
 
-UPDATE DatasetFields set OrderIndex = 500 WHERE DatasetId = 1290 AND DbColumnName = 'QAStatus';
-UPDATE DatasetFields set OrderIndex = 510 WHERE DatasetId = 1290 AND DbColumnName = 'QAComments';
+UPDATE DatasetFields set OrderIndex = 500 WHERE DatasetId = @datasetid AND DbColumnName = 'QAStatus';
+UPDATE DatasetFields set OrderIndex = 510 WHERE DatasetId = @datasetid AND DbColumnName = 'QAComments';
 
 -- Finally, Bulk add the new fields to the dataset -- this will insert a new row for each combination of datasetId and fieldId for the records inserted above
 INSERT INTO dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, Validation, SourceId, InstrumentId, OrderIndex, ControlType, [Rule])
