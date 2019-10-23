@@ -119,7 +119,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.PermitType().AsEnumerable();
+            return db.PermitType().OrderBy(o => o.Name).AsEnumerable();
 
         }
 
@@ -512,14 +512,20 @@ namespace services.Controllers.Private
 
             PermitParcel incoming_parcel = json.PermitParcel.ToObject<PermitParcel>();
 
+            incoming_parcel.PLSS = json.PermitParcel.PLSS_Label; // use the PLSS_Label instead of the PLSS field
+
             db.PermitParcels().Add(incoming_parcel);
             db.SaveChanges();
 
             //update the legal description of the permit with the new list of parcels
+
+            /*
+            * Not maintaining this field anymore          
             var permit = db.Permit().Find(incoming_parcel.PermitId);
             permit.LegalDescription = (permit.LegalDescription != null) ? permit.LegalDescription + "," + incoming_parcel.ParcelId : incoming_parcel.ParcelId;
             db.Entry(permit).State = EntityState.Modified;
             db.SaveChanges();
+            */
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_parcel);
             return response;

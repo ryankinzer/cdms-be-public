@@ -20,7 +20,7 @@ namespace services.Models
             public string LocationTypeId { get; set; } 
             public string DefaultConfig { get; set; }
             public int OwnerUserId { get; set; }
-            //public int? FieldCategoryId { get; set; }  
+            public string TableType { get; set; }
 
             private static Logger logger = LogManager.GetCurrentClassLogger();
 

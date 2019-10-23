@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace services.Resources
-{    
+{
     /**
     * Used for inserting new header rows into a dataset header table
     */
@@ -29,7 +29,8 @@ namespace services.Resources
             foreach (var prop_field in propertyNames)
             {
                 var dataset_field = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field && o.FieldRoleId == 1).SingleOrDefault();
-                if(dataset_field != null){
+                if (dataset_field != null)
+                {
                     headerFields.Add(prop_field);
                     headerDatasetFields.Add(dataset_field);
                 }
@@ -38,7 +39,8 @@ namespace services.Resources
         }
 
         //get an SQL query for inserting a header with these values.
-        public string getInsertQuery(int activityId, int userId){
+        public string getInsertQuery(int activityId, int userId)
+        {
 
             var headerValues = new List<string>();
 
@@ -66,10 +68,11 @@ namespace services.Resources
 
 
         //bah! to update we insert... because of point-in-time effective dating
-        public string getUpdateQuery(int activityId, int userId){
+        public string getUpdateQuery(int activityId, int userId)
+        {
 
-            var query = "UPDATE " + targetTable + " SET" + 
-                " ActivityId = " + activityId.ToString() + 
+            var query = "UPDATE " + targetTable + " SET" +
+                " ActivityId = " + activityId.ToString() +
                 " ByUserId = " + userId.ToString() +
                 " EffDt = '" + DateTime.Now.ToString() + "'";
 
