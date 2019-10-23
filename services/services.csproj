@@ -432,6 +432,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ControllerClassDiagram.cd" />
+    <None Include="Properties\PublishProfiles\cdms-dev.pubxml" />
     <None Include="Properties\PublishProfiles\cdms-local.pubxml" />
     <None Include="Properties\PublishProfiles\cdms2-dev.pubxml" />
     <None Include="Properties\PublishProfiles\cdms2-test-dmz.pubxml" />

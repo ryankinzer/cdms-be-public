@@ -824,6 +824,53 @@ namespace services.Controllers
 
         // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
         // The uploaded files will NOT be saved.
+        // Note:  The Id column may have different names, so we must get the header row, present the columns to the user, and make them choose
+        // the Id column for us to use.
+        // POST /api/v1/file/getwaypointscolheaders
+        [HttpPost]
+        public Task<HttpResponseMessage> GetWaypointsColHeaders()
+        {
+            logger.Debug("Inside HandleWaypoints...");
+
+            List<string> lstFieldItems = new List<string>();
+
+            var provider = new MultipartMemoryStreamProvider();
+
+            var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
+            {
+                //var data = new Dictionary<string, Dictionary<string, string>>();
+
+                foreach (var contents in provider.Contents)
+                {
+                    var csvData = contents.ReadAsStreamAsync();
+                    csvData.Wait();
+                    var res = csvData.Result;
+
+                    var parser = new TextFieldParser(res);
+
+                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                    parser.SetDelimiters(",");
+
+                    var fields = parser.ReadFields();
+
+                    foreach (var f in fields)
+                    {
+                        lstFieldItems.Add(f);
+                    }
+
+                    parser.Close();
+                }
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(JsonConvert.SerializeObject(lstFieldItems), System.Text.Encoding.UTF8, "text/plain");
+                return resp;
+            });
+
+            return task;
+        }
+
+        // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
+        // The uploaded files will NOT be saved.
         // POST /api/v1/file/handlewaypoints
         [HttpPost]
         public Task<HttpResponseMessage> HandleWaypoints()
