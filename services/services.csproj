@@ -246,6 +246,7 @@
     <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
+    <Compile Include="Resources\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
