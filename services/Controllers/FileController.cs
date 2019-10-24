@@ -848,9 +848,34 @@ namespace services.Controllers
                     var res = csvData.Result;
 
                     var parser = new TextFieldParser(res);
-
+                    logger.Debug("Created parser...");
                     parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-                    parser.SetDelimiters(",");
+                    logger.Debug("Set TextFieldType...");
+
+                    StreamReader reader = new StreamReader(res);
+                    logger.Debug("Created reader...");
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    logger.Debug("strLine = " + strLine);
+                    //reader.Close();
+
+                    int intTabLoc = -1;
+                    intTabLoc = strLine.IndexOf("\t");
+                    if (intTabLoc > -1)
+                    {
+                        logger.Debug("We have a tab-delimited file.");
+                        parser.SetDelimiters("\t");
+                    }
+                    else
+                    {
+                        logger.Debug("We have a csv file.");
+                        parser.SetDelimiters(",");
+                    }
+
+                    //var parser = new TextFieldParser(res);
+                    //parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                    //parser.SetDelimiters(",");
+
 
                     var fields = parser.ReadFields();
 
@@ -861,6 +886,72 @@ namespace services.Controllers
 
                     parser.Close();
                 }
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(JsonConvert.SerializeObject(lstFieldItems), System.Text.Encoding.UTF8, "text/plain");
+                return resp;
+            });
+
+            return task;
+        }
+
+        [HttpPost]
+        public Task<HttpResponseMessage> GetWaypointsColHeaders2()
+        {
+            logger.Debug("Inside GetWaypointsColHeaders2...");
+
+            List<string> lstFieldItems = new List<string>();
+            bool blnIsTabDelimited = false;
+            string strDelimitedBy = "";
+
+            var provider = new MultipartMemoryStreamProvider();
+
+            var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
+            {
+                foreach (var contents in provider.Contents)
+                {
+                    var csvData = contents.ReadAsStreamAsync();
+                    csvData.Wait();
+
+                    StreamReader reader = new StreamReader(csvData.Result);
+                    logger.Debug("Created reader...");
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    logger.Debug("strLine = " + strLine);
+                    reader.Close();
+
+                    int intTabLoc = -1;
+                    intTabLoc = strLine.IndexOf("\t");
+                    if (intTabLoc > -1)
+                    {
+                        logger.Debug("We have a tab-delimited file.");
+                        blnIsTabDelimited = true;
+                        strDelimitedBy = "tab";
+                    }
+                    else
+                    {
+                        logger.Debug("We have a csv file.");
+                        strDelimitedBy = "comma";
+                    }
+                    logger.Debug("strDelimitedBy = " + strDelimitedBy);
+
+                    string[] aryFields;
+
+                    if (blnIsTabDelimited)
+                    {
+                        aryFields = strLine.Split('\t');
+                    }
+                    else
+                        aryFields = strLine.Split(',');
+
+                    //foreach (var f in fields)
+                    foreach (var f in aryFields)
+                    {
+                        lstFieldItems.Add(f);
+                    }
+
+                }
+                lstFieldItems.Add(strDelimitedBy);
 
                 var resp = new HttpResponseMessage(HttpStatusCode.OK);
                 resp.Content = new StringContent(JsonConvert.SerializeObject(lstFieldItems), System.Text.Encoding.UTF8, "text/plain");
@@ -886,16 +977,16 @@ namespace services.Controllers
 
             //access form data
             NameValueCollection formData = provider.FormData;
-            logger.Debug("formData.Count = " + formData.Count);
+            //logger.Debug("formData.Count = " + formData.Count);
 
-            foreach (var item in formData)
-            {
-                logger.Debug("item = " + item.ToString());
-            }
+            //foreach (var item in formData)
+            //{
+            //    logger.Debug("item = " + item.ToString());
+            //}
 
             //access files
             IList<HttpContent> files = provider.Files;
-            logger.Debug("files.Count = " + files.Count);
+            //logger.Debug("files.Count = " + files.Count);
 
             //var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
             var task = Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(provider).ContinueWith(o =>
@@ -918,14 +1009,22 @@ namespace services.Controllers
                 string strWaypointIdFieldName = provider.FormData.Get("WaypointIdFieldName");
                 logger.Debug("strWaypointIdFieldName = " + strWaypointIdFieldName);
 
+                string strTheDelimiter = provider.FormData.Get("TheDelimiter");
+                logger.Debug("strTheDelimiter = " + strTheDelimiter);
+
+                char charDelimiter;
+                if (strTheDelimiter == "tab")
+                    charDelimiter = '\t';
+                else
+                    charDelimiter = ',';
+
+
                 //foreach (var contents in provider.Contents)
                 foreach (var contents in provider.Files)
                 {
                     var csvData = contents.ReadAsStreamAsync();
                     csvData.Wait();
-                    var res = csvData.Result;
-
-                    var parser = new TextFieldParser(res);
+                    //var res = csvData.Result;
 
                     var readingHeaderRow = true;
                     var id = -1;
@@ -934,8 +1033,90 @@ namespace services.Controllers
                     var x = -1;
                     var y = -1;
 
+                    StreamReader reader = new StreamReader(csvData.Result);
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    string[] aryFields = strLine.Split(charDelimiter);
+
+                    while (strLine != null)
+                    {
+                        // Figure out which fields we want
+                        if (readingHeaderRow)
+                        {
+                            //var fields = strLine.Split(charDelimiter);
+                            //aryFields = strLine.Split(charDelimiter);
+
+                            var ctr = 0;
+                            //foreach (var f in fields)
+                            foreach (var f in aryFields)
+                            {
+                                logger.Debug("f = " + f);
+                                if (f == strWaypointIdFieldName)
+                                {
+                                    //if (f == "WP_")
+                                    //if (f == strWaypointIdFieldName)
+                                    id = ctr;
+                                    logger.Debug("Found the Id field...");
+                                }
+                                else if (f == "Longitude")
+                                    lng = ctr;
+                                else if (f == "Latitude")
+                                    lat = ctr;
+                                else if (f == "x_proj")
+                                    x = ctr;
+                                else if (f == "y_proj")
+                                    y = ctr;
+                                ctr++;
+                            }
+
+                            if (id == -1)
+                                return error("Could not find waypoint id column");
+                            if (lat == -1)
+                                return error("Could not find lat column");
+                            if (lng == -1)
+                                return error("Could not find long column");
+                            if (x == -1)
+                                return error("Could not find projected x column");
+                            if (y == -1)
+                                return error("Could not find projected y column");
+
+                            readingHeaderRow = false;
+                        }
+                        else    // Parse a data row
+                        {
+                            try
+                            {
+                                var dict = new Dictionary<string, string>();
+                                dict["lat"] = aryFields[lat];
+                                dict["long"] = aryFields[lng];
+                                dict["x"] = aryFields[x];
+                                dict["y"] = aryFields[y];
+                                // Ids look like 1.00000.... sanitize it to 1
+                                data[int.Parse(aryFields[id], NumberStyles.Any).ToString()] = dict;    // Will clobber data if ids are reused
+                            }
+                            catch
+                            {
+                                return error("Could not parse waypoint file");
+                            }
+                        }
+                        strLine = reader.ReadLine();
+                        if (!string.IsNullOrEmpty(strLine))
+                            aryFields = strLine.Split(charDelimiter);
+                    }
+                    reader.Close();
+
+                    //var parser = new TextFieldParser(res);
+                    /*
+                    var readingHeaderRow = true;
+                    var id = -1;
+                    var lat = -1;
+                    var lng = -1;
+                    var x = -1;
+                    var y = -1;
+                    
                     parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
                     parser.SetDelimiters(",");
+
                     while (!parser.EndOfData)
                     {
                         var fields = parser.ReadFields();
@@ -946,7 +1127,7 @@ namespace services.Controllers
                             var ctr = 0;
                             foreach (var f in fields)
                             {
-                                //logger.Debug("f = " + f);
+                                logger.Debug("f = " + f);
                                 if (f == strWaypointIdFieldName)
                                 {
                                     //if (f == "WP_")
@@ -996,6 +1177,7 @@ namespace services.Controllers
                         }
                     }
                     parser.Close();
+                    */
                 }
 
                 var resp = new HttpResponseMessage(HttpStatusCode.OK);
