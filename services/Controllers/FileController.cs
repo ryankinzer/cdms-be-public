@@ -857,7 +857,7 @@ namespace services.Controllers
                     string strLine = "";
                     strLine = reader.ReadLine();
                     logger.Debug("strLine = " + strLine);
-                    //reader.Close();
+                    reader.Close();
 
                     int intTabLoc = -1;
                     intTabLoc = strLine.IndexOf("\t");
@@ -895,6 +895,11 @@ namespace services.Controllers
             return task;
         }
 
+        // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
+        // The uploaded files will NOT be saved.
+        // Note:  The Id column may have different names, so we must get the header row, present the columns to the user, and make them choose
+        // the Id column for us to use.
+        // POST /api/v1/file/getwaypointscolheaders
         [HttpPost]
         public Task<HttpResponseMessage> GetWaypointsColHeaders2()
         {
@@ -951,6 +956,8 @@ namespace services.Controllers
                     }
 
                 }
+
+                // Add the delimiter onto the end of the array.  In the frontend, we will remove the delimiter.
                 lstFieldItems.Add(strDelimitedBy);
 
                 var resp = new HttpResponseMessage(HttpStatusCode.OK);
@@ -971,46 +978,26 @@ namespace services.Controllers
         {
             logger.Debug("Inside HandleWaypoints2...");
 
-            //var provider = new MultipartMemoryStreamProvider();
-            //var provider = Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(new InMemoryMultipartFormDataStreamProvider());
             var provider = new InMemoryMultipartFormDataStreamProvider();
 
-            //access form data
-            NameValueCollection formData = provider.FormData;
-            //logger.Debug("formData.Count = " + formData.Count);
-
-            //foreach (var item in formData)
-            //{
-            //    logger.Debug("item = " + item.ToString());
-            //}
-
-            //access files
-            IList<HttpContent> files = provider.Files;
-            //logger.Debug("files.Count = " + files.Count);
-
-            //var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
             var task = Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(provider).ContinueWith(o =>
-            //var task = Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(files[0]).ContinueWith(o =>
             {
                 logger.Debug("Inside task part...");
 
                 if (!Request.Content.IsMimeMultipartContent())
                     return error("Uploaded file does not look like a waypoints file");
                 else if (!Request.Content.IsMimeMultipartContent("form-data"))
-                //if (!Request.Content.IsMimeMultipartContent())
                 {
-                    //throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-                    //throw new HttpResponseException(HttpStatusCode.BadRequest);
                     return error("Missing the Waypoint Id Column.");
                 }
 
                 var data = new Dictionary<string, Dictionary<string, string>>();
 
                 string strWaypointIdFieldName = provider.FormData.Get("WaypointIdFieldName");
-                logger.Debug("strWaypointIdFieldName = " + strWaypointIdFieldName);
+                //logger.Debug("strWaypointIdFieldName = " + strWaypointIdFieldName);
 
                 string strTheDelimiter = provider.FormData.Get("TheDelimiter");
-                logger.Debug("strTheDelimiter = " + strTheDelimiter);
+                //logger.Debug("strTheDelimiter = " + strTheDelimiter);
 
                 char charDelimiter;
                 if (strTheDelimiter == "tab")
@@ -1019,12 +1006,10 @@ namespace services.Controllers
                     charDelimiter = ',';
 
 
-                //foreach (var contents in provider.Contents)
                 foreach (var contents in provider.Files)
                 {
                     var csvData = contents.ReadAsStreamAsync();
                     csvData.Wait();
-                    //var res = csvData.Result;
 
                     var readingHeaderRow = true;
                     var id = -1;
@@ -1053,10 +1038,8 @@ namespace services.Controllers
                                 logger.Debug("f = " + f);
                                 if (f == strWaypointIdFieldName)
                                 {
-                                    //if (f == "WP_")
-                                    //if (f == strWaypointIdFieldName)
                                     id = ctr;
-                                    logger.Debug("Found the Id field...");
+                                    //logger.Debug("Found the Id field...");
                                 }
                                 else if (f == "Longitude")
                                     lng = ctr;
@@ -1104,80 +1087,6 @@ namespace services.Controllers
                             aryFields = strLine.Split(charDelimiter);
                     }
                     reader.Close();
-
-                    //var parser = new TextFieldParser(res);
-                    /*
-                    var readingHeaderRow = true;
-                    var id = -1;
-                    var lat = -1;
-                    var lng = -1;
-                    var x = -1;
-                    var y = -1;
-                    
-                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-                    parser.SetDelimiters(",");
-
-                    while (!parser.EndOfData)
-                    {
-                        var fields = parser.ReadFields();
-
-                        // Figure out which fields we want
-                        if (readingHeaderRow)
-                        {
-                            var ctr = 0;
-                            foreach (var f in fields)
-                            {
-                                logger.Debug("f = " + f);
-                                if (f == strWaypointIdFieldName)
-                                {
-                                    //if (f == "WP_")
-                                    //if (f == strWaypointIdFieldName)
-                                    id = ctr;
-                                }
-                                else if (f == "Longitude")
-                                    lng = ctr;
-                                else if (f == "Latitude")
-                                    lat = ctr;
-                                else if (f == "x_proj")
-                                    x = ctr;
-                                else if (f == "y_proj")
-                                    y = ctr;
-                                ctr++;
-                            }
-
-                            if (id == -1)
-                                return error("Could not find waypoint id column");
-                            if (lat == -1)
-                                return error("Could not find lat column");
-                            if (lng == -1)
-                                return error("Could not find long column");
-                            if (x == -1)
-                                return error("Could not find projected x column");
-                            if (y == -1)
-                                return error("Could not find projected y column");
-
-                            readingHeaderRow = false;
-                        }
-                        else    // Parse a data row
-                        {
-                            try
-                            {
-                                var dict = new Dictionary<string, string>();
-                                dict["lat"] = fields[lat];
-                                dict["long"] = fields[lng];
-                                dict["x"] = fields[x];
-                                dict["y"] = fields[y];
-                                // Ids look like 1.00000.... sanitize it to 1
-                                data[int.Parse(fields[id], NumberStyles.Any).ToString()] = dict;    // Will clobber data if ids are reused
-                            }
-                            catch
-                            {
-                                return error("Could not parse waypoint file");
-                            }
-                        }
-                    }
-                    parser.Close();
-                    */
                 }
 
                 var resp = new HttpResponseMessage(HttpStatusCode.OK);
