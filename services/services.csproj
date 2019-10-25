@@ -246,6 +246,7 @@
     <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
+    <Compile Include="Resources\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
@@ -441,6 +442,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ControllerClassDiagram.cd" />
+    <None Include="Properties\PublishProfiles\cdms-dev.pubxml" />
     <None Include="Properties\PublishProfiles\cdms-local.pubxml" />
     <None Include="Properties\PublishProfiles\cdms2-dev.pubxml" />
     <None Include="Properties\PublishProfiles\cdms2-test-dmz.pubxml" />
