@@ -5,6 +5,7 @@ using services.Models;
 using services.Resources;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.Entity;
 using System.Globalization;
 using System.IO;
@@ -824,6 +825,280 @@ namespace services.Controllers
 
         // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
         // The uploaded files will NOT be saved.
+        // Note:  The Id column may have different names, so we must get the header row, present the columns to the user, and make them choose
+        // the Id column for us to use.
+        // POST /api/v1/file/getwaypointscolheaders
+        [HttpPost]
+        public Task<HttpResponseMessage> GetWaypointsColHeaders()
+        {
+            logger.Debug("Inside GetWaypointsColHeaders...");
+
+            List<string> lstFieldItems = new List<string>();
+
+            var provider = new MultipartMemoryStreamProvider();
+
+            var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
+            {
+                //var data = new Dictionary<string, Dictionary<string, string>>();
+
+                foreach (var contents in provider.Contents)
+                {
+                    var csvData = contents.ReadAsStreamAsync();
+                    csvData.Wait();
+                    var res = csvData.Result;
+
+                    var parser = new TextFieldParser(res);
+                    logger.Debug("Created parser...");
+                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                    logger.Debug("Set TextFieldType...");
+
+                    StreamReader reader = new StreamReader(res);
+                    logger.Debug("Created reader...");
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    logger.Debug("strLine = " + strLine);
+                    reader.Close();
+
+                    int intTabLoc = -1;
+                    intTabLoc = strLine.IndexOf("\t");
+                    if (intTabLoc > -1)
+                    {
+                        logger.Debug("We have a tab-delimited file.");
+                        parser.SetDelimiters("\t");
+                    }
+                    else
+                    {
+                        logger.Debug("We have a csv file.");
+                        parser.SetDelimiters(",");
+                    }
+
+                    //var parser = new TextFieldParser(res);
+                    //parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                    //parser.SetDelimiters(",");
+
+
+                    var fields = parser.ReadFields();
+
+                    foreach (var f in fields)
+                    {
+                        lstFieldItems.Add(f);
+                    }
+
+                    parser.Close();
+                }
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(JsonConvert.SerializeObject(lstFieldItems), System.Text.Encoding.UTF8, "text/plain");
+                return resp;
+            });
+
+            return task;
+        }
+
+        // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
+        // The uploaded files will NOT be saved.
+        // Note:  The Id column may have different names, so we must get the header row, present the columns to the user, and make them choose
+        // the Id column for us to use.
+        // POST /api/v1/file/getwaypointscolheaders
+        [HttpPost]
+        public Task<HttpResponseMessage> GetWaypointsColHeaders2()
+        {
+            logger.Debug("Inside GetWaypointsColHeaders2...");
+
+            List<string> lstFieldItems = new List<string>();
+            bool blnIsTabDelimited = false;
+            string strDelimitedBy = "";
+
+            var provider = new MultipartMemoryStreamProvider();
+
+            var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
+            {
+                foreach (var contents in provider.Contents)
+                {
+                    var csvData = contents.ReadAsStreamAsync();
+                    csvData.Wait();
+
+                    StreamReader reader = new StreamReader(csvData.Result);
+                    logger.Debug("Created reader...");
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    logger.Debug("strLine = " + strLine);
+                    reader.Close();
+
+                    int intTabLoc = -1;
+                    intTabLoc = strLine.IndexOf("\t");
+                    if (intTabLoc > -1)
+                    {
+                        logger.Debug("We have a tab-delimited file.");
+                        blnIsTabDelimited = true;
+                        strDelimitedBy = "tab";
+                    }
+                    else
+                    {
+                        logger.Debug("We have a csv file.");
+                        strDelimitedBy = "comma";
+                    }
+                    logger.Debug("strDelimitedBy = " + strDelimitedBy);
+
+                    string[] aryFields;
+
+                    if (blnIsTabDelimited)
+                    {
+                        aryFields = strLine.Split('\t');
+                    }
+                    else
+                        aryFields = strLine.Split(',');
+
+                    //foreach (var f in fields)
+                    foreach (var f in aryFields)
+                    {
+                        lstFieldItems.Add(f);
+                    }
+
+                }
+
+                // Add the delimiter onto the end of the array.  In the frontend, we will remove the delimiter.
+                lstFieldItems.Add(strDelimitedBy);
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(JsonConvert.SerializeObject(lstFieldItems), System.Text.Encoding.UTF8, "text/plain");
+                return resp;
+            });
+
+            return task;
+        }
+
+        // After selecting the column that contains the Waypoint Id, users can upload waypoints,
+        // and the app will use the specified column as the Id column.
+        // The data will be extracted, converted to json, then sent back to the browser in the response.
+        // The uploaded files will NOT be saved.
+        // POST /api/v1/file/handlewaypoints2
+        [HttpPost]
+        public Task<HttpResponseMessage> HandleWaypoints2()
+        {
+            logger.Debug("Inside HandleWaypoints2...");
+
+            var provider = new InMemoryMultipartFormDataStreamProvider();
+
+            var task = Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(provider).ContinueWith(o =>
+            {
+                logger.Debug("Inside task part...");
+
+                if (!Request.Content.IsMimeMultipartContent())
+                    return error("Uploaded file does not look like a waypoints file");
+                else if (!Request.Content.IsMimeMultipartContent("form-data"))
+                {
+                    return error("Missing the Waypoint Id Column.");
+                }
+
+                var data = new Dictionary<string, Dictionary<string, string>>();
+
+                string strWaypointIdFieldName = provider.FormData.Get("WaypointIdFieldName");
+                //logger.Debug("strWaypointIdFieldName = " + strWaypointIdFieldName);
+
+                string strTheDelimiter = provider.FormData.Get("TheDelimiter");
+                //logger.Debug("strTheDelimiter = " + strTheDelimiter);
+
+                char charDelimiter;
+                if (strTheDelimiter == "tab")
+                    charDelimiter = '\t';
+                else
+                    charDelimiter = ',';
+
+
+                foreach (var contents in provider.Files)
+                {
+                    var csvData = contents.ReadAsStreamAsync();
+                    csvData.Wait();
+
+                    var readingHeaderRow = true;
+                    var id = -1;
+                    var lat = -1;
+                    var lng = -1;
+                    var x = -1;
+                    var y = -1;
+
+                    StreamReader reader = new StreamReader(csvData.Result);
+                    string strLine = "";
+                    strLine = reader.ReadLine();
+                    string[] aryFields = strLine.Split(charDelimiter);
+
+                    while (strLine != null)
+                    {
+                        // Figure out which fields we want
+                        if (readingHeaderRow)
+                        {
+                            //var fields = strLine.Split(charDelimiter);
+                            //aryFields = strLine.Split(charDelimiter);
+
+                            var ctr = 0;
+                            //foreach (var f in fields)
+                            foreach (var f in aryFields)
+                            {
+                                logger.Debug("f = " + f);
+                                if (f == strWaypointIdFieldName)
+                                {
+                                    id = ctr;
+                                    //logger.Debug("Found the Id field...");
+                                }
+                                else if (f == "Longitude")
+                                    lng = ctr;
+                                else if (f == "Latitude")
+                                    lat = ctr;
+                                else if (f == "x_proj")
+                                    x = ctr;
+                                else if (f == "y_proj")
+                                    y = ctr;
+                                ctr++;
+                            }
+
+                            if (id == -1)
+                                return error("Could not find waypoint id column");
+                            if (lat == -1)
+                                return error("Could not find lat column");
+                            if (lng == -1)
+                                return error("Could not find long column");
+                            if (x == -1)
+                                return error("Could not find projected x column");
+                            if (y == -1)
+                                return error("Could not find projected y column");
+
+                            readingHeaderRow = false;
+                        }
+                        else    // Parse a data row
+                        {
+                            try
+                            {
+                                var dict = new Dictionary<string, string>();
+                                dict["lat"] = aryFields[lat];
+                                dict["long"] = aryFields[lng];
+                                dict["x"] = aryFields[x];
+                                dict["y"] = aryFields[y];
+                                // Ids look like 1.00000.... sanitize it to 1
+                                data[int.Parse(aryFields[id], NumberStyles.Any).ToString()] = dict;    // Will clobber data if ids are reused
+                            }
+                            catch
+                            {
+                                return error("Could not parse waypoint file");
+                            }
+                        }
+                        strLine = reader.ReadLine();
+                        if (!string.IsNullOrEmpty(strLine))
+                            aryFields = strLine.Split(charDelimiter);
+                    }
+                    reader.Close();
+                }
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "text/plain");
+                return resp;
+            });
+
+            return task;
+        }
+
+        // Users can upload waypoints; the data will be extracted, converted to json, then sent back to the browser in the response.
+        // The uploaded files will NOT be saved.
         // POST /api/v1/file/handlewaypoints
         [HttpPost]
         public Task<HttpResponseMessage> HandleWaypoints()
@@ -844,6 +1119,8 @@ namespace services.Controllers
 
                 foreach (var contents in provider.Contents)
                 {
+                    logger.Debug("contents = " + contents.ToString());
+
                     var csvData = contents.ReadAsStreamAsync();
                     csvData.Wait();
                     var res = csvData.Result;

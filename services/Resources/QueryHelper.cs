@@ -247,8 +247,15 @@ namespace services.Resources
                                 conditions.Add(field.DbColumnName + " between '" + filterForSQL(item.Value.BetweenFromFieldDate, true) + "' and '" + filterForSQL(item.Value.BetweenToFieldDate, true) + "'");
                             }
                             break;
-                        case "activity-date": 
-                            conditions.Add("CONVERT(date,'" + filterForSQL(item.Value, true) + "') = CONVERT(date,ActivityDate)");
+                        case "activity-date":
+                            if (item.Value.ParamFieldDateType == "between") //otherwise, do nothing with this criteria
+                            {
+                                conditions.Add(field.DbColumnName + " between '" + filterForSQL(item.Value.BetweenFromFieldDate, true) + "' and '" + filterForSQL(item.Value.BetweenToFieldDate, true) + "'");
+                            }
+                            else
+                            {
+                                conditions.Add("CONVERT(date,'" + filterForSQL(item.Value, true) + "') = CONVERT(date,ActivityDate)");
+                            }
                             break;
                     }
                 }
