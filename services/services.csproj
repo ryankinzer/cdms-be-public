@@ -189,9 +189,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\201910292229533_reset.cs" />
-    <Compile Include="Migrations\201910292229533_reset.Designer.cs">
-      <DependentUpon>201910292229533_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201910292247034_reset.cs" />
+    <Compile Include="Migrations\201910292247034_reset.Designer.cs">
+      <DependentUpon>201910292247034_reset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910292250256_SfDetailAddWaypointNumber.cs" />
+    <Compile Include="Migrations\201910292250256_SfDetailAddWaypointNumber.Designer.cs">
+      <DependentUpon>201910292250256_SfDetailAddWaypointNumber.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -451,8 +455,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910292229533_reset.resx">
-      <DependentUpon>201910292229533_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910292247034_reset.resx">
+      <DependentUpon>201910292247034_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910292250256_SfDetailAddWaypointNumber.resx">
+      <DependentUpon>201910292250256_SfDetailAddWaypointNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
