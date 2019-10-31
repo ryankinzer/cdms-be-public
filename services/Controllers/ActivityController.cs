@@ -891,7 +891,7 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage SaveDatasetActivitiesConnector(JObject jsonData)
         {
-            return SaveDatasetActivities(jsonData);
+            return SaveDatasetActivities_SQL(jsonData);
         }
 
         //kb 9/19 - new sql version of saving activities - not dependent on EF 
