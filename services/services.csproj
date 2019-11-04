@@ -409,6 +409,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\20191029_SfAddWaypoints_paluut.sql" />
     <Content Include="db-scripts\archive\20191015_paluut.sql" />
     <Content Include="db-scripts\archive\20191016_metstation_paluut.sql" />
     <Content Include="db-scripts\archive\20191003_paluut.sql" />
