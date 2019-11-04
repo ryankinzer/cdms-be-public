@@ -12,5 +12,6 @@ namespace services.Models.Data
         public string ProtocolID { get; set; }
         public string SiteName { get; set; }
         public int? VisitID { get; set; }
+        public string SampleID { get; set; }
     }
 }

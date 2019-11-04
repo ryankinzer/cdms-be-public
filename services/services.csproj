@@ -189,6 +189,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
+    <Compile Include="Migrations\201911041620253_reset.cs" />
+    <Compile Include="Migrations\201911041620253_reset.Designer.cs">
+      <DependentUpon>201911041620253_reset.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
@@ -217,10 +221,6 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\201906282055113_reset.cs" />
-    <Compile Include="Migrations\201906282055113_reset.Designer.cs">
-      <DependentUpon>201906282055113_reset.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
@@ -412,6 +412,8 @@
     <Content Include="db-scripts\20191015_paluut.sql" />
     <Content Include="db-scripts\20191016_metstation_paluut.sql" />
     <Content Include="db-scripts\20191030_paluut.sql" />
+    <Content Include="db-scripts\20191104_biomMetricsFields.sql" />
+    <Content Include="db-scripts\20191104_paluut_biomMetricsUpdate.sql" />
     <Content Include="db-scripts\archive\20191003_paluut.sql" />
     <Content Include="db-scripts\20191008_all.sql" />
     <Content Include="db-scripts\20191010_paluut.sql" />
@@ -465,8 +467,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906282055113_reset.resx">
-      <DependentUpon>201906282055113_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911041620253_reset.resx">
+      <DependentUpon>201911041620253_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

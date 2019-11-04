@@ -1,4 +1,5 @@
-﻿using System;
+﻿using services.Resources.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,152 +8,439 @@ namespace services.Models.Data
 {
     public class BiomVisitMetrics_Detail : DataDetail
     {
-        public int? Alkalinity { get; set; }
-        public decimal? BankErosion { get; set; }
-        public decimal? BankfullArea { get; set; }
-        public decimal? BankfullChannelBraidedness { get; set; }
+        //added 11/4/19 kb
+        public string MetricSchemaCanonicalName { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLWDVolumeStdDev { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullLWDVolumeStdDev { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLargeWoodVolumeBySite { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullLargeWoodVolumeBySite { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLargeWoodVolumeInPools { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullLargeWoodVolumeInPools { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLargeWoodVolumeInFastTurbulent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullLargeWoodVolumeInFastTurbulent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLargeWoodVolumeInFastNonTurbulent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullLargeWoodVolumeInFastNonTurbulent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfOtherSpecies { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? LWVBankfull_SW { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentGroundCoverNoCover { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastWaterCobbleEmbeddednessAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastWaterCobbleEmbeddednessStdDev { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SiteLength { get; set; }
+        // end added
+
+        public int? SiteMeasurementOfAlkalinity { get; set; } //renamed
         public int? BankfullChannelCount { get; set; }
         public int? BankfullChannelIslandCount { get; set; }
-        public decimal? BankfullChannelQualifyingIslandArea { get; set; }
         public int? BankfullChannelQualifyingIslandCount { get; set; }
-        public decimal? BankfullChannelTotalLength { get; set; }
-        public decimal? BankfullDepthAvg { get; set; }
-        public decimal? BankfullDepthMax { get; set; }
         public int? BankfullMainChannelPartCount { get; set; }
-        public decimal? BankfullSideChannelWidth { get; set; }
-        public decimal? BankfullSideChannelWidthCV { get; set; }
-        public decimal? BankfullSideChannelWidthToDepthRatioAvg { get; set; }
-        public decimal? BankfullSideChannelWidthToDepthRatioCV { get; set; }
-        public decimal? BankfullSideChannelWidthToMaxDepthRatioAvg { get; set; }
-        public decimal? BankfullSideChannelWidthToMaxDepthRatioCV { get; set; }
-        public decimal? BankfullSiteLength { get; set; }
-        public decimal? BankfullVolume { get; set; }
-        public decimal? BankfullWidthAvg { get; set; }
-        public decimal? BankfullWidthCV { get; set; }
-        public decimal? BankfullWidthIntegrated { get; set; }
-        public decimal? BankfullWidthToDepthRatioAvg { get; set; }
-        public decimal? BankfullWidthToDepthRatioCV { get; set; }
-        public decimal? BankfullWidthToMaxDepthRatioAvg { get; set; }
-        public decimal? BankfullWidthToMaxDepthRatioCV { get; set; }
-        public decimal? BraidChannelRatio { get; set; }
-        public decimal? Conductivity { get; set; }
-        public decimal? ConstrainingFeatureHeightAverage { get; set; }
         public int? CountOfBrooktrout { get; set; }
         public int? CountOfBulltrout { get; set; }
         public int? CountOfChinook { get; set; }
         public int? CountOfChum { get; set; }
         public int? CountOfCoho { get; set; }
         public int? CountOfCutthroat { get; set; }
-        public int? CountOfJamLargeWoodyPieces { get; set; }
-        public int? CountOfKeyLargeWoodyPieces { get; set; }
-        public int? CountOfLamprey { get; set; }
-        public int? CountOfLargeWoodyPieces { get; set; }
-        public int? CountOfLeftBankLargeWoodyPieces { get; set; }
-        public int? CountOfMidChannelLargeWoodyPieces { get; set; }
         public int? CountOfOmykiss { get; set; }
         public int? CountOfOtherSpecies { get; set; }
         public int? CountOfPink { get; set; }
-        public int? CountOfPoolFormingLargeWoodyPieces { get; set; }
-        public int? CountOfRightBankLargeWoodyPieces { get; set; }
         public int? CountOfSockeye { get; set; }
-        public decimal? DensityOfBrooktrout { get; set; }
-        public decimal? DensityOfBulltrout { get; set; }
-        public decimal? DensityOfChinook { get; set; }
-        public decimal? DensityOfChum { get; set; }
-        public decimal? DensityOfCoho { get; set; }
-        public decimal? DensityOfCutthroat { get; set; }
-        public decimal? DensityOfLamprey { get; set; }
-        public decimal? DensityOfOmykiss { get; set; }
-        public decimal? DensityOfPink { get; set; }
-        public decimal? DensityOfSockeye { get; set; }
-        public decimal? DetrendedElevationSD { get; set; }
-        public decimal? Discharge { get; set; }
-        public decimal? DriftBiomass { get; set; }
-        public decimal? FastNonTurbulentArea { get; set; }
+        public int? CountOfLamprey { get; set; }
+        public int? LargeWoodyPiecesCountPoolForming { get; set; } //renamed
+        public int? LargeWoodyPiecesCountRightBank { get; set; } //renamed
+        public int? LargeWoodyPiecesCountIsJam { get; set; } //renamed
+        public int? LargeWoodyPiecesCountIsKey { get; set; } //renamed
+        public int? LargeWoodyPiecesCount { get; set; } //renamed
+        public int? LargeWoodyPiecesCountLeftBank { get; set; } //renamed
+        public int? LargeWoodyPiecesCountMidChannel { get; set; } //renamed
         public int? FastNonTurbulentCount { get; set; }
-        public decimal? FastNonTurbulentFrequency { get; set; }
-        public decimal? FastNonTurbulentPercent { get; set; }
-        public decimal? FastNonTurbulentVolume { get; set; }
-        public decimal? FastTurbulentArea { get; set; }
         public int? FastTurbulentCount { get; set; }
-        public decimal? FastTurbulentFrequency { get; set; }
-        public decimal? FastTurbulentPercent { get; set; }
-        public decimal? FastTurbulentVolume { get; set; }
-        public decimal? FishCoverAquaticVegetation { get; set; }
-        public decimal? FishCoverArtificial { get; set; }
-        public decimal? FishCoverLW { get; set; }
-        public decimal? FishCoverNone { get; set; }
-        public decimal? FishCoverTerrestrialVegetation { get; set; }
-        public decimal? FishCoverTotal { get; set; }
-        public decimal? FloodProneWidthAverage { get; set; }
-        public decimal? Gradient { get; set; }
-        public decimal? LargeWoodFrequencyBankfull { get; set; }
-        public decimal? LargeWoodFrequencyWetted { get; set; }
         public int? PercentConstrained { get; set; }
-        public decimal? PoolToTurbulentAreaRatio { get; set; }
-        public decimal? PercentUndercutByArea { get; set; }
-        public decimal? PercentUndercutByLength { get; set; }
-        public decimal? ResidualPoolDepth { get; set; }
-        public decimal? RiparianCoverBigTree { get; set; }
-        public decimal? RiparianCoverConiferous { get; set; }
-        public decimal? RiparianCoverGround { get; set; }
-        public decimal? RiparianCoverNoCanopy { get; set; }
-        public decimal? RiparianCoverNonWoody { get; set; }
-        public decimal? RiparianCoverUnderstory { get; set; }
-        public decimal? RiparianCoverWoody { get; set; }
-        public decimal? Sinuosity { get; set; }
-        public decimal? SinuosityViaCenterline { get; set; }
-        public decimal? SlowWaterArea { get; set; }
         public int? SlowWaterCount { get; set; }
-        public decimal? SlowWaterFrequency { get; set; }
-        public decimal? SlowWaterPercent { get; set; }
-        public decimal? SlowWaterVolume { get; set; }
-        public decimal? SolarAccessSummerAvg { get; set; }
-        public decimal? SubstrateLt2mm { get; set; }
-        public decimal? SubstrateLt6mm { get; set; }
-        public decimal? SubstrateEstBoulders { get; set; }
-        public decimal? SubstrateEstCoarseAndFineGravel { get; set; }
-        public decimal? SubstrateEstCobbles { get; set; }
-        public decimal? SubstrateEstSandAndFines { get; set; }
-        public decimal? SubstrateD16 { get; set; }
-        public decimal? SubstrateD50 { get; set; }
-        public decimal? SubstrateD84 { get; set; }
-        public decimal? SubstrateEmbeddednessAvg { get; set; }
-        public decimal? SubstrateEmbeddednessSD { get; set; }
-        public decimal? ThalwegDepthAvg { get; set; }
-        public decimal? ThalwegDepthCV { get; set; }
-        public decimal? ThalwegSiteLength { get; set; }
-        public decimal? TotalUndercutArea { get; set; }
-        public decimal? ValleyWidth { get; set; }
-        public decimal? WettedArea { get; set; }
-        public decimal? WettedChannelBraidedness { get; set; }
         public int? WettedChannelCount { get; set; }
         public int? WettedChannelIslandCount { get; set; }
-        public decimal? WettedChannelMainstemArea { get; set; }
-        public decimal? WettedChannelMainstemLength { get; set; }
-        public decimal? WettedChannelMainstemSinuosity { get; set; }
-        public decimal? WettedChannelQualifyingIslandArea { get; set; }
         public int? WettedChannelQualifyingIslandCount { get; set; }
-        public decimal? WettedChannelTotalLength { get; set; }
-        public decimal? WettedDepthSD { get; set; }
-        public decimal? WettedLargeSideChannelArea { get; set; }
         public int? WettedMainChannelPartCount { get; set; }
+
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullChannelQualifyingIslandArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullChannelTotalLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullDepthAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullDepthMax { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankErosion { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullChannelBraidedness { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidth { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidthCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidthToDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidthToDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidthToMaxDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSideChannelWidthToMaxDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullSiteLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullVolume { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthIntegrated { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthToDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthToDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthToMaxDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BankfullWidthToMaxDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? BraidChannelRatio { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SiteMeasurementOfConductivity { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ConstrainingFeatureHeightAverage { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfBrooktrout { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfBulltrout { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfChinook { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfChum { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfCoho { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfCutthroat { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfLamprey { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfOmykiss { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfPink { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfSockeye { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DetrendedElevationSD { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SiteDischarge { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DriftBiomass { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastNonTurbulentArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastNonTurbulentFrequency { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastNonTurbulentPercent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastNonTurbulentVolume { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastTurbulentArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastTurbulentFrequency { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastTurbulentPercent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FastTurbulentVolume { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverAquaticVegetation { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverArtificial { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverLW { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverNone { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverTerrestrialVegetation { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FishCoverTotal { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? FloodProneWidthAverage { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? Gradient { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? LargeWoodFrequencyBankfull { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? LargeWoodFrequencyWetted { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? PoolToTurbulentAreaRatio { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? PercentUndercutByArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? PercentUndercutByLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ResidualPoolDepth { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentBigTreeCover { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentConiferousCover { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentGroundCover { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentCanopyNoCover { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentNonWoodyGroundCover { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentUnderstoryCover { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? RiparianPercentWoodyCover { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? Sinuosity { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SinuosityViaCenterline { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SlowWaterArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SlowWaterFrequency { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SlowWaterPercent { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SlowWaterVolume { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SolarAccessSummerAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? PercentOfObservationsLessThan2mm { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? PercentOfObservationsLessThan6mm { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEstBoulders { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEstCoarseAndFineGravel { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEstCobbles { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEstSandAndFines { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? MeasurementOfD16 { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? MeasurementOfD50 { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? MeasurementOfD84 { get; set; } //renamed
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEmbeddednessAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? SubstrateEmbeddednessSD { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ThalwegDepthAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ThalwegDepthCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ThalwegSiteLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? TotalUndercutArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? ValleyWidth { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelBraidedness { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelMainstemArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelMainstemLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelMainstemSinuosity { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelQualifyingIslandArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedChannelTotalLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedDepthSD { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? WettedLargeSideChannelArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelPercentByArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidth { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidthCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidthToDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidthToDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidthToMaxDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSideChannelWidthToMaxDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSiteLength { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedSmallSideChannelArea { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedVolume { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthIntegrated { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthToDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthToDepthRatioCV { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthToMaxDepthRatioAvg { get; set; }
+
+        [DecimalPrecision(16, 8)]
         public decimal? WettedWidthToMaxDepthRatioCV { get; set; }
+
+
     }
 }

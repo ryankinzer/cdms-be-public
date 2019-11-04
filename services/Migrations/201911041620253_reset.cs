@@ -8,7 +8,6 @@ namespace services.Migrations
         public override void Up()
         {
            
-            
         }
         
         public override void Down()
