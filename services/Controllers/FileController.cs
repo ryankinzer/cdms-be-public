@@ -1235,14 +1235,18 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage DeleteFile(JObject jsonData)
         {
+            logger.Debug("Inside FileController.cs, DeleteFile...");
+
             var db = ServicesContext.Current;
             dynamic json = jsonData;
+            //logger.Debug("jsonData = " + jsonData);
+
             User me = AuthorizationManager.getCurrentUser();
             Project project = db.Projects.Find(json.ProjectId.ToObject<int>());
             if (project == null)
                 throw new System.Exception("Configuration error.  Please try again.");
 
-            logger.Debug("The project = " + project);
+            logger.Debug("The project = " + project.Name + ", project Id = " + project.Id);
 
             if (!project.isOwnerOrEditor(me))
                 throw new System.Exception("Authorization error.");
@@ -1251,7 +1255,6 @@ namespace services.Controllers
 
             services.Models.File in_file = json.File.ToObject<services.Models.File>();
             logger.Debug("Obtained file from input data...");
-            logger.Debug("in_file = " + in_file);
 
             logger.Debug("Checking list for file name...");
             services.Models.File existing_file = project.Files.Where(o => o.Id == in_file.Id).SingleOrDefault();
