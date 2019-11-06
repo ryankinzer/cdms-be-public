@@ -30,7 +30,7 @@ namespace services.Models.Data
         public int Id { get; set; }
 
         public int PermitId { get; set; }
-        public int ObjectId { get; set; }
+        public int? ObjectId { get; set; }
 
         public string ParcelId { get; set; }
         public string PLSS { get; set; }
