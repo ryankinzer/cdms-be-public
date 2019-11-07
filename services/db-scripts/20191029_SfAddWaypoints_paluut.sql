@@ -46,7 +46,7 @@ insert into dbo.Fields([Name], [Description], Units, [Validation], DataType, Pos
 values
 (
 	'Waypoint Number', 
-	'Waypoint Number',
+	'Waypoint Number as assigned by the GPS device',
 	null, 
 	null,
 	'int', 
@@ -56,6 +56,19 @@ values
 	'number',
 	(select Id from dbo.Datastores where TablePrefix = 'SnorkelFish'),
 	2
+),
+(
+	'Waypoints File',
+	'Upload a copy of your waypoints file',
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	'temp-waypoint-file',
+	(select Id from dbo.Datastores where TablePrefix = 'SnorkelFish'),
+	1
 )
 
 INSERT INTO dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, Validation, SourceId, InstrumentId, OrderIndex, ControlType, [Rule])
@@ -73,7 +86,22 @@ values
 	1703,
 	'number',
 	'{"OnChange": "if(scope.waypoints){var w=scope.waypoints[value]; if(w){row[''NorthingUTM'']=w.y;row[''EastingUTM'']=w.x;}}"}'
+),
+(
+	(select Id from dbo.Datasets where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'SnorkelFish') and [Name] = 'GRME-Snorkel'),
+	(select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'SnorkelFish') and [Name] = 'Waypoints File'),
+	1,
+	GetDate(),
+	'Waypoints',
+	null,
+	1,
+	null,
+	60,
+	'temp-waypoint-file',
+	null
 )
+
+
 --We are only adding the Waypoint to GRME-Snorkel right now.  Leaving this in, 
 /*(
 	(select Id from dbo.Datasets where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'SnorkelFish') and [Name] = 'BioM-Snorkel'),
