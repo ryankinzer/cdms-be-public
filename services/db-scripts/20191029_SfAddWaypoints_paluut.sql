@@ -107,9 +107,9 @@ update dbo.Datasets
 set Config = '{"DataEntryPage":{"HiddenFields":["Instrument","BulkQaChange"]},"AllowSaveWithErrors":true,"EnableDuplicateChecking":true,"DuplicateCheckFields":["ActivityDate","LocationId"],"SpecifyActivityListFields":true,"ActivityListFields":["ActivityDate","LocationId","QAStatusId"],"HasWaypointFile":true,"WaypointFileProperty":"Waypoints"}'
 where [Name] = 'GRME-Snorkel'
 
-update dbo.Datasets
-set Config = '{"DataEntryPage":{"HiddenFields":["Instrument","BulkQaChange"]},"AllowSaveWithErrors":true,"EnableDuplicateChecking":true,"DuplicateCheckFields":["ActivityDate","LocationId"],"SpecifyActivityListFields":true,"ActivityListFields":["ActivityDate","LocationId","QAComments","QAStatusId"],"HasWaypointFile":true,"WaypointFileProperty":"Waypoints"}'
-where [Name] = 'GRME-Spawning Ground Survey'
+--update dbo.Datasets
+--set Config = '{"DataEntryPage":{"HiddenFields":["Instrument","BulkQaChange"]},"AllowSaveWithErrors":true,"EnableDuplicateChecking":true,"DuplicateCheckFields":["ActivityDate","LocationId"],"SpecifyActivityListFields":true,"ActivityListFields":["ActivityDate","LocationId","QAComments","QAStatusId"],"HasWaypointFile":true,"WaypointFileProperty":"Waypoints"}'
+--where [Name] = 'GRME-Spawning Ground Survey'
 
 
 --We are only adding the Waypoint to GRME-Snorkel right now.  Leaving this in, 
