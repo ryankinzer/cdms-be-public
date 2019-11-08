@@ -85,7 +85,7 @@ values
 	null,
 	1703,
 	'number',
-	'{"OnChange": "if(scope.waypoints){var w=scope.waypoints[value]; if(w){row[''NorthingUTM'']=w.y;row[''EastingUTM'']=w.x;}}"}'
+	'{"OnChange": "if(scope.waypoints){var w=scope.waypoints[value]; if(w){row[''GPSNorthing'']=w.y;row[''GPSEasting'']=w.x;}}"}'
 ),
 (
 	(select Id from dbo.Datasets where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'SnorkelFish') and [Name] = 'GRME-Snorkel'),
@@ -101,6 +101,15 @@ values
 	'temp-waypoint-file',
 	null
 )
+
+-- Update config for just GRME-Snorkel
+update dbo.Datasets
+set Config = '{"DataEntryPage":{"HiddenFields":["Instrument","BulkQaChange"]},"AllowSaveWithErrors":true,"EnableDuplicateChecking":true,"DuplicateCheckFields":["ActivityDate","LocationId"],"SpecifyActivityListFields":true,"ActivityListFields":["ActivityDate","LocationId","QAStatusId"],"HasWaypointFile":true,"WaypointFileProperty":"Waypoints"}'
+where [Name] = 'GRME-Snorkel'
+
+update dbo.Datasets
+set Config = '{"DataEntryPage":{"HiddenFields":["Instrument","BulkQaChange"]},"AllowSaveWithErrors":true,"EnableDuplicateChecking":true,"DuplicateCheckFields":["ActivityDate","LocationId"],"SpecifyActivityListFields":true,"ActivityListFields":["ActivityDate","LocationId","QAComments","QAStatusId"],"HasWaypointFile":true,"WaypointFileProperty":"Waypoints"}'
+where [Name] = 'GRME-Spawning Ground Survey'
 
 
 --We are only adding the Waypoint to GRME-Snorkel right now.  Leaving this in, 
