@@ -193,10 +193,6 @@
     <Compile Include="Migrations\201910292247034_reset.Designer.cs">
       <DependentUpon>201910292247034_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910292250256_SfDetailAddWaypointNumber.cs" />
-    <Compile Include="Migrations\201910292250256_SfDetailAddWaypointNumber.Designer.cs">
-      <DependentUpon>201910292250256_SfDetailAddWaypointNumber.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
@@ -409,12 +405,12 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-	<Content Include="db-scripts\archive\20191003_paluut.sql" />
+    <Content Include="db-scripts\archive\20191003_paluut.sql" />
     <Content Include="db-scripts\archive\20191008_all.sql" />
     <Content Include="db-scripts\archive\20191010_paluut.sql" />
     <Content Include="db-scripts\archive\20191015_paluut.sql" />
     <Content Include="db-scripts\archive\20191016_metstation_paluut.sql" />
-	<Content Include="db-scripts\20191029_SfAddWaypoints_paluut.sql" />
+    <Content Include="db-scripts\20191029_SfAddWaypoints_paluut.sql" />
     <Content Include="db-scripts\20191030_paluut.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -459,9 +455,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201910292247034_reset.resx">
       <DependentUpon>201910292247034_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910292250256_SfDetailAddWaypointNumber.resx">
-      <DependentUpon>201910292250256_SfDetailAddWaypointNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
