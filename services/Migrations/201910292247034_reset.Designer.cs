@@ -13,7 +13,11 @@ namespace services.Migrations
         
         string IMigrationMetadata.Id
         {
+<<<<<<< HEAD:services/Migrations/201911041620253_reset.Designer.cs
             get { return "201911041620253_reset"; }
+=======
+            get { return "201910292247034_reset"; }
+>>>>>>> test:services/Migrations/201910292247034_reset.Designer.cs
         }
         
         string IMigrationMetadata.Source

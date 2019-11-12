@@ -189,10 +189,11 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\201911041620253_reset.cs" />
-    <Compile Include="Migrations\201911041620253_reset.Designer.cs">
-      <DependentUpon>201911041620253_reset.cs</DependentUpon>
+    <Compile Include="Migrations\201910292247034_reset.cs" />
+    <Compile Include="Migrations\201910292247034_reset.Designer.cs">
+      <DependentUpon>201910292247034_reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
@@ -221,7 +222,6 @@
     <Compile Include="Controllers\DatastoreController.cs" />
     <Compile Include="Controllers\Private\HabSubProjectController.cs" />
     <Compile Include="Controllers\Private\CRPPSubProjectController.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics.cs" />
     <Compile Include="Models\Data\BiomChannelUnitMetrics_Detail.cs" />
@@ -405,28 +405,15 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20190821_WqAddDataSource_priv.sql" />
-    <Content Include="db-scripts\20190821_WqAddDataSource_paluut.sql" />
-    <Content Include="db-scripts\20190823_WqShowBulkQa_paluut.sql" />
-    <Content Include="db-scripts\20190829_WtInstAccCheck_paluut.sql" />
-    <Content Include="db-scripts\20191015_paluut.sql" />
-    <Content Include="db-scripts\20191016_metstation_paluut.sql" />
-    <Content Include="db-scripts\20191030_paluut.sql" />
     <Content Include="db-scripts\20191104_biomMetricsFields.sql" />
     <Content Include="db-scripts\20191104_paluut_biomMetricsUpdate.sql" />
     <Content Include="db-scripts\20191112_paluut.sql" />
-    <Content Include="db-scripts\archive\20191003_paluut.sql" />
-    <Content Include="db-scripts\20191008_all.sql" />
-    <Content Include="db-scripts\20191010_paluut.sql" />
-    <Content Include="db-scripts\archive\20190815_HabLocUpd_paluut.sql" />
-    <Content Include="db-scripts\archive\20190819_WaterChemUpd_paluut.sql" />
-    <Content Include="db-scripts\archive\20190725_cdms.sql" />
-    <Content Include="db-scripts\archive\20190725_paluut.sql" />
-    <Content Include="db-scripts\archive\20190820_paluut.sql" />
-    <Content Include="db-scripts\archive\full_update_script_CreelPhonePal.sql" />
-    <Content Include="db-scripts\archive\full_update_script_CreelPhonePriv.sql" />
-    <Content Include="db-scripts\archive\full_update_script_OlcPal.sql" />
-    <Content Include="db-scripts\archive\full_update_script_OlcPriv.sql" />
+    <Content Include="db-scripts\20191030_paluut.sql" />
+	<Content Include="db-scripts\archive\20191003_paluut.sql" />
+    <Content Include="db-scripts\archive\20191008_all.sql" />
+    <Content Include="db-scripts\archive\20191010_paluut.sql" />
+    <Content Include="db-scripts\archive\20191015_paluut.sql" />
+    <Content Include="db-scripts\archive\20191016_metstation_paluut.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -468,8 +455,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201911041620253_reset.resx">
-      <DependentUpon>201911041620253_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910292247034_reset.resx">
+      <DependentUpon>201910292247034_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
