@@ -153,9 +153,12 @@ INSERT INTO Metrics_CBFishMetrics (MetricPriority, CBFishId, MetricName, MetricM
 ('Secondary',1765,'# of alternate water sources installed in the upland','erosion control structures or water sources installed'),
 ('Secondary',1766,'# of alternate water sources installed in the riparian','erosion control structures or water sources installed')
 
-go;
+go
 
 -- remove RVTouchstone and ReportingLevel dataset fields from all datasets
 delete from datasetfields where fieldid in (select id from fields where dbcolumnname in ('RVTouchstone', 'ReportingLevel'));
 go
+
+-- RAN ON TEST 10/31 (not on PROD)
+
 

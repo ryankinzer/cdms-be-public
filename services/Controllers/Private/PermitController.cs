@@ -283,7 +283,7 @@ namespace services.Controllers.Private
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
-            where p.ExpireDate < dateadd(dd,30,getDate()) and p.PermitStatus != 'Archived'";
+            where p.ExpireDate < dateadd(dd,30,getDate()) and p.FileStatus != 'Archived'";
 
             DataTable expires = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
