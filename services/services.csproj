@@ -414,6 +414,7 @@
     <Content Include="db-scripts\20191030_paluut.sql" />
     <Content Include="db-scripts\20191104_biomMetricsFields.sql" />
     <Content Include="db-scripts\20191104_paluut_biomMetricsUpdate.sql" />
+    <Content Include="db-scripts\20191112_paluut.sql" />
     <Content Include="db-scripts\archive\20191003_paluut.sql" />
     <Content Include="db-scripts\20191008_all.sql" />
     <Content Include="db-scripts\20191010_paluut.sql" />
