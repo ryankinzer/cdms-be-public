@@ -800,7 +800,7 @@ namespace services.Controllers.Private
 
         // POST /api/v1/permit/deletefile
         [HttpPost]
-        public HttpResponseMessage DeleteFile(JObject jsonData)
+        public HttpResponseMessage DeletePermitFile(JObject jsonData)
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;
