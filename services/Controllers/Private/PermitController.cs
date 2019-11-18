@@ -283,7 +283,7 @@ namespace services.Controllers.Private
             (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
             (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
             from permits p
-            where p.ExpireDate < dateadd(dd,30,getDate()) and p.PermitStatus != 'Archived'";
+            where p.ExpireDate < dateadd(dd,30,getDate()) and p.FileStatus != 'Archived'";
 
             DataTable expires = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -800,7 +800,7 @@ namespace services.Controllers.Private
 
         // POST /api/v1/permit/deletefile
         [HttpPost]
-        public HttpResponseMessage DeleteFile(JObject jsonData)
+        public HttpResponseMessage DeletePermitFile(JObject jsonData)
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;

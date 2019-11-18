@@ -18,13 +18,9 @@ namespace services.Resources
 
             List<string> recipients = null;
 
-            //if we are a "Review" we should have incoming ReviewersContact because the user has specified the recipients they want. otherwise get from the routes (probably just "Inspection")...
-            if(in_event.EventType == "Review"){
-                JObject in_recipients = (JObject)in_json["ReviewersContact"];
-                recipients = in_recipients.Properties().Select(p => p.Name).ToList();
-            } else {
-                recipients = PermitRouteHelper.getRecipientsForRoute(in_event.EventType, in_event.ItemType);
-            }
+            JObject in_recipients = (JObject)in_json["ReviewersContact"];
+            recipients = in_recipients.Properties().Select(p => p.Name).ToList();
+            //recipients = PermitRouteHelper.getRecipientsForRoute(in_event.EventType, in_event.ItemType);
 
             //if no recipients, no notification needed
             if (recipients.Count == 0)
@@ -54,7 +50,7 @@ namespace services.Resources
                 body += "<p><b>Date of Inspection Desired</b>: " + ((DateTime)in_event.RequestDate).ToShortDateString() + "</p>";
 
                 var preferred_time = "Any";
-                if (in_json.PreferredTime["PM"] is JToken)
+                if (in_json.PreferredTime is JToken && in_json.PreferredTime["PM"] is JToken)
                     if (in_json.PreferredTime.PM == true)
                         preferred_time = "PM";
                     else if (in_json.PreferredTime["AM"] is JToken)
@@ -63,6 +59,7 @@ namespace services.Resources
 
                 body += "<p><b>Preferred Time</b>: " + preferred_time + "</p>";
 
+/*
                 List<string> inspection_requested = new List<string>();
                 
                 if (in_json.InspectorsContact["Structural"] is JToken )
@@ -76,7 +73,10 @@ namespace services.Resources
                         inspection_requested.Add("Electrical");
 
                 body += "<p><b>Inspection Requested</b>: " + string.Join(", ",inspection_requested) + "</p>";
-                
+*/
+
+                body += "<p><b>Inspection Requested</b>: " + in_event.ItemType + "</p>";
+
                 body += "<p><b>Contact</b>: " + in_json.ContactNumber + "</p>";
                 body += "<p><b>Sent By</b>: " + in_permit.ReviewedBy + "</p>";
                 body += "<p><b>Sent Date</b>: " + in_event.EventDate.ToShortDateString() + "</p>";
