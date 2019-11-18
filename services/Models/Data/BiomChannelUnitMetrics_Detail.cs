@@ -25,7 +25,7 @@ namespace services.Models.Data
         // end added
 
         public int? ChUnitID { get; set; }
-        public int? ChUnitNum { get; set; }
+        public int? ChannelUnitID { get; set; } //renamed
         public int? LargeWoodyPiecesCount { get; set; } //renamed
 
         public string TierOneType { get; set; } //renamed
