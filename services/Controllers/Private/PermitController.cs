@@ -78,7 +78,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().Where(o => o.PermitStatus == "Under Review" || o.PermitStatus == "New Application").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
+            return db.Permit().Where(o => o.PermitStatus == "Under Review" || o.PermitStatus == "New Application" && o.FileStatus != "Archived").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
 
         }
 
@@ -92,7 +92,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Permit().Where(o => o.PermitStatus == "Approved" || o.PermitStatus == "Conditionally Approved").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
+            return db.Permit().Where(o => o.PermitStatus == "Approved" || o.PermitStatus == "Conditionally Approved" && o.FileStatus != "Archived").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
 
         }
 
@@ -219,7 +219,7 @@ namespace services.Controllers.Private
             join permitevents pe on pe.PermitId = p.Id
             where
             pe.ResponseDate is null
-            and pe.EventType in ('Review', 'Inspection')";
+            and pe.EventType in ('Review', 'Inspection') and p.FileStatus != 'Archived'";
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -250,7 +250,7 @@ namespace services.Controllers.Private
             var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.RequestDate
             from permits p 
 	            join permitevents pe on p.Id = pe.PermitId
-            where pe.EventType = 'Public Hearing' and pe.ResponseDate is null";
+            where pe.EventType = 'Public Hearing' and pe.ResponseDate is null and p.FileStatus != 'Archived'";
 
             DataTable result = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -311,7 +311,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select PermitStatus, count(*) as TotalCount from permits group by PermitStatus";
+            var sql = @"select PermitStatus, count(*) as TotalCount from permits where FileStatus != 'Archived' group by PermitStatus";
 
             DataTable stats = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
