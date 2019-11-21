@@ -62,7 +62,8 @@ namespace services.Controllers
             logger.Debug(strLocation);
 
 
-            //IF the incoming location has an ID then we update, otherwise we create a new project location
+
+            //If the incoming location has an ID then we update, otherwise we create a new project location
             if (location.Id == 0)
             {
                 location.CreateDateTime = DateTime.Now;
@@ -88,7 +89,7 @@ namespace services.Controllers
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;
-            logger.Debug("json = " + json);
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
 
@@ -118,7 +119,7 @@ namespace services.Controllers
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;
-            logger.Debug("json = " + json);
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
 
