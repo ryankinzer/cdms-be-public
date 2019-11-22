@@ -57,7 +57,6 @@ namespace services.Controllers
                 "OtherAgencyId = " + location.OtherAgencyId + "\n" +
                 "WaterBodyId = " + location.WaterBodyId + "\n" +
                 "ProjectId = " + location.ProjectId + "\n" +
-                "SdeObjectId = " + location.SdeObjectId + "\n" +
                 "StudyDesign = " + location.StudyDesign;
             logger.Debug(strLocation);
 
@@ -117,6 +116,7 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage UpdateLocation(JObject jsonData)
         {
+            logger.Debug("Inside LocationController.cs, UpdateLocation...");
             var db = ServicesContext.Current;
             dynamic json = jsonData;
             //logger.Debug("json = " + json);
@@ -124,9 +124,9 @@ namespace services.Controllers
             User me = AuthorizationManager.getCurrentUser();
 
             Location loc = db.Location.Find(json.LocationId.ToObject<int>());
-            logger.Debug("Location to update:  " + loc.Id + ", Name:  " + loc.Name);
+            logger.Debug("Location to update:  " + loc.Id + ", Name:  " + loc.Label);
 
-            int intNewSdeObjectId = json.newSdeObjectId.ToObject<int>();
+            int intNewSdeObjectId = json.NewSdeObjectId.ToObject<int>();
             logger.Debug("New ObjectID:  " + intNewSdeObjectId);
 
             //int intOldSdeObjectId = json.OldSdeObjectId.ToObject<int>();
@@ -147,10 +147,12 @@ namespace services.Controllers
             }
 
             loc.SdeObjectId = intNewSdeObjectId;
+            db.Entry(loc).State = EntityState.Modified;
             db.SaveChanges();
             logger.Debug("Updated location " + loc.Id + "; old SdeObjectId = " + intOldSdeObjectId + "; new SdeObjectId = " + loc.SdeObjectId);
 
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            //return new HttpResponseMessage(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.Created, loc);
         }
     }
 }
