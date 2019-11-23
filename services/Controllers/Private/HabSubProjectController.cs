@@ -44,9 +44,11 @@ namespace services.Controllers
                      orderby item.EffDt descending
                      select item).ToList();
 
+            logger.Debug("Fetched the subprojects...");
+
             foreach (var sp in s)
             {
-                logger.Debug("sp = " + sp.ProjectName);
+                //logger.Debug("sp = " + sp.ProjectName);
 
                 // First, convert the results to a list, so that we can sort them easily.
                 sp.HabitatItems = sp.HabitatItems.ToList();
@@ -59,6 +61,7 @@ namespace services.Controllers
                 // Next, do the sort.
                 sp.HabitatItems = sp.HabitatItems.OrderByDescending(x => x.EffDt).ToList();
             }
+            logger.Debug("Sorted the habitat items under each subproject...");
 
             return s.AsEnumerable();
         }

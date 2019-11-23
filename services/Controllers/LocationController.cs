@@ -42,22 +42,27 @@ namespace services.Controllers
             location.UserId = me.Id;
             location.ProjectId = project.Id;
 
-/*
+
             string strLocation = "Id = " + location.Id + "\n" +
-                "Projection = " + location.Projection + "\n" +
-                "UTMZone = " + location.UTMZone + "\n" +
+                "LocationTypeId = " + location.LocationTypeId + "\n" +
+                "SdeFeatureClassId = " + location.SdeFeatureClassId + "\n" +
+                "SdeObjectId = " + location.SdeObjectId + "\n" +
                 "Label = " + location.Label + "\n" +
                 "Description = " + location.Description + "\n" +
+                "UserId = " + location.UserId + "\n" +
                 "GPSEasting = " + location.GPSEasting + "\n" +
                 "GPSNorthing = " + location.GPSNorthing + "\n" +
+                "Projection = " + location.Projection + "\n" +
+                "UTMZone = " + location.UTMZone + "\n" +
+                "OtherAgencyId = " + location.OtherAgencyId + "\n" +
+                "WaterBodyId = " + location.WaterBodyId + "\n" +
                 "ProjectId = " + location.ProjectId + "\n" +
-                "SdeObjectId = " + location.SdeObjectId + "\n" +
-                "StudyDesign = " + location.StudyDesign + "\n" +
-                "ProjectId = " + location.ProjectId;
+                "StudyDesign = " + location.StudyDesign;
             logger.Debug(strLocation);
-*/
 
-            //IF the incoming location has an ID then we update, otherwise we create a new project location
+
+
+            //If the incoming location has an ID then we update, otherwise we create a new project location
             if (location.Id == 0)
             {
                 location.CreateDateTime = DateTime.Now;
@@ -83,9 +88,12 @@ namespace services.Controllers
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
             User me = AuthorizationManager.getCurrentUser();
 
             Location loc = db.Location.Find(json.LocationId.ToObject<int>());
+            logger.Debug("Location to delete:  " + loc.Id + ", Name:  " + loc.Label);
 
             if (loc == null)
                 throw new System.Exception("Configuration error.");
@@ -108,26 +116,43 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage UpdateLocation(JObject jsonData)
         {
+            logger.Debug("Inside LocationController.cs, UpdateLocation...");
             var db = ServicesContext.Current;
             dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
             User me = AuthorizationManager.getCurrentUser();
 
             Location loc = db.Location.Find(json.LocationId.ToObject<int>());
+            logger.Debug("Location to update:  " + loc.Id + ", Name:  " + loc.Label);
 
-            int intSdeObjectId = json.SdeObjectId.ToObject<int>();
+            int intNewSdeObjectId = json.NewSdeObjectId.ToObject<int>();
+            logger.Debug("New ObjectID:  " + intNewSdeObjectId);
+
+            //int intOldSdeObjectId = json.OldSdeObjectId.ToObject<int>();
+            //logger.Debug("ObjectID to update:  " + intOldSdeObjectId);
 
             if (loc == null)
                 throw new System.Exception("Configuration error.");
 
-            int intOldSdeObjectId = 0;
+            int intOldSdeObjectId = -1;
             if (loc.SdeObjectId.HasValue)
+            {
                 intOldSdeObjectId = (int)loc.SdeObjectId;
+                logger.Debug("Old SdeObjectId = " + intOldSdeObjectId);
+            }
+            else
+            {
+                logger.Debug("SdeObjectId is blank.  Setting to new one:  " + intNewSdeObjectId);
+            }
 
-            loc.SdeObjectId = intSdeObjectId;
+            loc.SdeObjectId = intNewSdeObjectId;
+            db.Entry(loc).State = EntityState.Modified;
             db.SaveChanges();
             logger.Debug("Updated location " + loc.Id + "; old SdeObjectId = " + intOldSdeObjectId + "; new SdeObjectId = " + loc.SdeObjectId);
 
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            //return new HttpResponseMessage(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.Created, loc);
         }
     }
 }
