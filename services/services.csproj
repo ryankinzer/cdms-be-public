@@ -405,7 +405,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20191118_paluut_biomMetricsUpdate.sql" />
+    <Content Include="db-scripts\20191205_paluut.sql" />
+    <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
     <Content Include="db-scripts\archive\20191108_SfAddWaypoints_paluut.sql" />
     <Content Include="db-scripts\archive\20191112_paluut.sql" />
     <Content Include="db-scripts\archive\20191030_paluut.sql" />
