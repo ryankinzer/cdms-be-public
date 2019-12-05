@@ -20,5 +20,9 @@ namespace services.Models.Data
         public string PanelName { get; set; }
         public int? VisitID { get; set; }
         public DateTime? VisitDate { get; set; }
+
+        //added 12/5/2019 kb
+        public int? ProtocolID { get; set; }
+
     }
 }
