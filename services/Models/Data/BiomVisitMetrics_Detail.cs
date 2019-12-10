@@ -11,6 +11,10 @@ namespace services.Models.Data
         //added 11/4/19 kb
         public string MetricSchemaCanonicalName { get; set; }
 
+        public string ChannelPattern { get; set; } // added 12/5
+
+        public string ConstrainingFeatureType { get; set; } // added 12/5
+
         [DecimalPrecision(16, 8)]
         public decimal? WettedLWDVolumeStdDev { get; set; }
 
@@ -46,6 +50,9 @@ namespace services.Models.Data
 
         [DecimalPrecision(16, 8)]
         public decimal? LWVBankfull_SW { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? LWVWetted_SW { get; set; } // added 12/5
 
         [DecimalPrecision(16, 8)]
         public decimal? RiparianPercentGroundCoverNoCover { get; set; }

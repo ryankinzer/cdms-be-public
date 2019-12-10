@@ -24,6 +24,39 @@ namespace services.Models.Data
         public int? CountOfLamprey { get; set; }
         // end added
 
+        //added 12/5/2019 kb
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfBrooktrout { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfBulltrout { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfChinook { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfCoho { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfCutthroat { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfLamprey { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfOmykiss { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfOtherSpecies { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfPink { get; set; }
+
+        [DecimalPrecision(16, 8)]
+        public decimal? DensityOfSockeye { get; set; }
+        //end added
+
+
         public int? ChUnitID { get; set; }
         public int? ChannelUnitID { get; set; } //renamed
         public int? LargeWoodyPiecesCount { get; set; } //renamed
