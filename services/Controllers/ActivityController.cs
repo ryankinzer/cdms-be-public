@@ -106,7 +106,7 @@ namespace services.Controllers
                 SELECT a.Id, a.Description, a.DatasetId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, 
                 a.InstrumentId, a.AccuracyCheckId, a.PostAccuracyCheckId,
                 h.*, 
-                qv.QAStatusId,
+                qv.QAStatusId, qv.Comments as QAComments,
                 loc.Label as LocationLabel, loc.LocationTypeId, loc.OtherAgencyId,
                 wb.Name as WaterBodyName,
                 u.Fullname as UserFullname
