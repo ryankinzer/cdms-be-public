@@ -1024,7 +1024,7 @@ namespace services.Controllers
                     }//foreach detail
 
                     //some special cases to set the activity description to be a more user friendly date range for this activity.
-                    if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic")) 
+                    if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic" || dataset.Datastore.TablePrefix == "MetStation")) 
                     {
                         var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, newActivityId);
                         using (SqlCommand cmd = new SqlCommand(query, con, trans))
@@ -1264,7 +1264,7 @@ namespace services.Controllers
                     }
                 }
             }
-            else if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterQuality")) // others with readingdatetime?
+            else if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "MetStation")) // others with readingdatetime?
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
                 {
