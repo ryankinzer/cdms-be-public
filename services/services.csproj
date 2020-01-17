@@ -193,10 +193,6 @@
     <Compile Include="Migrations\202001162228522_reset.Designer.cs">
       <DependentUpon>202001162228522_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202001162254562_sfAddFieldSheetFile.cs" />
-    <Compile Include="Migrations\202001162254562_sfAddFieldSheetFile.Designer.cs">
-      <DependentUpon>202001162254562_sfAddFieldSheetFile.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
@@ -409,6 +405,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
     <Content Include="db-scripts\archive\20191108_SfAddWaypoints_paluut.sql" />
@@ -462,9 +459,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202001162228522_reset.resx">
       <DependentUpon>202001162228522_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202001162254562_sfAddFieldSheetFile.resx">
-      <DependentUpon>202001162254562_sfAddFieldSheetFile.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,5 +1,3 @@
-use paluut_test
-go
 
 -- Update tables
 ALTER TABLE [dbo].[SnorkelFish_Header] ADD [FieldSheetFile] [nvarchar](max)
