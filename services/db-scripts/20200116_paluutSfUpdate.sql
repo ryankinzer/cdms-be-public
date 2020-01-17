@@ -1,7 +1,7 @@
 use paluut_test
 go
 
--- Updte tables
+-- Update tables
 ALTER TABLE [dbo].[SnorkelFish_Header] ADD [FieldSheetFile] [nvarchar](max)
 go
 
