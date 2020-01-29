@@ -190,7 +190,7 @@ namespace services.Resources
 				
                         case "number":
                             value = filterForSQL(item.Value);
-                            if (value.ToString().Contains(">") || value.ToString().Contains("<"))
+							if (value.ToString().Contains(">") || value.ToString().Contains("<") || value.ToString().Contains("="))
                                 conditional = "";
                             logger.Debug("A number");
                             conditions.Add(field.DbColumnName + conditional + value); //>100
