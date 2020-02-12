@@ -219,5 +219,46 @@ namespace services.Controllers
             return new HttpResponseMessage(HttpStatusCode.OK);
 
         }
-    }
+
+		[HttpPost]
+		public HttpResponseMessage DeleteLookupItem(JObject jsonData)
+		{
+
+			var db = ServicesContext.Current;
+			dynamic json = jsonData;
+
+			try
+			{
+				int itemId = json.payload.ItemId;
+
+				int LookupTableId = json.payload.LookupId.ToObject<int>();
+				LookupTable lookuptable = db.LookupTables.Find(LookupTableId);
+				var query = "";
+
+					query = "DELETE FROM dbo." + lookuptable.Name + " WHERE Id = @itemId";
+		
+
+				using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+				{
+					con.Open();
+					using (SqlCommand cmd = new SqlCommand(query, con))
+					{
+						cmd.Parameters.AddWithValue("@itemId", itemId);
+						logger.Debug(query);
+						cmd.ExecuteNonQuery();
+					}
+					con.Close();
+				}
+
+			}
+			catch(Exception ex)
+			{
+				logger.Debug("Error deleting lookup item:  " + ex);
+				return Request.CreateResponse(HttpStatusCode.InternalServerError);
+			}
+
+			return Request.CreateResponse(HttpStatusCode.OK);
+		}
+	}
+
 }
