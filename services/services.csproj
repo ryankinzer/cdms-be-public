@@ -189,9 +189,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202001162228522_reset.cs" />
-    <Compile Include="Migrations\202001162228522_reset.Designer.cs">
-      <DependentUpon>202001162228522_reset.cs</DependentUpon>
+    <Compile Include="Migrations\202002281956239_reset.cs" />
+    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002282009440_WtAddProperties.cs" />
+    <Compile Include="Migrations\202002282009440_WtAddProperties.Designer.cs">
+      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -405,7 +409,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20200116_paluutSfUpdate.sql" />
+    <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
     <Content Include="db-scripts\archive\20191108_SfAddWaypoints_paluut.sql" />
@@ -457,8 +462,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202001162228522_reset.resx">
-      <DependentUpon>202001162228522_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002282009440_WtAddProperties.resx">
+      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
