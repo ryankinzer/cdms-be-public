@@ -189,9 +189,9 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202001162228522_reset.cs" />
-    <Compile Include="Migrations\202001162228522_reset.Designer.cs">
-      <DependentUpon>202001162228522_reset.cs</DependentUpon>
+    <Compile Include="Migrations\202002281956239_reset.cs" />
+    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -457,8 +457,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202001162228522_reset.resx">
-      <DependentUpon>202001162228522_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
