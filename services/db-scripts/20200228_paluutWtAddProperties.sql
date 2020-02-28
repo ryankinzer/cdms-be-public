@@ -58,7 +58,7 @@ values
 ('MeanAirTemprature', 'Mean daily air tempertaure in degree C', 'C', '[-25,49]', 'float', null, null, 'MeanAirTemprature', 'number', 3, 2)
 go
 
-
+/*
 -- Update views
 -- Down
 drop view dbo.WaterTemp_Detail_VW
@@ -93,3 +93,4 @@ FROM            dbo.QAStatus AS qas INNER JOIN
                          dbo.Locations AS L ON a.LocationId = L.Id INNER JOIN
                          dbo.WaterBodies AS w ON L.WaterBodyId = w.Id ON d.ActivityId = h.ActivityId
 go
+*/
