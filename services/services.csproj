@@ -189,18 +189,17 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202002281956239_reset.cs" />
-    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202002282009440_WtAddProperties.cs" />
-    <Compile Include="Migrations\202002282009440_WtAddProperties.Designer.cs">
-      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
+    <Compile Include="Migrations\202003042327017_reset.cs" />
+    <Compile Include="Migrations\202003042327017_reset.Designer.cs">
+      <DependentUpon>202003042327017_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitViolation.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitViolationContact.cs" />
+    <Compile Include="Models\Data\Private\Permits\PermitViolationParcel.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
@@ -410,6 +409,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\20200304_paluut_violations.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
@@ -462,11 +462,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002282009440_WtAddProperties.resx">
-      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202003042327017_reset.resx">
+      <DependentUpon>202003042327017_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
