@@ -65,6 +65,12 @@
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.0.6\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -94,9 +100,16 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -160,6 +173,7 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
@@ -174,6 +188,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Models\Feedback.cs" />
+    <Compile Include="Models\NotificationLog.cs" />
+    <Compile Include="Resources\DatabaseColumnHelper.cs" />
+    <Compile Include="Resources\DatabaseTableHelper.cs" />
+    <Compile Include="Resources\DatasetDataDetailHelper.cs" />
+    <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FishermenController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
@@ -281,6 +301,7 @@
     <Compile Include="Models\Data\StreamNet_JuvOutmigrantsDetail.cs" />
     <Compile Include="Models\Data\StreamNet_JuvOutmigrantsDetail_Detail.cs" />
     <Compile Include="Models\Data\StreamNet_JuvOutmigrantsDetail_Header.cs" />
+    <Compile Include="Resources\DatasetDataHelper.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -391,8 +412,10 @@
     <Compile Include="Resources\AuthorizationManager.cs" />
     <Compile Include="Resources\CipherHelper.cs" />
     <Compile Include="Resources\DateTimeHelper.cs" />
+    <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
+    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
@@ -419,30 +442,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\uploads\" />
-    <Folder Include="db-scripts\" />
-    <Folder Include="Views\CrppDataset\" />
-    <Folder Include="Views\Season\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packages.config">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ControllerClassDiagram.cd" />
-    <None Include="Properties\PublishProfiles\cdms-local.pubxml" />
-    <None Include="Properties\PublishProfiles\cdms-test.pubxml" />
-    <None Include="Properties\PublishProfiles\cdms2-dev.pubxml" />
-    <None Include="Properties\PublishProfiles\cdms2-test-dmz.pubxml" />
-    <None Include="Properties\PublishProfiles\cdms2-test-priv.pubxml" />
-    <None Include="Properties\PublishProfiles\gis-dev02-services-dev.pubxml" />
-    <None Include="Properties\PublishProfiles\gis-dev02-services-test.pubxml" />
-    <None Include="Properties\PublishProfiles\gisweb02-production.pubxml" />
-    <None Include="Properties\PublishProfiles\local-services-dev.pubxml" />
-    <None Include="Properties\PublishProfiles\paluut-test.pubxml" />
-  </ItemGroup>
-  <ItemGroup>
     <COMReference Include="stdole">
       <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>2</VersionMajor>
@@ -453,41 +452,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910231634161_initial.resx">
-      <DependentUpon>201910231634161_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910231638083_release.resx">
-      <DependentUpon>201910231638083_release.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910231709014_rst_data.resx">
-      <DependentUpon>201910231709014_rst_data.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910281748448_release_fix.resx">
-      <DependentUpon>201910281748448_release_fix.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910281844314_release_fix_2.resx">
-      <DependentUpon>201910281844314_release_fix_2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912201555351_lamprey_dataset.resx">
-      <DependentUpon>201912201555351_lamprey_dataset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912201607088_juv_detail.resx">
-      <DependentUpon>201912201607088_juv_detail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912201620582_nosa_fix.resx">
-      <DependentUpon>201912201620582_nosa_fix.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912301853419_change_data_type.resx">
-      <DependentUpon>201912301853419_change_data_type.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912301936154_rm_shadowid.resx">
-      <DependentUpon>201912301936154_rm_shadowid.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202001031710498_changed_name.resx">
-      <DependentUpon>202001031710498_changed_name.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

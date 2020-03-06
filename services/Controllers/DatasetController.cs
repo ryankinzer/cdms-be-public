@@ -27,7 +27,7 @@ namespace services.Controllers
         public dynamic GetDatasetsList() 
         {
             string query = @"
-select d.Id, d.ProjectId, d.CreateDateTime, d.Name, d.Description, d.Config, p.Name as ProjectName, ds.Name as DatastoreName
+select d.Id, d.DatastoreId, d.ProjectId, d.CreateDateTime, d.Name, d.Description, d.Config, p.Name as ProjectName, ds.Name as DatastoreName
 from datasets d
 join projects p on d.ProjectId = p.Id and p.ProjectTypeId not in (select id from ProjectTypes where Name = 'System')
 join datastores ds on d.DatastoreId = ds.Id
@@ -305,14 +305,7 @@ join datastores ds on d.DatastoreId = ds.Id
                 DatasetField the_ds_field = new DatasetField();
 
                 the_ds_field.FieldId = the_field.Id;
-
-                var field_role = (from d in db.DatasetFields
-                                  where d.FieldId == the_field.Id
-                                  select d.FieldRoleId).FirstOrDefault();
-
-                //pick up the fieldroleid from the way it is used in datasetfields.
-                the_ds_field.FieldRoleId = (field_role != 0) ? field_role : 2; //default to DETAIL (2)
-
+                the_ds_field.FieldRoleId = the_field.FieldRoleId;
                 the_ds_field.CreateDateTime = DateTime.Now;
                 the_ds_field.Label = the_field.Name;
                 the_ds_field.DbColumnName = the_field.DbColumnName;

@@ -359,6 +359,19 @@ namespace services.Controllers
             return new_filename;
         }
 
+        public static HttpResponseMessage MoveFile(string sourceFile, string destinationFile)
+        {
+            try
+            {
+                System.IO.File.Move(sourceFile, destinationFile);
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
+            catch
+            {
+                return new HttpResponseMessage(HttpStatusCode.Forbidden);
+            }
+        }
+
         // GET /api/v1/file/getprojectfiles/5
         //returns the files for this projectid (empty list if none found...)
         //
@@ -815,12 +828,17 @@ namespace services.Controllers
         [HttpPost]
         public Task<HttpResponseMessage> HandleWaypoints()
         {
+            logger.Debug("Inside HandleWaypoints...");
+
             var provider = new MultipartMemoryStreamProvider();
+            //logger.Debug("Created provider...");
 
             var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith(o =>
             {
+                //logger.Debug("Starting task setup...");
+
                 if (!Request.Content.IsMimeMultipartContent())
-                    return error("Uploaded filed does not look like a waypoints file");
+                    return error("Uploaded file does not look like a waypoints file");
 
                 var data = new Dictionary<string, Dictionary<string, string>>();
 

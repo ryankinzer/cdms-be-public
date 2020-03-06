@@ -7,13 +7,13 @@ namespace services.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class Tier2 : IMigrationMetadata
+    public sealed partial class CDMS_21_DatabaseUpdates : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Tier2));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CDMS_21_DatabaseUpdates));
         
         string IMigrationMetadata.Id
         {
-            get { return "201904120008311_Tier2"; }
+            get { return "201910221822471_CDMS_2.1_DatabaseUpdates"; }
         }
         
         string IMigrationMetadata.Source

@@ -37,6 +37,24 @@ namespace services.Controllers
             return db.InstrumentType.AsEnumerable();
         }
 
+        // GET /api/v1/instrument/getallinstrumentaccuracychecks
+        [System.Web.Http.HttpGet]
+        public IEnumerable<InstrumentAccuracyCheck> GetAllInstrumentAccuracyChecks()
+        {
+            logger.Debug("Inside GetProjectInstrumentAccuracyChecks...");
+            var db = ServicesContext.Current;
+
+            //dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
+            List<InstrumentAccuracyCheck> ac = (from item in db.AccuracyChecks
+                                                //where lstInstrumentIdList.Contains(item.InstrumentId)
+                                                orderby item.Id
+                                                select item).ToList();
+
+            return ac.AsEnumerable();
+        }
+
         // POST /api/v1/instrument/saveinstrumentaccuracycheck
         [System.Web.Http.HttpPost]
         public HttpResponseMessage SaveInstrumentAccuracyCheck(JObject jsonData)

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Dynamic;
 
 namespace services.Controllers
 {
@@ -21,6 +22,9 @@ namespace services.Controllers
      * 
      * Any data in a dataset will have belong to an "activity".
      * 
+* **************
+*                NOTE: we have an active feature toggle to switch between EF and SQL versions of saving: Toggle_EFSQL_SaveMode
+* **************
      */
     public class ActivityController : CDMSController
     {
@@ -70,57 +74,54 @@ namespace services.Controllers
         [HttpGet]
         public IEnumerable<Activity> GetDatasetActivities(int Id)
         {
+            logger.Debug("Inside GetDatasetActivities...");
+            logger.Debug("DatasetId = " + Id);
+
             var ndb = ServicesContext.Current;
             return ndb.Activities.Where(o => o.DatasetId == Id).ToList();
         }
 
-        /*
-         * get list of seasons for this datasetid (returns an empty list if none)
-         */
-        //GET /api/v1/activity/getdatasetseasons/5
-        /*[HttpGet]
-        public IEnumerable<Seasons> GetDatasetSeasons(int id)
-        {
-            logger.Debug("Inside GetDatasetSeasons...");
-            logger.Debug("id = " + id);
-            var ndb = ServicesContext.Current;
-            return ndb.Seasons.Where(o => o.DatasetId == id).ToList();
-        }
-        */
 
         /*
         * This queries just the information we need for showing the Activities on the
         * Data tab on CDMS front-end (for performance).
+        * NOTE: tweaked to no longer use the view (kb 9/19) 
         */
         // GET /api/v1/activity/getdatasetactivitiesview/5
         [HttpGet]
         public dynamic GetDatasetActivitiesView(int Id)
         {
+            logger.Debug("Inside GetDatasetActivitiesView...");
+            logger.Debug("DatasetId = " + Id);
+
             var db = ServicesContext.Current;
 
             var dataset = db.Datasets.Find(Id);
             if (dataset == null)
                 throw new System.Exception("Dataset could not be found: " + Id);
 
-            var data_header_name = dataset.Datastore.TablePrefix + "_Header_VW";
-
-            //var sql = "SELECT * FROM " + data_header_name + " vw JOIN Activities a ON a.Id = vw.ActivityId WHERE a.datasetid = "+Id;
+            var data_header_name = dataset.Datastore.TablePrefix + "_Header"; // + "_Header_VW";
 
             var sql = @"
-SELECT a.Id, a.Description, a.DatasetId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, 
-a.InstrumentId, a.AccuracyCheckId, a.PostAccuracyCheckId,
-vw.*, 
-qv.QAStatusId,
-loc.Label as LocationLabel, loc.LocationTypeId, loc.OtherAgencyId,
-wb.Name as WaterBodyName,
-u.Fullname as UserFullname
-FROM " + data_header_name + @" vw 
-JOIN Activities a ON a.Id = vw.ActivityId 
-JOIN ActivityQAs_VW qv ON a.Id = qv.ActivityId
-JOIN Locations loc ON a.LocationId = loc.Id
-LEFT JOIN WaterBodies wb ON loc.WaterBodyId = wb.Id
-JOIN Users u ON u.Id = a.UserId
-WHERE a.datasetid = " + Id;
+                SELECT a.Id, a.Description, a.DatasetId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, 
+                a.InstrumentId, a.AccuracyCheckId, a.PostAccuracyCheckId,
+                h.*, 
+                qv.QAStatusId, qv.Comments as QAComments,
+                loc.Label as LocationLabel, loc.LocationTypeId, loc.OtherAgencyId,
+                wb.Name as WaterBodyName,
+                u.Fullname as UserFullname
+                FROM " + data_header_name + @" h 
+                JOIN Activities a ON a.Id = h.ActivityId 
+                JOIN ActivityQAs_VW qv ON a.Id = qv.ActivityId
+                JOIN Locations loc ON a.LocationId = loc.Id
+                LEFT JOIN WaterBodies wb ON loc.WaterBodyId = wb.Id
+                JOIN Users u ON u.Id = a.UserId
+                WHERE 
+                (h.EffDt =
+                                (SELECT        MAX(hh.EffDt) AS MaxEffDt
+                                               FROM            "+ data_header_name +@" AS hh
+                                               WHERE(hh.ActivityId = h.ActivityId))) 
+                AND a.datasetid = " + Id;
 
 
             DataTable activities = new DataTable();
@@ -140,93 +141,7 @@ WHERE a.datasetid = " + Id;
 
 
 
-        /*
-         * This queries just the information we need for showing the Activities on the
-         * Data tab on CDMS front-end (for performance).
-         */
-        // GET /api/v1/activity/getdatasetactivitiesview/5
-        [HttpGet]
-        public dynamic GetDatasetActivitiesView_old(int Id)
-        {
-            var db = ServicesContext.Current;
-
-            Dataset ds = db.Datasets.Find(Id);
-            if (ds == null)
-                throw new Exception("Configuration Error:  Could not find the DatasetID in the database.");
-
-            /*var query = @"SELECT a.Id, a.LocationId, a.UserId, a.ActivityDate, a.Description, l.Label, l.LocationTypeId, l.SdeObjectId, l.WaterBodyId,
-                l.OtherAgencyId, l.GPSEasting, l.GPSNorthing, l.Projection, l.UTMZone, l.Latitude, l.Longitude, w.Name as WaterBodyName,
-                u.Fullname, qa.QAStatusId, qa.UserId as QAStatusUserId, qa.QAStatusName
-                FROM dbo.Activities AS a
-                    JOIN dbo.ActivityQAs_VW AS qa ON a.Id = qa.ActivityId
-                    JOIN dbo.Locations AS l ON a.LocationId = l.Id
-                    LEFT JOIN dbo.WaterBodies AS w ON l.WaterBodyId = w.Id
-                    JOIN dbo.Users AS u ON a.UserId = u.Id
-                WHERE a.DatasetId = " + Id;
-            */
-            string strQuery = BuildQueryString(Id, ds.Datastore.TablePrefix);
-
-            DataTable activities = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(strQuery, con))
-                {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(activities);
-                }
-            }
-
-            //build up our json instead of sending back the whole blasted object graph
-            //return activities;
-
-            /*JArray datasetactivities =
-                new JArray(                     //array of activities
-                from a in activities.AsEnumerable()
-                select new JObject              //one for each activity
-                (
-                    new JProperty("Id", a["Id"]),
-                    new JProperty("LocationId", a["LocationId"]),
-                    new JProperty("UserId", a["UserId"]),
-                    new JProperty("Description", a["Description"]),
-                    new JProperty("ActivityDate", a["ActivityDate"]),
-                    new JProperty("Location",
-                        new JObject(
-                            new JProperty("Id", a["LocationId"]),
-                            new JProperty("Label", a["Label"]),
-                            new JProperty("OtherAgencyId", a["OtherAgencyId"]),
-                            new JProperty("LocationTypeId", a["LocationTypeId"]),
-                            new JProperty("SdeObjectId", a["SdeObjectId"]),
-                            new JProperty("WaterBodyId", a["WaterBodyId"]),
-                            new JProperty("GPSEasting", a["GPSEasting"]),
-                            new JProperty("GPSNorthing", a["GPSNorthing"]),
-                            new JProperty("Projection", a["Projection"]),
-                            new JProperty("UTMZone", a["UTMZone"]),
-                            new JProperty("Latitude", a["Latitude"]),
-                            new JProperty("Longitude", a["Longitude"]),
-                            new JProperty("WaterBody",
-                                new JObject(
-                                    new JProperty("Id", a["WaterBodyId"]),
-                                    new JProperty("Name", a["WaterBodyName"])))
-                            )), //closes location
-                    new JProperty("User",
-                        new JObject(
-                            new JProperty("Id", a["UserId"]),
-                            new JProperty("Fullname", a["Fullname"]))),
-                    new JProperty("ActivityQAStatus",
-                        new JObject(
-                            new JProperty("QAStatusId", a["QAStatusId"]),
-                            new JProperty("UserId", a["QAStatusUserId"]),
-                            new JProperty("QAStatusName", a["QAStatusName"])
-                            ))
-                )
-                  );
-            */
-            JArray datasetactivities = BuildJArray(activities, ds.Datastore.TablePrefix);
-
-            return datasetactivities;
-        }
+       
 
         // GET /api/v1/activity/getcreelsurveydatasetactivitiesview/5
         [HttpGet]
@@ -320,14 +235,25 @@ WHERE a.datasetid = " + Id;
             return datasetactivities;
         }
 
+
         // GET /api/v1/activity/getdatasetactivitydata/5
-        /*
-         * returns a dataset model instance (like "AdultWeir") populated with the data related to an activity id
-         */
+
+        //Feature Toggle for EF vs SQL  //  TODO: remove when the move is complete
         [HttpGet]
         public dynamic GetDatasetActivityData(int Id)
         {
-            logger.Debug("Inside DatasetData.  Need data for this activity:  " + Id);
+            var toggle_data = ConfigurationManager.AppSettings["Toggle_EFSQL_SaveMode"];
+            if (toggle_data != null && toggle_data == "SQL")
+                return GetDatasetActivityData_SQL(Id);
+            else
+                return GetDatasetActivityData_EF(Id);
+        }
+
+        [HttpGet]
+        public dynamic GetDatasetActivityData_EF(int Id)
+        {
+            logger.Debug("Inside GetDatasetActivityData - ENTITY FRAMEWORK.  Loading data for this activity:  " + Id);
+
             var db = ServicesContext.Current;
             Activity activity = db.Activities.Find(Id);
 
@@ -344,6 +270,68 @@ WHERE a.datasetid = " + Id;
 
             //instantiate by name: AdultWeir(activity.Id)
             return Activator.CreateInstance(type, activity.Id);
+        }
+
+
+        /*
+         * returns a dataset model instance (like "AdultWeir") populated with the data related to an activity id
+         * NOTE: this is now a dynamic version (SQL) and not reliant on EF (kb 9/2019)
+         */
+        [HttpGet]
+        public dynamic GetDatasetActivityData_SQL(int Id)
+        {
+            logger.Debug("Inside GetDatasetActivityData - SQL Version.  Loading data for this activity:  " + Id);
+            var db = ServicesContext.Current;
+            Activity activity = db.Activities.Find(Id);
+
+            if (activity == null)
+                throw new Exception("Configuration Error");
+
+            logger.Debug("activity.Id = " + activity.Id);
+
+            var header_query = DatasetDataHelper.getHeaderQuery(activity.Dataset.Datastore.TablePrefix) + " AND ActivityId = " + activity.Id; 
+            var detail_query = DatasetDataHelper.getDetailQuery(activity.Dataset.Datastore.TablePrefix) + " AND ActivityId = " + activity.Id; 
+
+            logger.Debug("header query: " + header_query);
+            logger.Debug("detail query: " + detail_query);
+
+            dynamic retval = new ExpandoObject();
+            retval.Dataset = activity.Dataset;
+            retval.Header = new ExpandoObject();
+            retval.Details = new DataTable();
+
+            retval.Header.Activity = activity;
+            retval.Header.ByUser = activity.User;
+            
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(detail_query, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(retval.Details);
+                }
+
+                using (SqlCommand cmd = new SqlCommand(header_query, con)){
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    
+                    var columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        foreach (String column in columns)
+                        {
+                            logger.Debug(column);
+                            ((IDictionary<String, object>)retval.Header)[column] = reader[column];
+                        }
+                    }
+
+                }
+
+            }
+
+            return retval;
         }
 
 
@@ -430,18 +418,184 @@ WHERE a.datasetid = " + Id;
 
         }
 
-
-
+        // POST /api/v1/activity/updatedatasetactivities
+        //Feature Toggle for EF vs SQL  //  TODO: remove when the move is complete
+        [HttpPost]
+        public dynamic UpdateDatasetActivities(JObject jsonData)
+        {
+            var toggle_data = ConfigurationManager.AppSettings["Toggle_EFSQL_SaveMode"];
+            if (toggle_data != null && toggle_data == "SQL")
+                return UpdateDatasetActivities_SQL(jsonData);
+            else
+                return UpdateDatasetActivities_EF(jsonData);
+        }
 
         /**
          * Updates activities for a dataset.
          * json with: DatasetId, ProjectId, activities
+         * kb 9/19 - version that is not dependent on Entity Framework
          */
-        // POST /api/v1/activity/updatedatasetactivities
         [HttpPost]
-        public HttpResponseMessage UpdateDatasetActivities(JObject jsonData)
+        public HttpResponseMessage UpdateDatasetActivities_SQL(JObject jsonData)
         {
-            logger.Debug("Inside UpdateDatasetActivities...");
+            logger.Debug("Inside UpdateDatasetActivities_SQL ");
+
+            var db = ServicesContext.Current;
+
+            dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
+            User me = AuthorizationManager.getCurrentUser();
+
+            Dataset dataset = db.Datasets.Find(json.DatasetId.ToObject<int>());
+            if (dataset == null)
+                throw new Exception("Configuration Error.");
+
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (project == null)
+                throw new Exception("Configuration Error");
+
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
+
+            //1 - update the Activity with all of the incoming values
+            dynamic activity_json = json.Activity;
+            Activity activity = DatasetDataHelper.updateActivity(activity_json, me);
+
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                //each activity in its own transaction 
+                var trans = con.BeginTransaction();
+
+                //2 - insert new header row from incoming data
+                //    NOTE: we insert a new row (not actually update the old row) to track changes 
+                DatasetDataHeaderHelper header = new DatasetDataHeaderHelper(dataset, dataset.Datastore.TablePrefix, json.header);
+
+                var header_query = header.getInsertQuery(activity.Id, me.Id);  
+                logger.Debug(header_query);
+
+                using (SqlCommand cmd = new SqlCommand(header_query, con, trans))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+                //3 - insert detail rows from incoming data
+                DatasetDataDetailHelper detail = null; 
+
+                //there are three possible cases of incoming changes:
+                //  1) updated row (has ID and is in "editedRowIds" list)
+                //  2) new row (has no ID)
+                //  3) deleted row (is not in the list, ID is in "deletedRowIds" list)
+
+                //we ALWAYS make such indication by INSERTING a new row with a matching rowid + activityid + new current effective date.
+                //  exception is NEW row which gets and incremented rowid
+
+                
+                //now lets iterate our incoming rows and see what we've got.
+                var details = new List<DataDetail>();
+
+                List<int> updated_rows = new List<int>();
+                foreach (var updated_row in json.editedRowIds)
+                {
+                    logger.Debug("Found an updated row: " + updated_row);
+                    updated_rows.Add(updated_row.ToObject<int>());
+                }
+
+                List<int> deleted_rows = new List<int>();
+                foreach (var deleted_row in json.deletedRowIds)
+                {
+                    logger.Debug("Found a deleted row: " + deleted_row);
+                    deleted_rows.Add(deleted_row.ToObject<int>());
+                    if (updated_rows.Contains(deleted_row.ToObject<int>()))
+                        updated_rows.Remove(deleted_row.ToObject<int>());
+                }
+
+                int nextRowId = 1;
+
+                //iterate all the incoming details
+                foreach (var detailitem in json.details)
+                {
+
+                    var incomingDetailId = (detailitem["Id"] == null) ? null : detailitem["Id"].ToObject<int>();
+
+                    //if this row isn't new, updated, or deleted then skip it...
+                    if ((incomingDetailId != null) && (!updated_rows.Contains(incomingDetailId) && (!deleted_rows.Contains(incomingDetailId))))
+                        continue;
+
+                    //detail helper setup -- only once
+                    if(detail == null)
+                    {
+                        detail = new DatasetDataDetailHelper(dataset, dataset.Datastore.TablePrefix, detailitem);
+
+                        //get the next rowid
+                        var row_query = DatasetDataHelper.getMaxRowIdSQL(dataset.Datastore.TablePrefix, activity.Id);
+                        using (SqlCommand cmd = new SqlCommand(row_query, con, trans))
+                        {
+                            nextRowId = (int)cmd.ExecuteScalar() + 1;
+                        }
+
+                    }
+
+                    if (incomingDetailId != null && deleted_rows.Contains(incomingDetailId))
+                    {
+                        detailitem["RowStatusId"] = DataDetail.ROWSTATUS_DELETED;
+                    }
+
+                    //if we are inserting a new row, use the next RowId otherwise use the existing RowId since we're updating
+                    var thisRowId = nextRowId;
+                    if (incomingDetailId != null && incomingDetailId != 0) {
+                        thisRowId = detailitem.RowId.ToObject<int>(); //use the row's RowId
+                    } else {
+                        nextRowId++; //use the next one and increment it
+                    }
+
+                    var insert_detail_query = detail.getInsertQuery(activity.Id, me.Id, detailitem, thisRowId);
+                    logger.Debug(insert_detail_query);
+
+                    using (SqlCommand cmd = new SqlCommand(insert_detail_query, con, trans))
+                    {
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            logger.Debug("Problem executing: " + insert_detail_query);
+                            throw new Exception("Failed to execute detail query!");
+                        }
+                    }
+
+                    if (incomingDetailId != null && deleted_rows.Contains(incomingDetailId))
+                    {
+                        //delete any files associated with this detail item if it is deleted.
+                        //TODO ------------------------- 8******  Resources.ActivitiesFileHelper.DeleteAllFilesForDetail(detailitem, dataset);
+
+                    }
+
+                }
+
+                //some special cases to set the activity description to be a more user friendly date range for this activity.
+                if (activity.Id != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic"))
+                {
+                    var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, activity.Id);
+                    using (SqlCommand cmd = new SqlCommand(query, con, trans))
+                    {
+                        logger.Debug(query);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                trans.Commit();
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+
+        //The original entity framework version of update
+        [HttpPost]
+        public HttpResponseMessage UpdateDatasetActivities_EF(JObject jsonData)
+        {
+            logger.Debug("Inside UpdateDatasetActivities_EF  ...");
             var db = ServicesContext.Current;
 
             dynamic json = jsonData;
@@ -709,27 +863,191 @@ WHERE a.datasetid = " + Id;
 
                 }
             }
-            
+
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
-        
+
         /*
          * Saves activities for a dataset
-         */ 
+         */
 
         // POST /api/v1/activity/savedatasetactivities
+
+        //Feature Toggle for EF vs SQL  //  TODO: remove when the move is complete
         [HttpPost]
-        public HttpResponseMessage SaveDatasetActivities(JObject jsonData)
+        public dynamic SaveDatasetActivities(JObject jsonData)
         {
-            return SaveDatasetActivitiesEFF(jsonData);
+            var toggle_data = ConfigurationManager.AppSettings["Toggle_EFSQL_SaveMode"];
+            if (toggle_data != null && toggle_data == "SQL")
+                return SaveDatasetActivities_SQL(jsonData);
+            else
+                return SaveDatasetActivities_EF(jsonData);
+        }
+
+
+        // this is now just an alias in use by outside scripts
+        // POST /api/v1/activity/SaveDatasetActivitiesConnector
+        [HttpPost]
+        public HttpResponseMessage SaveDatasetActivitiesConnector(JObject jsonData)
+        {
+            return SaveDatasetActivities(jsonData);
+        }
+
+        //kb 9/19 - new sql version of saving activities - not dependent on EF 
+        [HttpPost]
+        public HttpResponseMessage SaveDatasetActivities_SQL(JObject jsonData)
+        {
+            logger.Debug("Running SaveDatasetActivities_SQL");
+
+            var db = ServicesContext.Current;
+            User me = AuthorizationManager.getCurrentUser();
+
+            dynamic json = jsonData;
+
+            Dataset dataset = db.Datasets.Find(json.DatasetId.ToObject<int>());
+
+            if (dataset == null)
+                throw new Exception("Configuration Error.");
+
+            Project project = db.Projects.Find(dataset.ProjectId);
+            if (!project.isOwnerOrEditor(me))
+                throw new Exception("Authorization error.");
+
+            List<dynamic> activities = new List<dynamic>();
+
+            if(json.activities == null && json.Activity != null) {
+                 activities.Add(json.Activity);
+            }else{
+                 foreach(var activity_in in json.activities){
+                    activities.Add(activity_in);
+                 }
+            }
+
+
+            DatasetDataHeaderHelper header = null;
+            DatasetDataDetailHelper detail = null;
+
+            int rowId = 1;
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                foreach (var activity_in in activities)
+                {
+                    int newActivityId = 0;
+
+                    //each activity in its own transaction 
+                    var trans = con.BeginTransaction();
+
+                    dynamic activity_json = null;
+
+                    if (activity_in is JProperty) {
+                        var activity_prop = activity_in as JProperty;
+                        activity_json = activity_prop.Value;
+                    } else {
+                        activity_json = activity_in;
+                    }
+                    logger.Debug(activity_json);
+                    string activity_query = DatasetDataHelper.getInsertActivitySQL(dataset, activity_json, me.Id);
+
+                    logger.Debug(activity_query);
+
+                    using (SqlCommand cmd = new SqlCommand(activity_query, con, trans))
+                    {
+                        var result = cmd.ExecuteScalar();
+                        //logger.Debug(result + result.GetType().ToString()); = System.Decimal?!
+                        newActivityId = Convert.ToInt32(result.ToString());
+                    }
+
+                    //logger.Debug("Hey!  we have a new activity id: " + newActivityId);
+
+                    string newQA_query = DatasetDataHelper.getInsertActivityQASQL(newActivityId, activity_json, me.Id);
+                    logger.Debug(newQA_query);
+
+                    using (SqlCommand cmd = new SqlCommand(newQA_query, con, trans))
+                    {
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            logger.Debug("Failed to execute query: " + newQA_query);
+                            throw new Exception("Failed to execute qa query.  See log.");
+                        }
+                    }
+
+                    //construct the header helper - only need to do this once.
+                    var the_header = json.Header;
+
+                    if (header == null) {
+                        if (json.Header == null && json.header != null)
+                            the_header = json.header;
+
+                        header = new DatasetDataHeaderHelper(dataset, dataset.Datastore.TablePrefix, the_header);
+                    }
+
+                    var header_query = header.getInsertQuery(newActivityId, me.Id);
+                    logger.Debug(header_query);
+
+                    using (SqlCommand cmd = new SqlCommand(header_query, con, trans))
+                    {
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            logger.Debug("Failed to execute query: " + header_query);
+                            throw new Exception("Failed to execute header query.  See log.");
+                        }
+                    }
+
+                    //---------------- now iterate over the details... 
+                    var the_details = json.Details;
+                    if (json.Details == null && json.details != null)
+                        the_details = json.details;
+
+                    foreach (JObject detail_row in the_details)
+                    {
+                        //construct the detail helper object -- only need to do this once
+                        if (detail == null){
+                            detail = new DatasetDataDetailHelper(dataset, dataset.Datastore.TablePrefix, detail_row);
+                        }
+
+                        string the_detail_query = detail.getInsertQuery(newActivityId, me.Id, detail_row, rowId);
+                        logger.Debug(the_detail_query);
+
+                        using (SqlCommand cmd = new SqlCommand(the_detail_query, con, trans))
+                        {
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                logger.Debug("Problem executing: " + the_detail_query);
+                                throw new Exception("Failed to execute detail query!");
+                            }
+                            rowId++;
+                        }
+                    }//foreach detail
+
+                    //some special cases to set the activity description to be a more user friendly date range for this activity.
+                    if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic")) 
+                    {
+                        var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, newActivityId);
+                        using (SqlCommand cmd = new SqlCommand(query, con, trans))
+                        {
+                            logger.Debug(query);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    trans.Commit();
+
+                }//foreach activity
+            }//connection
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
         //entity framework version of saving - this is slow but effective.
-        private HttpResponseMessage SaveDatasetActivitiesEFF(JObject jsonData)
+        private HttpResponseMessage SaveDatasetActivities_EF(JObject jsonData)
         {
-            logger.Debug("Saving dataset activities: ");
-            var db = ServicesContext.RestartCurrent;
+            logger.Debug("Running SaveDatasetActivities_EF");
+
+             var db = ServicesContext.RestartCurrent;
             User me = AuthorizationManager.getCurrentUser();
 
             dynamic json = jsonData;
@@ -765,7 +1083,7 @@ WHERE a.datasetid = " + Id;
             db.Configuration.ValidateOnSaveEnabled = false;
 
             int newActivityId = 0;
-            
+
             dynamic activity_json = json.Activity;
 
             Activity activity = new Activity();
@@ -787,15 +1105,15 @@ WHERE a.datasetid = " + Id;
             {
                 activity.DatasetId = json.DatasetId;
                 activity.UserId = me.Id;
-                activity.SourceId = 1 ;  
-                activity.ActivityTypeId = 1 ;
+                activity.SourceId = 1;
+                activity.ActivityTypeId = 1;
                 activity.CreateDate = DateTime.Now;
                 activity.InstrumentId = (activity_json.InstrumentId != null) ? activity_json.InstrumentId : null;
                 activity.AccuracyCheckId = (activity_json.AccuracyCheckId != null) ? activity_json.AccuracyCheckId : null;
                 activity.PostAccuracyCheckId = (activity_json.PostAccuracyCheckId != null) ? activity_json.PostAccuracyCheckId : null;
                 activity.Timezone = (activity_json.Timezone != null) ? activity_json.Timezone : null;
 
-                
+
                 string strActivity = "activity.DatasetId = " + activity.DatasetId + "\n" +
                     "activity.UserId = " + activity.UserId + "\n" +
                     "activity.SourceId = " + activity.SourceId + "\n" +
@@ -809,15 +1127,15 @@ WHERE a.datasetid = " + Id;
 
                 logger.Debug("activity = " + activity);
                 logger.Debug(strActivity);
-                
+
                 logger.Debug("and we have finished parameters (DataActionController).");
-                /*
+
                 //check for duplicates.  If it is a duplicate, add it to our list and bail out.
-                if (activity.isDuplicate())
-                {
-                    duplicateActivities.Add(activity);
-                }
-                */
+                //if (activity.isDuplicate())
+                // {
+                //     duplicateActivities.Add(activity);
+                // }
+
 
                 db.Activities.Add(activity);
                 now = DateTime.Now;
@@ -1044,286 +1362,6 @@ WHERE a.datasetid = " + Id;
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
-        // POST /api/v1/activity/SaveDatasetActivitiesConnector
-        [HttpPost]
-        public HttpResponseMessage SaveDatasetActivitiesConnector(JObject jsonData)
-        {
-            return SaveDatasetActivitiesSQL(jsonData);
-        }
-
-        //sql version of saving - used for connectors inserting new activities
-        private HttpResponseMessage SaveDatasetActivitiesSQL(JObject jsonData)
-        {
-            var db = ServicesContext.Current;
-            User me = AuthorizationManager.getCurrentUser();
-
-            dynamic json = jsonData;
-
-            Dataset dataset = db.Datasets.Find(json.DatasetId.ToObject<int>());
-
-            if (dataset == null)
-                throw new Exception("Configuration Error.");
-
-            Project project = db.Projects.Find(dataset.ProjectId);
-            if (!project.isOwnerOrEditor(me))
-                throw new Exception("Authorization error.");
-
-            var data_header_name = dataset.Datastore.TablePrefix + "_Header";
-            var data_detail_name = dataset.Datastore.TablePrefix + "_Detail";
-
-            //these will get loaded once and then stay the same every time.
-            var query_header = "INSERT INTO " + data_header_name + " (";
-            var query_detail = "INSERT INTO " + data_detail_name + " (";
-            var headerFields = new List<string>();
-            var detailFields = new List<string>();
-
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                con.Open();
-
-                foreach (var item in json.activities)
-                {
-                    int newActivityId = 0;
-
-                    //each activity in its own transaction - maybe usually only one
-
-                    var trans = con.BeginTransaction();
-                    if (item is JProperty)
-                    {
-                        var prop = item as JProperty;
-                        dynamic activity_json = prop.Value;
-
-                        //mapping to our activity object verifies all of the types
-
-                        Activity activity = new Activity();
-                        activity.LocationId = activity_json.LocationId;
-                        activity.ActivityDate = (activity_json.ActivityDate != null) ? activity_json.ActivityDate : DateTime.Now;
-                        activity.DatasetId = json.DatasetId;
-                        activity.UserId = me.Id;
-                        activity.SourceId = (activity_json.SourceId != null) ? activity_json.SourceId : 3; //3=stream
-                        activity.ActivityTypeId = 1;
-                        activity.CreateDate = DateTime.Now;
-                        activity.InstrumentId = (activity_json.InstrumentId != null) ? (activity_json.InstrumentId) : null;
-                        activity.AccuracyCheckId = (activity_json.AccuracyCheckId != null) ? activity_json.AccuracyCheckId : null;
-                        activity.PostAccuracyCheckId = (activity_json.PostAccuracyCheckId != null) ? activity_json.PostAccuracyCheckId : null;
-                        activity.Timezone = (activity_json.Timezone != null) ? activity_json.Timezone.Replace("'", "''") : "";
-
-                        var activity_query = "INSERT INTO Activities (LocationId, ActivityDate, DatasetId, UserId, SourceId, ActivityTypeId, CreateDate, ";
-
-                        var activity_query_values =
-                            activity.LocationId + ",'" +
-                            activity.ActivityDate + "'," +
-                            activity.DatasetId + "," +
-                            activity.UserId + "," +
-                            activity.SourceId + "," +
-                            activity.ActivityTypeId + "," +
-                            "'" + activity.CreateDate + "',";
-
-                            if(activity.InstrumentId != null)
-                            {
-                                activity_query += "InstrumentId, ";
-                                activity_query_values += activity.InstrumentId + ",";
-                            }
-
-                            if (activity.AccuracyCheckId != null)
-                            {
-                                activity_query += "AccuracyCheckId, ";
-                                activity_query_values += activity.AccuracyCheckId + ",";
-                            }
-
-                            if (activity.PostAccuracyCheckId != null)
-                            {
-                                activity_query += "PostAccuracyCheckId, ";
-                                activity_query_values += activity.PostAccuracyCheckId + ",";
-                            }
-
-                            activity_query += "Timezone) VALUES("; 
-                            activity_query_values += "'" + activity.Timezone + "');";
-
-                        activity_query += activity_query_values + "SELECT SCOPE_IDENTITY();";
-
-                        logger.Debug(activity_query);
-                        logger.Debug(activity_query_values);
-
-                        using (SqlCommand cmd = new SqlCommand(activity_query, con, trans))
-                        {
-                            var result = cmd.ExecuteScalar();
-                            //logger.Debug(result + result.GetType().ToString()); = System.Decimal?!
-                            newActivityId = Convert.ToInt32(result.ToString());
-                        }
-
-                        //this element is optional. if not included, we'll default to "6" and "initial import"
-                        dynamic activityqastatus = activity_json.ActivityQAStatus;
-
-                        activity.Id = newActivityId;
-                        logger.Debug("Hey!  we have a new activity id: " + activity.Id);
-
-                        var newQA_query = "INSERT INTO ActivityQAs (ActivityId, QAStatusId, Comments, EffDt, UserId) VALUES (";
-
-                        ActivityQA newQA = new ActivityQA();
-                        newQA.ActivityId = newActivityId;
-                        newQA.QAStatusId = (activityqastatus != null) ? activityqastatus.QAStatusID : 6; //6=readyforqa
-                        newQA.Comments = (activityqastatus != null) ? activityqastatus.Comments.Replace("'", "''") : "Initial Import";
-                        newQA.EffDt = DateTime.Now;
-                        newQA.UserId = activity.UserId;
-
-                        newQA_query += newQA.ActivityId + "," +
-                            newQA.QAStatusId + "," +
-                            "'" + newQA.Comments + "','" +
-                            newQA.EffDt + "'," +
-                            newQA.UserId + ");";
-
-                        logger.Debug(newQA_query);
-
-                        using (SqlCommand cmd = new SqlCommand(newQA_query, con, trans))
-                        {
-                            if (cmd.ExecuteNonQuery() == 0)
-                            {
-                                logger.Debug("Failed to execute query: " + newQA_query);
-                                throw new Exception("Failed to execute qa query.  See log.");
-                            }
-                        }
-
-                        //get these ready for a new set of values
-                        var query_header_values = " VALUES (";
-                        var query_detail_values = " VALUES (";
-                        var headerValues = new List<string>();
-                        var detailValues = new List<string>();
-
-                        //have our headers been populated yet?  we only have to do it once.
-                        if (headerFields.Count == 0)
-                        {
-                            //first the ones we always have
-                            headerFields.Add("ActivityId");
-                            headerFields.Add("ByUserId");
-                            headerFields.Add("EffDt");
-
-                            //now spin through and add any incoming ones from our JSON.
-                            var the_header = activity_json.Header as JObject;
-                            IList<string> propertyNames = the_header.Properties().Select(p => p.Name).ToList();
-                            foreach (var prop_field in propertyNames)
-                            {
-                                headerFields.Add(prop_field);
-                            }
-                        }
-
-                        headerValues.Add(activity.Id.ToString());
-                        headerValues.Add(activity.UserId.ToString());
-                        headerValues.Add("'" + DateTime.Now.ToString() + "'");
-
-                        //now populate header values 
-                        foreach (var prop_field in headerFields)
-                        {
-                            if (prop_field != "ActivityId" && prop_field != "ByUserId" && prop_field != "EffDt") //these are already done.
-                            {
-                                var control_type = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field).Single().ControlType;
-                                var objVal = activity_json.Header.GetValue(prop_field);
-                                if (objVal == null)
-                                    headerValues.Add("null");
-                                else
-                                {
-                                    headerValues.Add(QueryHelper.getStringValueByControlType(control_type, objVal.ToString()));
-                                }
-                            }
-                        }
-
-                        var the_query = query_header + string.Join(",", headerFields) + ") " + query_header_values + string.Join(",", headerValues) + ")";
-                        logger.Debug(the_query);
-                        using (SqlCommand cmd = new SqlCommand(the_query, con, trans))
-                        {
-                            if (cmd.ExecuteNonQuery() == 0)
-                            {
-                                logger.Debug("Failed to execute query: " + the_query);
-                                throw new Exception("Failed to execute header query.  See log.");
-                            }
-                        }
-
-                        //---------------- now for the details...
-                        int rowid = 1;
-                        foreach (JObject detail in activity_json.Details)
-                        {
-                            //have our detail fields been populated yet?  we only have to do it once.
-                            if (detailFields.Count == 0)
-                            {
-                                //first the ones we always have
-                                detailFields.Add("ActivityId");
-                                detailFields.Add("ByUserId");
-                                detailFields.Add("EffDt");
-                                detailFields.Add("RowStatusId");
-                                detailFields.Add("RowId");
-                                detailFields.Add("QAStatusId");
-
-                                //now spin through and add any incoming ones from our JSON.
-                                IList<string> propertyNames = detail.Properties().Select(p => p.Name).ToList();
-                                foreach (var prop_field in propertyNames)
-                                {
-                                    DatasetField the_field = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field && o.FieldRoleId == 2).SingleOrDefault();
-                                    if (the_field != null)
-                                        detailFields.Add(prop_field);
-                                }
-                            }
-
-                            var QAStatusId = (detail.GetValue("QAStatusId") != null) ? detail.GetValue("QAStatusId") : "1"; //1=ok
-
-                            detailValues.Add(activity.Id.ToString());
-                            detailValues.Add(activity.UserId.ToString());
-                            detailValues.Add("'" + DateTime.Now.ToString() + "'");
-                            detailValues.Add(DataDetail.ROWSTATUS_ACTIVE.ToString());
-                            detailValues.Add(rowid.ToString());
-                            detailValues.Add(QAStatusId.ToString());
-
-                            //now populate detail values 
-                            foreach (var prop_field in detailFields)
-                            {
-                                if (prop_field != "QAStatusId" && prop_field != "ActivityId" && prop_field != "ByUserId" && prop_field != "EffDt" && prop_field != "RowId" && prop_field != "RowStatusId") //these are already done.
-                                {
-                                    var control_type = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field).SingleOrDefault().ControlType;
-                                    var objVal = detail.GetValue(prop_field);
-                                    if (objVal == null)
-                                        detailValues.Add("null");
-                                    else
-                                    {
-                                        detailValues.Add(QueryHelper.getStringValueByControlType(control_type, objVal.ToString()));
-
-                                    }
-                                }
-                            }
-                            rowid++;
-                            var the_detail_query = query_detail + string.Join(",", detailFields) + ") " + query_detail_values + string.Join(",", detailValues) + ")";
-                            logger.Debug(the_detail_query);
-                            using (SqlCommand cmd = new SqlCommand(the_detail_query, con, trans))
-                            {
-                                if (cmd.ExecuteNonQuery() == 0)
-                                {
-                                    logger.Debug("Problem executing: " + the_detail_query);
-                                    throw new Exception("Failed to execute detail query!");
-                                }
-                            }
-                            detailValues = new List<string>();
-                        }//foreach detail
-
-                        //If there is a ReadingDateTime field in use, set the activity description to be the range of reading dates for this activity.
-                        if (newActivityId != 0 && dataset.Datastore.TablePrefix == "WaterTemp") // others with readingdatetime?
-                        {
-                            var query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + dataset.Datastore.TablePrefix + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
-
-                            using (SqlCommand cmd = new SqlCommand(query, con, trans))
-                            {
-                                logger.Debug(query);
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-
-
-                    }//if is a jproperty
-
-                    trans.Commit();
-
-                }//foreach activity
-            }//connection
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        }
 
         // POST /api/v1/activity/savedatasetseason
         public HttpResponseMessage SaveDatasetSeason(JObject jsonData)
@@ -1447,86 +1485,6 @@ WHERE a.datasetid = " + Id;
 
         }
 
-        //QuerySpecificActivities
-        // POST /api/v1/activity/queryspecificactivities
-        /*[HttpPost]
-        public DataTable QuerySpecificActivities(JObject jsonData)
-        {
-            logger.Debug("Inside ActivityController.cs, QuerySpecificActivities...");
-            var db = ServicesContext.Current;
-            //DataTable datatable = null;
-            DataTable datatable = new DataTable();
-
-            dynamic json = jsonData;
-            logger.Debug("json = " + json);
-
-            int DatasetId = json.DatasetId.ToObject<int>();
-            logger.Debug("DatasetId = " + DatasetId);
-            var dataset = db.Datasets.Find(DatasetId);
-            if (dataset == null)
-                throw new System.Exception("Dataset could not be found: " + DatasetId);
-
-            int LocationId = json.LocationId.ToObject<int>();
-            logger.Debug("LocationId = " + LocationId);
-
-            DateTime ActivityDate = json.ActivityDate.ToObject<DateTime>();
-            string strActivityDate = ActivityDate.ToString("u");
-            logger.Debug("strActivityDate = " + strActivityDate);
-
-            int intSpaceLoc = strActivityDate.IndexOf(" ");
-            logger.Debug("intSpaceLoc = " + intSpaceLoc);
-
-            strActivityDate = strActivityDate.Substring(0, intSpaceLoc);
-            strActivityDate += " 00:00:00.000";
-            logger.Debug("strActivityDate (after stripping time) = " + strActivityDate);
-
-            DateTime ActivityDate2 = ActivityDate.AddDays(1);
-            string strActivityDate2 = ActivityDate2.ToString("u");
-            strActivityDate2 = strActivityDate2.Substring(0, intSpaceLoc);
-            strActivityDate2 += " 00:00:00.000";
-
-            string query = "";
-            query += "select Id from dbo.Activities where DatasetId = " + DatasetId;
-            query += " AND LocationId = " + LocationId;
-            query += " AND ActivityDate >= '" + strActivityDate + "'";
-            query += " AND ActivityDate < '" + strActivityDate2 + "'";
-
-            logger.Debug("query = " + query);
-
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                // Enable setting the command timeout.
-                con.Open();
-                logger.Debug("Opened connection...");
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                logger.Debug("Created SQL commaned...");
-
-                cmd.CommandTimeout = 120; // 2 minutes in seconds.
-                logger.Debug("Set cmd timeout...");
-
-                try
-                {
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    logger.Debug("Created SqlDataAdapter...");
-
-                    da.SelectCommand.CommandTimeout = 120; // 2 minutes in seconds
-                    logger.Debug("Set da timeout...");
-
-                    da.Fill(datatable);
-                    logger.Debug("Filled SqlDataAdapter da...");
-                }
-                catch (SqlException e)
-                {
-                    logger.Debug("Query sql command timed out..." + e.Message);
-                    logger.Debug(e.InnerException);
-                }
-            }
-
-            return datatable;
-        }
-        */
-
         public DataTable QueryActivities(string strQuery)
         {
             logger.Debug("Inside ActivityController.cs, QueryActivities...");
@@ -1567,6 +1525,9 @@ WHERE a.datasetid = " + Id;
             return datatable;
         }
 
+/*
+ *      kb 9/19 - is the following still in use? 
+*      
         public DataTable QuerySpecificActivities(JObject jsonData)
         {
             logger.Debug("Inside ActivityController.cs, QuerySpecificActivities...");
@@ -1664,38 +1625,6 @@ WHERE a.datasetid = " + Id;
 
             return QueryActivities(query);
 
-            /*using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                // Enable setting the command timeout.
-                con.Open();
-                logger.Debug("Opened connection...");
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                logger.Debug("Created SQL commaned...");
-
-                cmd.CommandTimeout = 120; // 2 minutes in seconds.
-                logger.Debug("Set cmd timeout...");
-
-                try
-                {
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    logger.Debug("Created SqlDataAdapter...");
-
-                    da.SelectCommand.CommandTimeout = 120; // 2 minutes in seconds
-                    logger.Debug("Set da timeout...");
-
-                    da.Fill(datatable);
-                    logger.Debug("Filled SqlDataAdapter da...");
-                }
-                catch (SqlException e)
-                {
-                    logger.Debug("Query sql command timed out..." + e.Message);
-                    logger.Debug(e.InnerException);
-                }
-            }
-
-            return datatable;
-            */
         }
 
         // QuerySpecificActivitiesWithBounds
@@ -1881,7 +1810,7 @@ WHERE a.datasetid = " + Id;
             //}
 
             return datatable;
-            */
+            // * /
         }
 
         //QuerySpecificWaterTempActivities
@@ -2005,7 +1934,7 @@ WHERE a.datasetid = " + Id;
                     strDtList += "\'" + dtItem + "\'";
             }
             logger.Debug("strDtList = " + strDtList);
-            */
+            * /
             string strDtList = "";
             foreach (var dtItem in jaryReadingDateTimeList)
             {
@@ -2034,7 +1963,7 @@ WHERE a.datasetid = " + Id;
                 rowqas.Add(filterForSQL(item));
             }
             conditions.Add("QAStatusId IN (" + string.Join(",", rowqas.ToArray()) + ")");
-            */
+            * /
 
             logger.Debug("query = " + query);
 
@@ -2071,7 +2000,7 @@ WHERE a.datasetid = " + Id;
             }
 
             return datatable;
-            */
+            * /
         }
 
         //QuerySpecificCreelSurveyActivities
@@ -2182,7 +2111,7 @@ WHERE a.datasetid = " + Id;
                     strTimeStartList += "," + item.ToString();
             }
             logger.Debug("strTimeStartList = " + strTimeStartList);
-            */
+            * /
             logger.Debug("strTimeStart = " + strTimeStart);
 
 
@@ -2232,7 +2161,7 @@ WHERE a.datasetid = " + Id;
             }
 
             return datatable;
-            */
+            * /
         }
 
         //QuerySpecificScrewTrapActivities
@@ -2281,7 +2210,7 @@ WHERE a.datasetid = " + Id;
 
             //*** Activity Dates ***
             var dtList2 = new List<string>();
-            string strActivityDateList = "";
+            //string strActivityDateList = "";
 
             JArray jaryActivityDateList = (JArray)json.ActivityDate;
 
@@ -2356,7 +2285,7 @@ WHERE a.datasetid = " + Id;
                         strArrivalTimeList += "," + item.ToString();
                 }
                 logger.Debug("strArrivalTimeList = " + strArrivalTimeList);
-                */
+                * /
                 logger.Debug("strArrivalTime = " + strArrivalTime);
             }
 
@@ -2408,8 +2337,9 @@ WHERE a.datasetid = " + Id;
             }
 
             return datatable;
-            */
+            * /
         }
+*/
 
         private string BuildQueryString(int Id, string strTblPrefix)
         {
@@ -2548,5 +2478,5 @@ WHERE a.datasetid = " + Id;
 
             return datasetactivities;
         }
-    }
+    }   
 }
