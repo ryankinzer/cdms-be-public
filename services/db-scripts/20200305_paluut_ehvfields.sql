@@ -516,4 +516,20 @@ drop table #NewFieldInfo
 INSERT INTO MetadataValues (MetadataPropertyId, RelationId, EffDt, [Values], UserId) values (24,@projectid,getdate(), '(None)' ,1);
 INSERT INTO MetadataValues (MetadataPropertyId, RelationId, EffDt, [Values], UserId) values (23,@projectid,getdate(), 'Admin' ,1);
 
+
+
+-- other settings
+
+insert into PermitTypes (Name, PermitTypeStatus, FeeRequired, PermitNumberPrefix, CurrentPermitNumber, StampRequired) values ('Environmental Health & Safety', 0, 0, 'EHS', 5, 0);  --TODO: what is the starting record number?
+
+update DatasetFields set ColumnIndex = 1 where datasetid = @datasetid;
+update DatasetFields set ColumnIndex = 2 where datasetid = @datasetid and DbColumnName like ('Site%');
+update DatasetFields set ColumnIndex = 3 where datasetid = @datasetid and DbColumnName like ('Complain%');
+update DatasetFields set ColumnIndex = 6 where datasetid = @datasetid and DbColumnName = 'NotifyRoutes';
+
+update fields set DataSource = 'select possiblevalues from metadataproperties where id = 65' where datastoreid = @datastoreid and DbColumnName in ('SiteCity','ComplainantCity');
+update fields set DataSource = 'select possiblevalues from metadataproperties where id = 66' where datastoreid = @datastoreid and DbColumnName in ('SiteState','ComplainantState');
+update fields set DataSource = 'select possiblevalues from metadataproperties where id = 67' where datastoreid = @datastoreid and DbColumnName in ('SiteZip','ComplainantZip');
+update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('Reviewer', 'StatusUpdatedBy');
+
 COMMIT TRAN T1;

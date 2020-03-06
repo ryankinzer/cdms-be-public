@@ -920,6 +920,42 @@ namespace services.Controllers.Private
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
+
+        [HttpPost]
+        public HttpResponseMessage SaveViolation(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            EHSViolation violation = json.Violation.ToObject<EHSViolation>();
+
+            if (violation.Id == 0)
+            {
+                //check and increment the permit number based on the PermitType
+                PermitType the_type = db.PermitType().Where(o => o.PermitNumberPrefix == "EHS").SingleOrDefault();
+                the_type.CurrentPermitNumber++;
+                violation.FileNumber = the_type.generatePermitNumber(); 
+                db.Entry(the_type).State = EntityState.Modified;
+
+                //save the permit
+                db.EHSViolations().Add(violation);
+
+                db.SaveChanges();
+            }
+            else
+            {
+                db.Entry(violation).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, violation);
+            return response;
+        }
+
     }
 
 
