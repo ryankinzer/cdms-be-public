@@ -193,10 +193,6 @@
     <Compile Include="Migrations\202002281956239_reset.Designer.cs">
       <DependentUpon>202002281956239_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202002282009440_WtAddProperties.cs" />
-    <Compile Include="Migrations\202002282009440_WtAddProperties.Designer.cs">
-      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
@@ -449,6 +445,7 @@
     <None Include="Properties\PublishProfiles\gis-dev02-services-test.pubxml" />
     <None Include="Properties\PublishProfiles\gisweb02-production.pubxml" />
     <None Include="Properties\PublishProfiles\local-services-dev.pubxml" />
+    <None Include="Properties\PublishProfiles\webstats_prod.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -464,9 +461,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
       <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002282009440_WtAddProperties.resx">
-      <DependentUpon>202002282009440_WtAddProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
