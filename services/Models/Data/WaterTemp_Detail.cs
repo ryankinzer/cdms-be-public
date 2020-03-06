@@ -21,12 +21,18 @@ namespace services.Models.Data
         public double? AbsolutePressure { get; set; }
         public double? Depth { get; set; }
         public double? Discharge { get; set; }
-        public double? MinWaterTemperature { get; set; }
-        public double? MaxWaterTemperature { get; set; }
-        public double? MeanWaterTemperature { get; set; }
-        public double? MinAirTemperature { get; set; }
-        public double? MaxAirTemperature { get; set; }
-        public double? MeanAirTemprature { get; set; }
+        public double? MinWaterTemperatureC { get; set; }
+        public double? MaxWaterTemperatureC { get; set; }
+        public double? MeanWaterTemperatureC { get; set; }
+        public double? MinAirTemperatureC { get; set; }
+        public double? MaxAirTemperatureC { get; set; }
+        public double? MeanAirTempratureC { get; set; }
+        public double? MinWaterTemperatureF { get; set; }
+        public double? MaxWaterTemperatureF { get; set; }
+        public double? MeanWaterTemperatureF { get; set; }
+        public double? MinAirTemperatureF { get; set; }
+        public double? MaxAirTemperatureF { get; set; }
+        public double? MeanAirTempratureF { get; set; }
 
     }
 }
