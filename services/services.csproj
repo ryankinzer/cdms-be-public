@@ -197,9 +197,9 @@
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
-    <Compile Include="Models\Data\Private\Permits\PermitViolation.cs" />
-    <Compile Include="Models\Data\Private\Permits\PermitViolationContact.cs" />
-    <Compile Include="Models\Data\Private\Permits\PermitViolationParcel.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolation.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationContact.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationParcel.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
@@ -409,7 +409,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
-    <Content Include="db-scripts\20200304_paluut_violations.sql" />
+    <Content Include="db-scripts\20200304_paluut_ehvtables.sql" />
+    <Content Include="db-scripts\20200305_paluut_ehvfields.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />

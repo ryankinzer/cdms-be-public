@@ -12,12 +12,12 @@ using System.Web;
 
 namespace services.ExtensionMethods
 {
-    public static class PermitViolationParcelExtensions
+    public static class EHSViolationParcelExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<PermitViolationParcel> PermitViolationParcels(this ServicesContext ctx)
+        public static DbSet<EHSViolationParcel> EHSViolationParcels(this ServicesContext ctx)
         {
-            return ctx.GetDbSet("PermitViolationParcel").Cast<PermitViolationParcel>();
+            return ctx.GetDbSet("EHSViolationParcel").Cast<EHSViolationParcel>();
         }
     }
 }
@@ -25,11 +25,11 @@ namespace services.ExtensionMethods
 
 namespace services.Models.Data
 {
-    public class PermitViolationParcel : DataEntity
+    public class EHSViolationParcel : DataEntity
     {
         public int Id { get; set; }
 
-        public int PermitViolationId { get; set; }
+        public int EHSViolationId { get; set; }
         public int? ObjectId { get; set; }
 
         public string ParcelId { get; set; }
@@ -39,11 +39,11 @@ namespace services.Models.Data
         //relationships
 
         [JsonIgnore]
-        public virtual PermitViolation PermitViolation { get; set; }
+        public virtual EHSViolation EHSViolation { get; set; }
 
         public virtual PermitCadasterView Object { get; set; }
 
-        public PermitViolationParcel(){
+        public EHSViolationParcel(){
             CreateDate = DateTime.Now;
         }
 

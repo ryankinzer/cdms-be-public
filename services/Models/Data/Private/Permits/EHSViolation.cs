@@ -9,26 +9,26 @@ using System.Web;
 
 namespace services.ExtensionMethods
 {
-    public static class PermitViolationExtensions
+    public static class EHSViolationExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<PermitViolation> PermitViolation(this ServicesContext ctx)
+        public static DbSet<EHSViolation> EHSViolations(this ServicesContext ctx)
         {
-            return ctx.GetDbSet("PermitViolation").Cast<PermitViolation>();
+            return ctx.GetDbSet("EHSViolation").Cast<EHSViolation>();
         }
     }
 }
 
 namespace services.Models.Data
 {
-    public class PermitViolation : DataEntity
+    public class EHSViolation : DataEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string FileNumber { get; set; }
         public string FileType { get; set; }
         public DateTime CreateDate { get; set; }
-        public int ReviewerId { get; set; }
+        public string Reviewer { get; set; }
 
         public DateTime? ViolationStartDate { get; set; }
         public DateTime? ViolationResolvedDate { get; set; }
@@ -36,7 +36,7 @@ namespace services.Models.Data
         public string ViolationDescription { get; set; }
 
         public string ViolationStatus { get; set; }
-        public int StatusUpdatedBy { get; set; }
+        public string StatusUpdatedBy { get; set; }
         public DateTime? StatusUpdateDate { get; set; }
         
         public string Comments { get; set; }
@@ -52,7 +52,7 @@ namespace services.Models.Data
 
         public string ComplaintDate { get; set; }
         public string ComplaintDescription { get; set; }
-        public int ComplaintReceivedBy { get; set; }
+        public string ComplaintReceivedBy { get; set; }
 
         public string SiteName { get; set; }
         public string SiteAddress { get; set; }

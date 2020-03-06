@@ -12,12 +12,12 @@ using System.Web;
 
 namespace services.ExtensionMethods
 {
-    public static class PermitViolationContactExtensions
+    public static class EHSViolationContactExtensions
     {
         //Extension method to give ServicesContext this property.
-        public static DbSet<PermitViolationContact> PermitViolationContacts(this ServicesContext ctx)
+        public static DbSet<EHSViolationContact> EHSViolationContacts(this ServicesContext ctx)
         {
-            return ctx.GetDbSet("PermitViolationContact").Cast<PermitViolationContact>();
+            return ctx.GetDbSet("EHSViolationContact").Cast<EHSViolationContact>();
         }
     }
 }
@@ -25,10 +25,10 @@ namespace services.ExtensionMethods
 
 namespace services.Models.Data
 {
-    public class PermitViolationContact : DataEntity
+    public class EHSViolationContact : DataEntity
     {
         [Key, Column(Order = 0)]
-        public int PermitViolationId { get; set; }
+        public int EHSViolationId { get; set; }
 
         [Key, Column(Order = 1)]
         public int PermitPersonId { get; set; }
@@ -39,7 +39,7 @@ namespace services.Models.Data
         //relationships
 
         [JsonIgnore]
-        public virtual PermitViolation PermitViolation { get; set; }
+        public virtual EHSViolation EHSViolation { get; set; }
 
         public virtual PermitPerson PermitPerson { get; set; }
 

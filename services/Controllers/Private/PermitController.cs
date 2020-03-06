@@ -56,6 +56,36 @@ namespace services.Controllers.Private
         }
 
         [HttpGet]
+        public dynamic AllViolations()
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            //return db.Permit().AsEnumerable(); <-- not as fast as a direct sql... 
+
+
+            var sql = @"select * from EHSViolations";
+
+            DataTable requests = new DataTable();
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                //using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(requests);
+                }
+            }
+
+            return requests;
+
+        }
+
+        [HttpGet]
         public dynamic GetPermitByPermitNumber(string PermitNumber)
         {
             User me = AuthorizationManager.getCurrentUser();
