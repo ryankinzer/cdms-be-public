@@ -532,4 +532,6 @@ update fields set DataSource = 'select possiblevalues from metadataproperties wh
 update fields set DataSource = 'select possiblevalues from metadataproperties where id = 67' where datastoreid = @datastoreid and DbColumnName in ('SiteZip','ComplainantZip');
 update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('Reviewer', 'StatusUpdatedBy');
 
+update files set datasetid = 1281 where projectid = 11044; -- set all of the current files in the TPO project to the permits dataset; violations will add their own dataset to differentiate...
+
 COMMIT TRAN T1;

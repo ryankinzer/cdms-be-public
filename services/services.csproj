@@ -188,6 +188,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Controllers\Private\ViolationController.cs" />
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Migrations\202003042327017_reset.cs" />
     <Compile Include="Migrations\202003042327017_reset.Designer.cs">
