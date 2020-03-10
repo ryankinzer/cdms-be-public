@@ -331,7 +331,7 @@ namespace services.Controllers.Private
 
 
         [HttpGet]
-        public dynamic GetPermitFiles(int ProjectId, int DatasetId, int PermitId)
+        public dynamic GetPermitFiles(int ProjectId, int PermitId)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -339,7 +339,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Files.Where(o => o.ProjectId == ProjectId && o.DatasetId == DatasetId && o.Subproject_CrppId == PermitId).AsEnumerable();
+            return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == PermitId).AsEnumerable();
 
         }
 
@@ -672,9 +672,6 @@ namespace services.Controllers.Private
                 Int32 ItemId = Convert.ToInt32(provider.FormData.Get("ItemId"));
                 logger.Debug("And we think the ItemId === " + ItemId);
 
-                Int32 DatasetId = Convert.ToInt32(provider.FormData.Get("DatasetId"));
-                logger.Debug("And we think the DatasetId === " + DatasetId);
-
                 Project project = db.Projects.Find(ProjectId);
                 Permit permit = db.Permit().Find(SubprojectId);
 
@@ -754,7 +751,7 @@ namespace services.Controllers.Private
                             newFile.FileTypeId = FileType.getFileTypeFromFilename(info);
                             newFile.UserId = me.Id;
                             newFile.ProjectId = ProjectId;
-                            newFile.DatasetId = DatasetId; 
+                            newFile.DatasetId = null; 
                             newFile.Subproject_CrppId = SubprojectId;
                             logger.Debug(" Adding file " + newFile.Name + " at " + newFile.Link);
 
@@ -828,8 +825,6 @@ namespace services.Controllers.Private
             logger.Debug("subprojectId = " + subprojectId);
             int itemId = json.ItemId.ToObject<int>();
             logger.Debug("EventId = " + itemId);
-            int datasetId = json.DatasetId.ToObject<int>();
-            logger.Debug("DatasetId = " + datasetId);
 
             services.Models.File existing_file = json.File.ToObject<services.Models.File>();
             logger.Debug("Obtained file from input data...");
@@ -873,13 +868,13 @@ namespace services.Controllers.Private
             //logger.Debug("Result of delete action:  " + result);
 
             int numFiles = (from f in db.Files
-                            where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.DatasetId == datasetId && f.Name == existing_file.Name
+                            where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.Name == existing_file.Name
                             select f).Count();
 
             if (numFiles > 0)
             {
                 var fileToDelete = (from f in db.Files
-                                    where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.DatasetId == datasetId && f.Name == existing_file.Name
+                                    where f.ProjectId == project.Id && f.Subproject_CrppId == subprojectId && f.Name == existing_file.Name
                                     select f).FirstOrDefault();
                 logger.Debug("Removing " + fileToDelete.Name + " from subproject " + subprojectId + " in the database.");
                 db.Files.Remove(fileToDelete);
@@ -888,7 +883,7 @@ namespace services.Controllers.Private
             }
             else
             {
-                logger.Debug("No record in tbl Files for Pid:  " + project.Id + ", SubpId = " + subprojectId + ", datasetId = "+ datasetId + ", fileName = " + existing_file.Name);
+                logger.Debug("No record in tbl Files for Pid:  " + project.Id + ", SubpId = " + subprojectId + ", fileName = " + existing_file.Name);
             }
             logger.Debug("Done.");
 

@@ -5,7 +5,7 @@ begin TRAN T1;
 DECLARE @datasetname nvarchar(max) = 'ESPViolations'; -- no spaces!
 DECLARE @datasetdesc nvarchar(max) = 'Environmental Health & Safety Violations';
 DECLARE @owneruserid int = 1; 
-DECLARE @projectid int = 11044; 
+DECLARE @projectid int = 0; 
 DECLARE @locationtypeid int = 0;
 
 DECLARE @defaultrowqa int = 1;
@@ -14,6 +14,20 @@ DECLARE @defaultdatasetstatus int = 1;
 
 DECLARE @datastoreid int = 0;
 DECLARE @datasetid int = 0;
+
+-- Create the EHS project
+
+INSERT into Projects (Name, Description, ProjectTypeId, OwnerId, OrganizationId, CreateDateTime) 
+values (
+    'Environmental Health and Safety',
+    'EHS Violations and Inspections',
+	15,
+	@owneruserid,
+	1,
+	getdate()
+);
+
+select @projectid = scope_identity();
 
 -- Create the Location type
 INSERT into LocationTypes (Name, Description)
@@ -532,6 +546,6 @@ update fields set DataSource = 'select possiblevalues from metadataproperties wh
 update fields set DataSource = 'select possiblevalues from metadataproperties where id = 67' where datastoreid = @datastoreid and DbColumnName in ('SiteZip','ComplainantZip');
 update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('Reviewer', 'StatusUpdatedBy');
 
-update files set datasetid = 1281 where projectid = 11044; -- set all of the current files in the TPO project to the permits dataset; violations will add their own dataset to differentiate...
+
 
 COMMIT TRAN T1;
