@@ -170,26 +170,90 @@ namespace services.Controllers.Private
 
         }
 
-/*
+        /*
+                [HttpGet]
+                public dynamic GetViolationRoutes(string ItemType)
+                {
+                    User me = AuthorizationManager.getCurrentUser();
+                    if (!me.hasRole(ROLE_REQUIRED))
+                        throw new Exception("Not Authorized.");
+
+                    var db = ServicesContext.Current;
+                    //dynamic json = jsonData;
+
+                    //string in_itemtype = json["ItemType"];
+
+                    return db.ViolationRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
+
+                }
+        */
+
         [HttpGet]
-        public dynamic GetViolationRoutes(string ItemType)
+        public dynamic GetViolationEvents(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
                 throw new Exception("Not Authorized.");
 
             var db = ServicesContext.Current;
-            //dynamic json = jsonData;
 
-            //string in_itemtype = json["ItemType"];
-
-            return db.ViolationRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
+            return db.EHSViolationEvents().Where(o => o.EHSViolationId == Id).AsEnumerable();
 
         }
-*/
-        
 
-        
+        [HttpPost]
+        public HttpResponseMessage SaveViolationEvent(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            EHSViolationEvent incoming_event = json.ViolationEvent.ToObject<EHSViolationEvent>();
+
+            EHSViolationEvent existing = db.EHSViolationEvents().Find(incoming_event.Id);
+
+            if (existing == null)
+            {
+                db.EHSViolationEvents().Add(incoming_event);
+                db.SaveChanges();
+
+/*
+                if (incoming_event.EventType == "Review" || incoming_event.EventType == "Inspection")
+                {
+                    Permit permit = db.Permit().Find(incoming_event.PermitId);
+                    Resources.PermitEventNotifier.notify(permit, incoming_event, json.PermitEvent); //only notify on "new" events
+                }
+*/
+            }
+            else
+            {
+                existing.ByUser = incoming_event.ByUser;
+                existing.Comments = incoming_event.Comments;
+                existing.EventDate = incoming_event.EventDate;
+                existing.EventType = incoming_event.EventType;
+                existing.Files = incoming_event.Files;
+                existing.EHSViolationId = incoming_event.EHSViolationId;
+                existing.Reference = incoming_event.Reference;
+                existing.RequestDate = incoming_event.RequestDate;
+                existing.ResponseDate = incoming_event.ResponseDate;
+                existing.Result = incoming_event.Result;
+                existing.Reviewer = incoming_event.Reviewer;
+                existing.Comments = incoming_event.Comments;
+                existing.Interviewees = incoming_event.Interviewees;
+                existing.OthersPresent = incoming_event.OthersPresent;
+
+                db.Entry(existing).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
+            return response;
+        }
+
+
         [HttpPost]
         public HttpResponseMessage SaveViolationContact(JObject jsonData)
         {

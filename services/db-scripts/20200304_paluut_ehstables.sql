@@ -50,6 +50,23 @@ CREATE TABLE [dbo].[EHSViolationParcels] (
     [CreateDate] [datetime] NOT NULL,
     CONSTRAINT [PK_dbo.EHSViolationParcels] PRIMARY KEY ([Id])
 )
+CREATE TABLE [dbo].[EHSViolationEvents] (
+    [Id] [int] NOT NULL IDENTITY,
+    [EHSViolationId] [int] NOT NULL,
+    [ByUser] [int] NOT NULL,
+    [EventDate] [datetime] NOT NULL,
+    [EventType] [nvarchar](max),
+    [RequestDate] [datetime],
+    [ResponseDate] [datetime],
+    [Reviewer] [nvarchar](max),
+    [Result] [nvarchar](max),
+    [Reference] [nvarchar](max),
+    [Comments] [nvarchar](max),
+    [Interviewees] [nvarchar](max),
+    [OthersPresent] [nvarchar](max),
+    [Files] [nvarchar](max),
+    CONSTRAINT [PK_dbo.EHSViolationEvents] PRIMARY KEY ([Id])
+)
 CREATE INDEX [IX_EHSViolationId] ON [dbo].[EHSViolationParcels]([EHSViolationId])
 CREATE INDEX [IX_ObjectId] ON [dbo].[EHSViolationParcels]([ObjectId])
 ALTER TABLE [dbo].[EHSViolationContacts] ADD CONSTRAINT [FK_dbo.EHSViolationContacts_dbo.EHSViolations_EHSViolationId] FOREIGN KEY ([EHSViolationId]) REFERENCES [dbo].[EHSViolations] ([Id])

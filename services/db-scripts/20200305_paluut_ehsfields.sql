@@ -2,11 +2,10 @@
 begin TRAN T1;
 
 --set these to what you want
-DECLARE @datasetname nvarchar(max) = 'ESPViolations'; -- no spaces!
+DECLARE @datasetname nvarchar(max) = 'EHS Violations'; 
 DECLARE @datasetdesc nvarchar(max) = 'Environmental Health & Safety Violations';
 DECLARE @owneruserid int = 1; 
 DECLARE @projectid int = 0; 
-DECLARE @locationtypeid int = 0;
 
 DECLARE @defaultrowqa int = 1;
 DECLARE @defaultactivityqa int = 6;
@@ -29,14 +28,6 @@ values (
 
 select @projectid = scope_identity();
 
--- Create the Location type
-INSERT into LocationTypes (Name, Description)
-  values (
-	@datasetname,
-	concat(@datasetname,' Location Type')
- );
-
-select @locationtypeid = scope_identity();
 
 -- Create the Datastore --excluding tableprefix b/c not relevant for EHS
 INSERT into Datastores (
@@ -49,7 +40,7 @@ INSERT into Datastores (
 		@datasetname,
 		@datasetdesc,
 		@owneruserid,
-        @locationtypeid,
+        null,
         '{}'
 	);
 
@@ -549,3 +540,6 @@ update fields set DataSource = 'select possiblevalues from metadataproperties wh
 
 
 COMMIT TRAN T1;
+
+
+
