@@ -27,15 +27,14 @@ namespace services.Models.Data
         public int Id { get; set; }
         public int EHSViolationId { get; set; }
         public int ByUser { get; set; }
+        public DateTime CreateDate { get; set; }
         public DateTime EventDate { get; set; }
         public string EventType { get; set; }
-        public DateTime? RequestDate { get; set; }
-        public DateTime? ResponseDate { get; set; }
-        public string Reviewer { get; set; }
-        public string Result { get; set; }
-        public string Reference { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public DateTime? ComplianceDate { get; set; }
         public string Comments { get; set; }
-        public string Interviewees { get; set; }
+        public string Responder { get; set; }
+        public string Respondents { get; set; }
         public string OthersPresent { get; set; }
         public string Files { get; set; }
 

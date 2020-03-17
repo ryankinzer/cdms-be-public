@@ -236,13 +236,12 @@ namespace services.Controllers.Private
                 existing.EventType = incoming_event.EventType;
                 existing.Files = incoming_event.Files;
                 existing.EHSViolationId = incoming_event.EHSViolationId;
-                existing.Reference = incoming_event.Reference;
-                existing.RequestDate = incoming_event.RequestDate;
-                existing.ResponseDate = incoming_event.ResponseDate;
-                existing.Result = incoming_event.Result;
-                existing.Reviewer = incoming_event.Reviewer;
+
+                existing.ComplianceDate = incoming_event.ComplianceDate;
+                existing.CompletedDate = incoming_event.CompletedDate;
+                existing.Respondents = incoming_event.Respondents;
+                existing.Responder = incoming_event.Responder;
                 existing.Comments = incoming_event.Comments;
-                existing.Interviewees = incoming_event.Interviewees;
                 existing.OthersPresent = incoming_event.OthersPresent;
 
                 db.Entry(existing).State = EntityState.Modified;

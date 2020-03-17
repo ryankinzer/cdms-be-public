@@ -95,8 +95,8 @@ INSERT INTO dbo.Fields (Name, [Description], Units, Validation, DataType, Possib
 OUTPUT INSERTED.id, INSERTED.Name, INSERTED.DbColumnName, INSERTED.Validation, INSERTED.ControlType , INSERTED.[Rule], INSERTED.FieldRoleId INTO #NewFieldInfo
 
 SELECT
-        Name = 'Event Date',
-        Description = 'Date of event',
+        Name = 'Activity Date',
+        Description = 'Date of activity',
         Units = NULL,
         Validation = NULL,
         DataType = 'datetime',
@@ -108,7 +108,7 @@ SELECT
         FieldRoleId = 1
 
 UNION ALL SELECT
-        Name = 'Event Type',
+        Name = 'Activity Type',
         Description = 'Type of event',
         Units = NULL,
         Validation = NULL,
@@ -121,80 +121,54 @@ UNION ALL SELECT
         FieldRoleId = 1
 
 UNION ALL SELECT   
-        Name = 'Request Date',
-        Description = 'Date of request',
+        Name = 'Compliance Date',
+        Description = 'Date compliance is required/due',
         Units = NULL,
         Validation = NULL,
         DataType = 'datetime',
         PossibleValues = null,
-        DbColumnName = 'RequestDate',
+        DbColumnName = 'ComplianceDate',
         ControlType = 'date',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
 
 UNION ALL SELECT   
-        Name = 'Response Date',
-        Description = 'Date of response',
+        Name = 'Completed Date',
+        Description = 'Date activity was completed',
         Units = NULL,
         Validation = NULL,
         DataType = 'datetime',
         PossibleValues = null,
-        DbColumnName = 'ResponseDate',
+        DbColumnName = 'CompletedDate',
         ControlType = 'date',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
 
 UNION ALL SELECT
-        Name = 'Reviewer',
+        Name = 'Responder',
         Description = 'Person responsible for this event',
         Units = NULL,
         Validation = NULL,
         DataType = 'string',
         PossibleValues = '["Replace Me"]',
-        DbColumnName = 'Reviewer',
-        ControlType = 'select',
+        DbColumnName = 'Responder',
+        ControlType = 'text',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
 
 
 UNION ALL SELECT
-        Name = 'Result',
-        Description = 'Description of result',
+        Name = 'Respondents',
+        Description = 'Person(s) receiving communication or action',
         Units = NULL,
         Validation = NULL,
         DataType = 'string',
         PossibleValues = null,
-        DbColumnName = 'Result',
-        ControlType = 'textarea',
-        DatastoreId = @datastoreid,
-        [Rule] = NULL,
-        FieldRoleId = 1
-
-UNION ALL SELECT
-        Name = 'Comments',
-        Description = 'Comments',
-        Units = NULL,
-        Validation = NULL,
-        DataType = 'string',
-        PossibleValues = null,
-        DbColumnName = 'Comments',
-        ControlType = 'textarea',
-        DatastoreId = @datastoreid,
-        [Rule] = NULL,
-        FieldRoleId = 1
-
-UNION ALL SELECT
-        Name = 'Interviewees',
-        Description = 'People interviewed',
-        Units = NULL,
-        Validation = NULL,
-        DataType = 'string',
-        PossibleValues = null,
-        DbColumnName = 'Interviewees',
-        ControlType = 'textarea',
+        DbColumnName = 'Respondents',
+        ControlType = 'text',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
@@ -207,6 +181,19 @@ UNION ALL SELECT
         DataType = 'string',
         PossibleValues = null,
         DbColumnName = 'OthersPresent',
+        ControlType = 'text',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Comments',
+        Description = 'Comments',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'Comments',
         ControlType = 'textarea',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
@@ -247,6 +234,6 @@ FROM #NewFieldInfo as f
 drop table #NewFieldInfo
 
 
-update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('Reviewer', 'StatusUpdatedBy');
+update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('StatusUpdatedBy');
 
 COMMIT TRAN T1;
