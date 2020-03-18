@@ -236,4 +236,12 @@ drop table #NewFieldInfo
 
 update fields set DataSource = 'select possiblevalues from metadataproperties where id = 53' where datastoreid = @datastoreid and DbColumnName in ('StatusUpdatedBy');
 
+update fields set possiblevalues = '[{"Id":"Document Served","Label":"Document Served","Group":"Document"},{"Id":"Abatement Plan","Label":"Abatement Plan","Group":"Document"},{"Id":"Citation","Label":"Citation","Group":"Document"},
+{"Id":"Notice","Label":"Notice","Group":"Correspondence"},{"Id":"Email","Label":"Email","Group":"Correspondence"},{"Id":"Letter","Label":"Letter","Group":"Correspondence"},{"Id":"Phone Call","Label":"Phone Call","Group":"Correspondence"},
+{"Id":"Mail","Label":"Mail","Group":"Correspondence"},{"Id":"Site Visit","Label":"Site Visit","Group":"In Person"},{"Id":"Interview","Label":"Interview","Group":"In Person"},{"Id":"Inspection","Label":"Inspection","Group":"In Person"},
+{"Id":"BIA Information","Label":"BIA Information","Group":"Other"},{"Id":"Court Hearing","Label":"Court Hearing","Group":"Other"},{"Id":"Review","Label":"Review","Group":"Other"}]', 
+controltype = 'select-group' where datastoreid = @datastoreid and DbColumnName = 'EventType';
+
+update datasetfields set controltype = 'select-group' where datasetid = @datasetid and DbColumnName = 'EventType';
+
 COMMIT TRAN T1;
