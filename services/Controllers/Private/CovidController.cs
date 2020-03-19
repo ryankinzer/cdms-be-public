@@ -19,7 +19,7 @@ namespace services.Controllers.Private
         {
             User me = AuthorizationManager.getCurrentUser();
 
-            var sql = @"select * from COVID_Employees where SupervisorUsername = '" + me.Username + "' ORDER BY Name";
+            var sql = @"select * from COVID_Employees where SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "' ORDER BY Name";
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -43,7 +43,7 @@ namespace services.Controllers.Private
         {
             User me = AuthorizationManager.getCurrentUser();
 
-            var sql = @"select w.* from COVID_EmployeesWork w JOIN COVID_Employees e ON w.EmployeeId = e.Id where e.SupervisorUsername = '" + me.Username + "'" ;
+            var sql = @"select w.* from COVID_EmployeesWork w JOIN COVID_Employees e ON w.EmployeeId = e.Id where e.SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "'" ;
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -68,7 +68,7 @@ namespace services.Controllers.Private
 
             User me = AuthorizationManager.getCurrentUser(); //only can update employees they are supervisors for
 
-            List<string> employeeFields = new List<string> { "Department","Email","Id","Name","Program","Status","Access","SupervisorUsername","Title","IsHighRisk","IsUnique","IsSick","Notes" };
+            List<string> employeeFields = new List<string> { "Department","Email","Id","Name","Program","Status","Access","SupervisorUsername","DeptSupervisorUsername","Title","IsHighRisk","IsUnique","IsSick","Notes" };
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
@@ -92,7 +92,7 @@ namespace services.Controllers.Private
                         ", [IsUnique] = '" + IsUnique + "' " +
                         ", [IsSick] = '" + IsSick + "' " +
                         ", [Notes] = '" + Notes + "' " +
-                        "WHERE Id = " + EmployeeId + " AND SupervisorUsername = '" + me.Username + "'";
+                        "WHERE Id = " + EmployeeId + " AND (SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "')";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
