@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using services.Models;
 using services.Resources;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -66,10 +68,70 @@ namespace services.Controllers.Private
 
             User me = AuthorizationManager.getCurrentUser(); //only can update employees they are supervisors for
 
-            foreach (var employee in json.Employees)
+            List<string> employeeFields = new List<string> { "Department","Email","Id","Name","Program","Status","Access","SupervisorUsername","Title" };
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
-                //save employee
-                //save employee work
+                con.Open();
+
+
+                foreach (var employee in json.Employees)
+                {
+                    //save employee
+                    //QueryHelper.filterForSQL()
+
+                    string EmployeeId = employee.Id.ToObject<int>().ToString();
+                    string Status = QueryHelper.filterForSQL(employee.Status.ToObject<string>());
+                    string Access = QueryHelper.filterForSQL(employee.Access.ToObject<string>());
+
+                    //TODO: it would be nice to detect updated records instead of just updating all... or maybe just send updated records from the FE... yes, do that. :)                    
+
+                    var query = @"UPDATE COVID_Employees SET [Status] = '" + Status + "', [Access] = '" + Access + "' WHERE Id = " + EmployeeId + " AND SupervisorUsername = '" + me.Username + "'";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        //logger.Debug(query);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    //save employee work
+                    foreach(JProperty property in employee.Properties()){
+                        if(!employeeFields.Contains(property.Name)){
+                            //if it exists, update
+                            var exists_sql = @"SELECT Id FROM COVID_EmployeesWork WHERE EmployeeId = " + EmployeeId + " AND WorkDate = '" + property.Name + "'";
+
+                            int IdToUpdate = 0;
+
+                            using (SqlCommand cmd = new SqlCommand(exists_sql, con))
+                            {
+                                //logger.Debug(exists_sql);
+                                try
+                                {
+                                    IdToUpdate = (int)cmd.ExecuteScalar();
+                                }catch(Exception e){
+                                    // doesn't exist;
+                                }
+                            }
+
+                            if(IdToUpdate != 0){
+                                var update_sql = @"UPDATE COVID_EmployeesWork SET WorkStatus = '" + property.Value + "' WHERE Id = " + IdToUpdate.ToString();
+
+                                using (SqlCommand cmd = new SqlCommand(update_sql, con)){
+                                    //logger.Debug(update_sql);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            } else {
+                                var insert_sql = @"INSERT INTO COVID_EmployeesWork (EmployeeId, WorkDate, WorkStatus) VALUES (" + EmployeeId + ", '"+ property.Name + "','" + property.Value +"')";
+
+                                using (SqlCommand cmd = new SqlCommand(insert_sql, con))
+                                {
+                                    //logger.Debug(insert_sql);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             return new HttpResponseMessage(HttpStatusCode.OK);
