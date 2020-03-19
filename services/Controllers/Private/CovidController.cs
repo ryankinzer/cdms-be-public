@@ -68,25 +68,31 @@ namespace services.Controllers.Private
 
             User me = AuthorizationManager.getCurrentUser(); //only can update employees they are supervisors for
 
-            List<string> employeeFields = new List<string> { "Department","Email","Id","Name","Program","Status","Access","SupervisorUsername","Title" };
+            List<string> employeeFields = new List<string> { "Department","Email","Id","Name","Program","Status","Access","SupervisorUsername","Title","IsHighRisk","IsUnique","IsSick","Notes" };
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
                 con.Open();
 
-
                 foreach (var employee in json.Employees)
                 {
                     //save employee
-                    //QueryHelper.filterForSQL()
-
                     string EmployeeId = employee.Id.ToObject<int>().ToString();
                     string Status = QueryHelper.filterForSQL(employee.Status.ToObject<string>());
                     string Access = QueryHelper.filterForSQL(employee.Access.ToObject<string>());
+                    string IsHighRisk = QueryHelper.filterForSQL(employee.IsHighRisk.ToObject<string>());
+                    string IsUnique = QueryHelper.filterForSQL(employee.IsUnique.ToObject<string>());
+                    string IsSick = QueryHelper.filterForSQL(employee.IsSick.ToObject<string>());
+                    string Notes = QueryHelper.filterForSQL(employee.Notes.ToObject<string>(), true);
 
                     //TODO: it would be nice to detect updated records instead of just updating all... or maybe just send updated records from the FE... yes, do that. :)                    
 
-                    var query = @"UPDATE COVID_Employees SET [Status] = '" + Status + "', [Access] = '" + Access + "' WHERE Id = " + EmployeeId + " AND SupervisorUsername = '" + me.Username + "'";
+                    var query = @"UPDATE COVID_Employees SET [Status] = '" + Status + "'" +
+                        ", [IsHighRisk] = '" + IsHighRisk + "' "+
+                        ", [IsUnique] = '" + IsUnique + "' " +
+                        ", [IsSick] = '" + IsSick + "' " +
+                        ", [Notes] = '" + Notes + "' " +
+                        "WHERE Id = " + EmployeeId + " AND SupervisorUsername = '" + me.Username + "'";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
