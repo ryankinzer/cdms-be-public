@@ -1,4 +1,6 @@
-﻿CREATE TABLE [dbo].[COVID_EmployeesWork] (
+﻿-- NOTE - this isn't ready to run yet... 
+
+CREATE TABLE [dbo].[COVID_EmployeesWork] (
     [Id] [int] NOT NULL IDENTITY,
     [EmployeeId] int NOT NULL,
 	WorkDate datetime NOT NULL,
@@ -8,6 +10,7 @@
 
 CREATE TABLE COVID_Employees (
     [Id] [int] NOT NULL IDENTITY,
+    [RecordStatus] int NULL,
     [Name] NVarChar(255) NULL,
     [Program] NVarChar(255) NULL,
     [Department] NVarChar(255) NULL,
@@ -15,6 +18,7 @@ CREATE TABLE COVID_Employees (
     [Email] NVarChar(255) NULL,
     [Status] NVarChar(255) NULL,
     [SupervisorUsername] NVarChar(255) NULL,
+    [DeptSupervisorUsername] NVarChar(255) NULL,
     [Access] NVarChar(255) NULL,
     IsHighRisk NVarChar(20) NULL,
     IsUnique NVarChar(20) NULL,
@@ -23,6 +27,18 @@ CREATE TABLE COVID_Employees (
     CONSTRAINT [PK_dbo.COVID_Employees] PRIMARY KEY ([Id])
 )
 
+-- ALTER TABLE COVID_Employees ADD RecordStatus int NULL;
+
+go
+
+SET IDENTITY_INSERT COVID_Employees ON;
+insert into COVID_Employees (Id, Name, Program, Department, Title, Email, Status, SupervisorUsername, Access, IsHighRisk, IsUnique, Notes, IsSick, DeptSupervisorUsername)
+select Id, Name, Program, Department, Title, Email, Status, SupervisorUsername, Access, IsHighRisk, IsUnique, Notes, IsSick, DeptSupervisorUsername from CDMS_TEST.dbo.COVID_Employees;
+SET IDENTITY_INSERT COVID_Employees OFF;
+
+go
+
+-- notes below, don't run...
 
 update COVID_Employees set DeptSupervisorUsername = 'katb' where department = 'Board of Trustees'
 update COVID_Employees set DeptSupervisorUsername = 'juliet' where department = 'Children and Family Services'
@@ -69,3 +85,16 @@ update covid_employees set supervisorusername = 'erinb' where program = 'CSE'
 update covid_employees set supervisorusername = 'robb' where program = 'Fire' 
 update covid_employees set supervisorusername = 'propserp' where program = 'Facilities' and department = 'Public Safety' 
 update covid_employees set supervisorusername = 'kellys' where program = 'Tribal Court' 
+
+
+
+
+-- update the supervisorusername to a list
+update e 
+	set SupervisorUsername = concat('["', ce.supervisorusername, '"]')
+from covid_employees e 
+join covid_employees ce
+	on ce.Id = e.Id
+	where e.SupervisorUsername is not null;
+
+
