@@ -19,12 +19,13 @@ namespace services.Controllers.Private
         {
             User me = AuthorizationManager.getCurrentUser();
 
-            var sql = @"select * from COVID_Employees where SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "' AND (RecordStatus is null OR RecordStatus != 1) ORDER BY Name";
+            var sql = @"select * from COVID_Employees where (SupervisorUsername like '%""" + me.Username + @"""%' OR DeptSupervisorUsername = '" + me.Username + "') AND (RecordStatus is null OR RecordStatus != 1) ORDER BY Name";
+
+            //logger.Debug(sql);
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
                 using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
                     con.Open();
@@ -43,12 +44,12 @@ namespace services.Controllers.Private
         {
             User me = AuthorizationManager.getCurrentUser();
 
-            var sql = @"select w.* from COVID_EmployeesWork w JOIN COVID_Employees e ON w.EmployeeId = e.Id where (e.RecordStatus is null OR e.RecordStatus != 1) AND e.SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "'";
+            var sql = @"select w.* from COVID_EmployeesWork w JOIN COVID_Employees e ON w.EmployeeId = e.Id where (e.RecordStatus is null OR e.RecordStatus != 1) 
+                        AND (e.SupervisorUsername like '%""" + me.Username + @"""%' OR DeptSupervisorUsername = '" + me.Username + "')";
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
                 using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
                     con.Open();
@@ -70,7 +71,7 @@ namespace services.Controllers.Private
             dynamic json = jsonData;
             int Id = json.Id.ToObject<int>();
 
-            var query = @"UPDATE COVID_Employees set RecordStatus = 1 WHERE Id = " + Id.ToString() + " AND (SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "')";
+            var query = @"UPDATE COVID_Employees set RecordStatus = 1 WHERE Id = " + Id.ToString() + @" AND (SupervisorUsername like '%""" + me.Username + @"""%' OR DeptSupervisorUsername = '" + me.Username + "')";
 
             //open a raw database connection...
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -147,7 +148,7 @@ namespace services.Controllers.Private
                     //save employee
                     string EmployeeId = employee.Id.ToObject<int>().ToString();
                     string Status = QueryHelper.filterForSQL(employee.Status.ToObject<string>());
-                    string Access = QueryHelper.filterForSQL(employee.Access.ToObject<string>());
+                    string Access = QueryHelper.filterForSQL(employee.Access.ToObject<string>(),true);
                     string IsHighRisk = QueryHelper.filterForSQL(employee.IsHighRisk.ToObject<string>());
                     string IsUnique = QueryHelper.filterForSQL(employee.IsUnique.ToObject<string>());
                     string IsSick = QueryHelper.filterForSQL(employee.IsSick.ToObject<string>());
@@ -158,7 +159,8 @@ namespace services.Controllers.Private
                         ", [IsUnique] = '" + IsUnique + "' " +
                         ", [IsSick] = '" + IsSick + "' " +
                         ", [Notes] = '" + Notes + "' " +
-                        "WHERE Id = " + EmployeeId + " AND (SupervisorUsername = '" + me.Username + "' OR DeptSupervisorUsername = '" + me.Username + "')";
+                        ", [Access] = '" + Access + "' " +
+                        "WHERE Id = " + EmployeeId + @" AND (SupervisorUsername like '%""" + me.Username + @"""%' OR DeptSupervisorUsername = '" + me.Username + "')";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {

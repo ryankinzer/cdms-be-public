@@ -85,3 +85,16 @@ update covid_employees set supervisorusername = 'erinb' where program = 'CSE'
 update covid_employees set supervisorusername = 'robb' where program = 'Fire' 
 update covid_employees set supervisorusername = 'propserp' where program = 'Facilities' and department = 'Public Safety' 
 update covid_employees set supervisorusername = 'kellys' where program = 'Tribal Court' 
+
+
+
+
+-- update the supervisorusername to a list
+update e 
+	set SupervisorUsername = concat('["', ce.supervisorusername, '"]')
+from covid_employees e 
+join covid_employees ce
+	on ce.Id = e.Id
+	where e.SupervisorUsername is not null;
+
+
