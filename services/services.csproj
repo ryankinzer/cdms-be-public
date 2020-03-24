@@ -190,9 +190,11 @@
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
     <Compile Include="Controllers\Private\ViolationController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202003042327017_reset.cs" />
-    <Compile Include="Migrations\202003042327017_reset.Designer.cs">
-      <DependentUpon>202003042327017_reset.cs</DependentUpon>
+    <Compile Include="Controllers\Private\CovidController.cs" />
+    <Compile Include="Controllers\TableController.cs" />
+    <Compile Include="Migrations\202002281956239_reset.cs" />
+    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -414,6 +416,7 @@
     <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
     <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
     <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
+    <Content Include="db-scripts\20200318_COVID.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
@@ -453,6 +456,7 @@
     <None Include="Properties\PublishProfiles\gis-dev02-services-test.pubxml" />
     <None Include="Properties\PublishProfiles\gisweb02-production.pubxml" />
     <None Include="Properties\PublishProfiles\local-services-dev.pubxml" />
+    <None Include="Properties\PublishProfiles\webstats_prod.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -466,8 +470,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202003042327017_reset.resx">
-      <DependentUpon>202003042327017_reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
+      <DependentUpon>202002281956239_reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
