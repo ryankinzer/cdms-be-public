@@ -38,6 +38,9 @@ namespace services.Models.Data
         public string OthersPresent { get; set; }
         public string Files { get; set; }
 
+        public EHSViolationEvent() {
+            CreateDate = DateTime.Now;
+        }
 
     }
 }
