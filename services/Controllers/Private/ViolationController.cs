@@ -201,6 +201,19 @@ namespace services.Controllers.Private
 
         }
 
+        [HttpGet]
+        public dynamic GetViolationCodes(int Id)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+
+            return db.EHSViolationCodes().Where(o => o.EHSViolationId == Id).AsEnumerable();
+
+        }
+
         [HttpPost]
         public HttpResponseMessage SaveViolationEvent(JObject jsonData)
         {
@@ -230,7 +243,7 @@ namespace services.Controllers.Private
             }
             else
             {
-                existing.ByUser = incoming_event.ByUser;
+                existing.ByUser = me.Id;
                 existing.Comments = incoming_event.Comments;
                 existing.EventDate = incoming_event.EventDate;
                 existing.EventType = incoming_event.EventType;
@@ -252,6 +265,42 @@ namespace services.Controllers.Private
             return response;
         }
 
+        [HttpPost]
+        public HttpResponseMessage SaveViolationCode(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            EHSViolationCode incoming_code = json.ViolationCode.ToObject<EHSViolationCode>();
+            EHSViolationCode existing = db.EHSViolationCodes().Find(incoming_code.Id);
+
+            if (existing == null)
+            {
+                db.EHSViolationCodes().Add(incoming_code);
+                db.SaveChanges();
+            }
+            else
+            {
+                existing.ByUser = me.Id;
+                existing.Comments = incoming_code.Comments;
+                existing.Files = incoming_code.Files;
+                existing.EHSViolationId = incoming_code.EHSViolationId;
+                existing.CodeParagraph = incoming_code.CodeParagraph;
+                existing.CodeSubParagraph = incoming_code.CodeSubParagraph;
+                existing.Description = incoming_code.Description;
+                existing.Comments = incoming_code.Comments;
+                
+                db.Entry(existing).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_code);
+            return response;
+        }
 
         [HttpPost]
         public HttpResponseMessage SaveViolationContact(JObject jsonData)

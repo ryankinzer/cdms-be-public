@@ -66,7 +66,21 @@ CREATE TABLE [dbo].[EHSViolationEvents] (
     [Files] [nvarchar](max),
     CONSTRAINT [PK_dbo.EHSViolationEvents] PRIMARY KEY ([Id])
 )
+CREATE TABLE [dbo].[EHSViolationCodes] (
+    [Id] [int] NOT NULL IDENTITY,
+    [EHSViolationId] [int] NOT NULL,
+    [ByUser] [int] NOT NULL,
+    [CodeSection] [nvarchar](max),
+    [CodeParagraph] [nvarchar](max),
+    [CodeSubParagraph] [nvarchar](max),
+    [Comments] [nvarchar](max),
+    [Description] [nvarchar](max),
+    [Files] [nvarchar](max),
+    CONSTRAINT [PK_dbo.EHSViolationCodes] PRIMARY KEY ([Id])
+)
 CREATE INDEX [IX_EHSViolationId] ON [dbo].[EHSViolationParcels]([EHSViolationId])
+CREATE INDEX [IX_EHSViolationId] ON [dbo].[EHSViolationCodes]([EHSViolationId])
+CREATE INDEX [IX_EHSViolationId] ON [dbo].[EHSViolationEvents]([EHSViolationId])
 CREATE INDEX [IX_ObjectId] ON [dbo].[EHSViolationParcels]([ObjectId])
 ALTER TABLE [dbo].[EHSViolationContacts] ADD CONSTRAINT [FK_dbo.EHSViolationContacts_dbo.EHSViolations_EHSViolationId] FOREIGN KEY ([EHSViolationId]) REFERENCES [dbo].[EHSViolations] ([Id])
 ALTER TABLE [dbo].[EHSViolationContacts] ADD CONSTRAINT [FK_dbo.EHSViolationContacts_dbo.PermitPersons_PermitPersonId] FOREIGN KEY ([PermitPersonId]) REFERENCES [dbo].[PermitPersons] ([Id])

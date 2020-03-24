@@ -197,6 +197,7 @@
     <Compile Include="Models\Data\MetStation_Header.cs" />
     <Compile Include="Models\Data\Private\Permits\EHSViolation.cs" />
     <Compile Include="Models\Data\Private\Permits\EHSViolationContact.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationCode.cs" />
     <Compile Include="Models\Data\Private\Permits\EHSViolationParcel.cs" />
     <Compile Include="Models\Data\Private\Permits\EHSViolationEvent.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
@@ -411,6 +412,7 @@
     <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
     <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
     <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
+    <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
     <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
     <Content Include="db-scripts\20200318_COVID.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
