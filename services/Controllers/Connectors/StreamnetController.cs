@@ -50,7 +50,7 @@ namespace services.Controllers
 
             string strWebException = "";
             // Note:  The following url works to verify StreamNet is up and running, but it is not the actual url we will use to do the update.
-            HttpWebRequest thisRequest = (HttpWebRequest)WebRequest.Create("https://api.streamnet.org/api/test/users?email=ColetteCoiner@ctuir.org&password=8JnGDynP");
+            HttpWebRequest thisRequest = (HttpWebRequest)WebRequest.Create("https://api.streamnet.org/api/v1/users?email=ColetteCoiner@ctuir.org&password=8JnGDynP");
             thisRequest.Timeout = 5000;
             // If we use this the line below, it does not retrieve enough or the right stuff, so throws an exception.
             //thisRequest.Method = "HEAD"; // We do not want to actually download anything right now.
