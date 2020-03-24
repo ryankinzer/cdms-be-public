@@ -15,7 +15,6 @@ namespace services.Models.Data
         public string WaterBody { get; set; }
         public string SpawningYear { get; set; }
         public string TRTmethod { get; set; }
-        public string NOSADefinition { get; set; }
         public string MethodNumber { get; set; }
         public string NOSAIJ { get; set; }
         public string NOSAEJ { get; set; }
@@ -60,6 +59,7 @@ namespace services.Models.Data
         public string Age9PropLowerLimit { get; set; }
         public string Age9PropUpperLimit { get; set; }
         public string AgePropAlpha { get; set; }
+        public string BestValue { get; set; }
         public string CBFWApopName { get; set; }
         public string Comments { get; set; }
         public string CommonPopName { get; set; }
@@ -86,6 +86,7 @@ namespace services.Models.Data
         public string NOSJFAlpha { get; set; }
         public string NOSJFLowerLimit { get; set; }
         public string NOSJFUpperLimit { get; set; }
+        public string OtherDataSources { get; set; }
         public string PopFitNotes { get; set; }
         public string PopID { get; set; }
         public string ProtMethDocumentation { get; set; }
@@ -115,5 +116,7 @@ namespace services.Models.Data
 
         public string ContactAgency { get; set; }
         public String ShadowId { get; set; } 
+        public string EstimateType { get; set; }
+        public string EstimateTypeNotes { get; set; }
     }
 }

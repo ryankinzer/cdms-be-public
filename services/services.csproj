@@ -188,6 +188,10 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Migrations\202003241549197_nosa_fix.cs" />
+    <Compile Include="Migrations\202003241549197_nosa_fix.Designer.cs">
+      <DependentUpon>202003241549197_nosa_fix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\NotificationLog.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
@@ -210,50 +214,6 @@
     <Compile Include="Controllers\ActivityController.cs" />
     <Compile Include="Controllers\DatasetController.cs" />
     <Compile Include="Controllers\DatastoreController.cs" />
-    <Compile Include="Migrations\201910231634161_initial.cs" />
-    <Compile Include="Migrations\201910231634161_initial.Designer.cs">
-      <DependentUpon>201910231634161_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910231638083_release.cs" />
-    <Compile Include="Migrations\201910231638083_release.Designer.cs">
-      <DependentUpon>201910231638083_release.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910231709014_rst_data.cs" />
-    <Compile Include="Migrations\201910231709014_rst_data.Designer.cs">
-      <DependentUpon>201910231709014_rst_data.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910281748448_release_fix.cs" />
-    <Compile Include="Migrations\201910281748448_release_fix.Designer.cs">
-      <DependentUpon>201910281748448_release_fix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910281844314_release_fix_2.cs" />
-    <Compile Include="Migrations\201910281844314_release_fix_2.Designer.cs">
-      <DependentUpon>201910281844314_release_fix_2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912201555351_lamprey_dataset.cs" />
-    <Compile Include="Migrations\201912201555351_lamprey_dataset.Designer.cs">
-      <DependentUpon>201912201555351_lamprey_dataset.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912201607088_juv_detail.cs" />
-    <Compile Include="Migrations\201912201607088_juv_detail.Designer.cs">
-      <DependentUpon>201912201607088_juv_detail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912201620582_nosa_fix.cs" />
-    <Compile Include="Migrations\201912201620582_nosa_fix.Designer.cs">
-      <DependentUpon>201912201620582_nosa_fix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912301853419_change_data_type.cs" />
-    <Compile Include="Migrations\201912301853419_change_data_type.Designer.cs">
-      <DependentUpon>201912301853419_change_data_type.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912301936154_rm_shadowid.cs" />
-    <Compile Include="Migrations\201912301936154_rm_shadowid.Designer.cs">
-      <DependentUpon>201912301936154_rm_shadowid.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202001031710498_changed_name.cs" />
-    <Compile Include="Migrations\202001031710498_changed_name.Designer.cs">
-      <DependentUpon>202001031710498_changed_name.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\Arrays_Efficiency.cs" />
@@ -452,7 +412,11 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202003241549197_nosa_fix.resx">
+      <DependentUpon>202003241549197_nosa_fix.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
