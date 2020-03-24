@@ -191,11 +191,6 @@
     <Compile Include="Controllers\Private\ViolationController.cs" />
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Controllers\Private\CovidController.cs" />
-    <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202002281956239_reset.cs" />
-    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
@@ -254,6 +249,7 @@
     <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
     <Compile Include="Resources\InMemoryMultipartFormDataStreamProvider.cs" />
+    <Compile Include="Resources\Metadata.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
@@ -468,11 +464,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
