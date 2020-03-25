@@ -27,6 +27,7 @@ CREATE TABLE COVID_Employees (
     CONSTRAINT [PK_dbo.COVID_Employees] PRIMARY KEY ([Id])
 )
 
+CREATE INDEX [IX_COVIDWorkEmployeeId] ON [dbo].[COVID_EmployeesWork]([EmployeeId])
 -- ALTER TABLE COVID_Employees ADD RecordStatus int NULL;
 
 go
