@@ -216,7 +216,7 @@ UNION ALL SELECT
         DataType = 'string',
         PossibleValues = '["Junked items","Manure spill","Open dumping","Lead paint","Sewage issue","Other"]',
         DbColumnName = 'ViolationOffenses',
-        ControlType = 'multiselect-checkbox',
+        ControlType = 'multiselect',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
