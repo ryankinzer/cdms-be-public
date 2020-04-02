@@ -23,14 +23,22 @@ namespace services.Controllers
         {
             // Expects:  Id of table in LookupTables.
             // Returns:  The contents of that table.
+            logger.Debug("Inside LookupTableController.cs...");
+            //logger.Debug("Id = " + Id);
 
             var ndb = ServicesContext.Current;
             LookupTable lookuptable = ndb.LookupTables.Find(Id);
     
             if(lookuptable == null)
                 throw new System.Exception("LookupTable not found.");
-    
+
+            //logger.Debug("lookuptable.Dataset.Name = " + lookuptable.Dataset.Name);
+            //logger.Debug("lookuptable.Dataset.Id = " + lookuptable.Dataset.Id);
+            //logger.Debug("lookuptable.Dataset.DatastoreId = " + lookuptable.Dataset.DatastoreId);
+            //logger.Debug("lookuptable.Dataset.Datastore.TablePrefix = " + lookuptable.Dataset.Datastore.TablePrefix);
+
             var sql = "SELECT * FROM " + lookuptable.Dataset.Datastore.TablePrefix;
+            logger.Debug("sql cmd = " + sql);
 
             DataTable items = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
