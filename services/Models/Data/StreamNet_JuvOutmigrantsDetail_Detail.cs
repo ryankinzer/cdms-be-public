@@ -13,14 +13,14 @@ namespace services.Models.Data
         public string Location { get; set; }
         public string LocPTcode { get; set; }
         public string LifeStage { get; set; }
-        public int TotalNatural { get; set; }
-        public int TotalNaturalLowerLimit { get; set; }
-        public int TotalNaturalUpperLimit { get; set; }
-        public float TotalNaturalAlpha { get; set; }
-        public float SurvivalRate { get; set; }
-        public float SurvivalRateLowerLimit { get; set; }
-        public float SurvivalRateUpperLimit { get; set; }
-        public float SurvivalRateAlpha { get; set; }
+        public string TotalNatural { get; set; }
+        public string TotalNaturalLowerLimit { get; set; }
+        public string TotalNaturalUpperLimit { get; set; }
+        public string TotalNaturalAlpha { get; set; }
+        public string SurvivalRate { get; set; }
+        public string SurvivalRateLowerLimit { get; set; }
+        public string SurvivalRateUpperLimit { get; set; }
+        public string SurvivalRateAlpha { get; set; }
         public string ContactAgency { get; set; }
         public string Comments { get; set; }
         public string JMXID { get; set; }

@@ -188,9 +188,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
-    <Compile Include="Migrations\202003241549197_nosa_fix.cs" />
-    <Compile Include="Migrations\202003241549197_nosa_fix.Designer.cs">
-      <DependentUpon>202003241549197_nosa_fix.cs</DependentUpon>
+    <Compile Include="Migrations\202004032206331_juvout_fix.cs" />
+    <Compile Include="Migrations\202004032206331_juvout_fix.Designer.cs">
+      <DependentUpon>202004032206331_juvout_fix.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\NotificationLog.cs" />
@@ -413,8 +413,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202003241549197_nosa_fix.resx">
-      <DependentUpon>202003241549197_nosa_fix.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004032206331_juvout_fix.resx">
+      <DependentUpon>202004032206331_juvout_fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
