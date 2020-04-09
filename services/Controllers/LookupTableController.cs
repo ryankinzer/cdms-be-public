@@ -127,10 +127,13 @@ namespace services.Controllers
         // POST /api/v1/item/saveitem
         public HttpResponseMessage SaveItem(JObject jsonData)
         {
-            logger.Debug("Inside SaveItem...");
+            logger.Debug("Inside LookupTableController.cs, SaveItem...");
             var db = ServicesContext.Current;
             dynamic json = jsonData;
+            //logger.Debug("json = " + json);
+
             int LookupTableId = json.LookupTableId.ToObject<int>();
+            //logger.Debug("LookupTableId = " + LookupTableId);
 
             LookupTable lookuptable = db.LookupTables.Find(LookupTableId);
 
@@ -143,33 +146,112 @@ namespace services.Controllers
             User me = AuthorizationManager.getCurrentUser();
 
             var dbset = db.GetDbSet(lookuptable.Dataset.Datastore.TablePrefix, "services.Models"); //lookups are not in services.Models.Data namespace
-            logger.Debug("got dbset now getting type");
+            //logger.Debug("got dbset now getting type");
             var lookuptable_type = db.GetTypeFor(lookuptable.Dataset.Datastore.TablePrefix, "services.Models"); //lookups are not in services.Models.Data namespace
-            logger.Debug("got type");
+            //logger.Debug("lookuptable.Dataset.Datastore.TablePrefix = " + lookuptable.Dataset.Datastore.TablePrefix);
+            //logger.Debug("got type");
+
             var incoming_item = json.Item.ToObject(lookuptable_type);
+            //logger.Debug("incoming_item.Id = " + incoming_item.Id);
+
+            SqlCommand sqlCommand;
+            string strSql = "";
 
             if (incoming_item.Id == 0)
             {
-                logger.Debug("About to add new item...");
-                dbset.Add(incoming_item);
+                //logger.Debug("About to add new item...");
 
-                db.SaveChanges();
+                // Original lines.  Characteristics would not save using this.
+                //dbset.Add(incoming_item);
+                //db.SaveChanges();
+
+                // Use SQL to save Characteristics.
+                if (lookuptable.Dataset.Datastore.TablePrefix == "Characteristics")
+                {
+                    using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                    {
+                        strSql = "insert into dbo." + lookuptable.Dataset.Datastore.TablePrefix +
+                            "(CharacteristicName, CharacteristicActive) " +
+                            "values(@characteristicName, @characteristicActive)";
+
+                        using (sqlCommand = new SqlCommand(strSql, con))
+                        {
+                            con.Open();
+
+                            sqlCommand.Parameters.AddWithValue("@characteristicName", incoming_item.CharacteristicName);
+                            sqlCommand.Parameters.AddWithValue("@characteristicActive", incoming_item.CharacteristicActive);
+
+                            sqlCommand.ExecuteNonQuery();
+                        }
+                    }
+                }
+                else
+                {
+                    // Continue to use the original method to save the other items.
+                    dbset.Add(incoming_item);
+
+                    db.SaveChanges();
+                    logger.Debug("Added new item...");
+                }
             }
             else
             {
                 logger.Debug("About to update item...");
-//                var update_item = dbset.Find(incoming_item.Id);
+                dynamic update_item; // = dbset.Find(incoming_item.Id);
+                //logger.Debug("Got update_item...");
 
-//                if (update_item == null)
-//                    throw new Exception("Item to update with that ID was not found.");
+                //if (update_item == null)
+                //    throw new Exception("Item to update with that ID was not found.");
+                logger.Debug("lookuptable.Dataset.Datastore.TablePrefix = " + lookuptable.Dataset.Datastore.TablePrefix);
 
-                db.Entry(incoming_item).State = EntityState.Modified;
+                //if (lookuptable.Dataset.Datastore.TablePrefix == "Characteristics") // This line did not work to check check for equality.
+                if (String.Compare(lookuptable.Dataset.Datastore.TablePrefix, "Characteristics") == 0)
+                {
+                    //logger.Debug("We have a match...");
+                    using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+                    {
+                        strSql = "update dbo." + lookuptable.Dataset.Datastore.TablePrefix + " " +
+                            "set CharacteristicName = @characteristicName, CharacteristicActive = @characteristicActive " +
+                            "where [Id] = @theId";
+                        logger.Debug("strSql = " + strSql);
 
-                db.SaveChanges();
-                logger.Debug("updated existing item...");
+                        using (sqlCommand = new SqlCommand(strSql, con))
+                        {
+                            con.Open();
+                            //logger.Debug("Opened connection...");
 
+                            sqlCommand.Parameters.AddWithValue("@theId", incoming_item.Id);
+                            sqlCommand.Parameters.AddWithValue("@characteristicName", incoming_item.CharacteristicName);
+                            sqlCommand.Parameters.AddWithValue("@characteristicActive", incoming_item.CharacteristicActive);
+                            //logger.Debug("Added Parameters...");
+
+                            sqlCommand.ExecuteNonQuery();
+                            //logger.Debug("Executed command....");
+                        }
+                    }
+                }
+                else
+                {
+                    update_item = dbset.Find(incoming_item.Id);
+                    //logger.Debug("Got update_item...");
+
+                    if (update_item == null)
+                        throw new Exception("Item to update with that ID was not found.");
+
+                    db.Entry(incoming_item).State = EntityState.Modified;
+
+                    db.SaveChanges();
+                    logger.Debug("updated existing item...");
+                }
             }
             
+            return Request.CreateResponse(HttpStatusCode.OK, (Object)incoming_item);
+        }
+
+        public HttpResponseMessage SaveCharacteristic (Object incoming_item)
+        {
+
+
             return Request.CreateResponse(HttpStatusCode.OK, (Object)incoming_item);
         }
 
