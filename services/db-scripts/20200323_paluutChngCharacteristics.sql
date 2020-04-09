@@ -1,3 +1,6 @@
+use PALUUT_DEV_GEO
+go
+
 -- Add Characteristics to Admin page
 -- Create the Characteristics table
 create table dbo.Characteristics
@@ -286,42 +289,40 @@ values('Characteristics','Characteristics','Characteristics',1081,null,'{}','Sin
 update dbo.Fields set PossibleValues = null, DataSource = 'select [Id], CharacteristicName from dbo.Characteristics' where Id = 2172
 
 insert into dbo.Datasets(ProjectId, DefaultRowQAStatusId, StatusId, CreateDateTime, [Name], [Description], DefaultActivityQAStatusId, DatastoreId, Config)
-values(11043, 1, 1, (select convert(varchar, getdate(), 121)), 'WQ-Characteristics', 'Characteristics Lookup Table', 5, 39, null)
+values(11043, 1, 1, (select convert(varchar, getdate(), 121)), 'WQ-Characteristics', 'Characteristics Lookup Table', 5, (select Id from dbo.Datastores where TablePrefix = 'Characteristics'), null)
 
 insert into dbo.LookupTables([Name], Label, [Description], DatasetId)
-values ('Characteristics Lookup Fields', 'Characteristics', 'Characteristics Lookup Table', 1292)
+values ('Characteristics Lookup Fields', 'Characteristics', 'Characteristics Lookup Table', (select Id from dbo.Datasets where [Name] = 'WQ-Characteristics'))
 
 --update dbo.Projects
 --set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1292}]}'
 --where [Name] = 'WRP Surface Water Monitoring'
 
-update dbo.Projects set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1292}],"ShowDelete":"false"}'
+update dbo.Projects set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1295}],"ShowDelete":"false"}'
 where [Name] = 'WRP Surface Water Monitoring'
 
 insert into dbo.Fields(TechnicalName, [Name], [Description], Units, Validation, DataType, PossibleValues, [Rule], DbColumnName, ControlType, DataSource, DatastoreId, FieldRoleId)
-values(null, 'Characteristic Name', 'Name of characteristic', null, null, 'string', null, null, 'CharacteristicName', 'text', null, 39, 2),
-(null, 'Characteristic Active', 'Is the characteristic active?', null, null, 'int', null, null, 'CharacteristicActive', 'number', null, 39, 2)
+values(null, 'Characteristic Name', 'Name of characteristic', null, null, 'string', null, null, 'CharacteristicName', 'text', null, (select Id from dbo.Datastores where TablePrefix = 'Characteristics'), 2),
+(null, 'Characteristic Active', 'Is the characteristic active?', null, null, 'int', null, null, 'CharacteristicActive', 'number', null, (select Id from dbo.Datastores where TablePrefix = 'Characteristics'), 2)
 
 update dbo.Fields
 set PossibleValues = null, ControlType = 'select-number', DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics'
 where DatastoreId = 6 and DbColumnName = 'CharacteristicName'
 
 insert into dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, [Validation], SourceId, InstrumentId, OrderIndex, ControlType, [Rule], ColumnIndex)
-values (1292, 
-(select Id from dbo.Fields where DatastoreId = 39 and DbColumnName = 'CharacteristicName'),
+values ((select Id from dbo.Datasets where [Name] = 'WQ-Characteristics'), 
+(select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'Characteristics') and DbColumnName = 'CharacteristicName'),
 2,
 (select convert(varchar, getdate(), 121)),
 'Characteristic Name',
 'CharacteristicName',
 null, 1, null, null, 'text', null, null
 ),
-(1292, 
-(select Id from dbo.Fields where DatastoreId = 39 and DbColumnName = 'CharacteristicActive'),
+((select Id from dbo.Datasets where [Name] = 'WQ-Characteristics'), 
+(select Id from dbo.Fields where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'Characteristics') and DbColumnName = 'CharacteristicActive'),
 2,
 (select convert(varchar, getdate(), 121)),
 'Characteristic Active',
 'CharacteristicActive',
 null, 1, null, null, 'text', null, null
 )
-
--- Below here is scratch stuff
