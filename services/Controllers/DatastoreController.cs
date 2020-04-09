@@ -190,9 +190,12 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage SaveMasterField(JObject jsonData)
         {
+            logger.Debug("Inside DatastoreController, SaveMasterField...");
+
             var db = ServicesContext.Current;
 
             dynamic json = jsonData;
+            //logger.Debug("json = " + json);
 
             User me = AuthorizationManager.getCurrentUser();
 
@@ -220,6 +223,7 @@ namespace services.Controllers
             df.DataSource = json.DataSource;
             df.FieldRoleId = json.FieldRoleId;
 
+            //logger.Debug("json['Id'] = " + json["Id"]);
             if (json["Id"] == null)
             {
                 DatabaseColumnHelper.addFieldToDatabase(df);
@@ -230,7 +234,9 @@ namespace services.Controllers
                 db.Entry(df).State = EntityState.Modified;
             }
 
+            //logger.Debug("About to save...");
             db.SaveChanges();
+            //logger.Debug("Done saving...");
 
             return Request.CreateResponse(HttpStatusCode.Created, df);
         }
