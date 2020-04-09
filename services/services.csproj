@@ -192,6 +192,7 @@
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Controllers\Private\CovidController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Characteristics.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
@@ -410,6 +411,7 @@
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\20200323_paluutChngCharacteristics.sql" />
     <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
     <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
     <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
