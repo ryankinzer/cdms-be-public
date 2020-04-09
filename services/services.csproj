@@ -188,16 +188,19 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
+    <Compile Include="Controllers\Private\ViolationController.cs" />
     <Compile Include="Controllers\TableController.cs" />
-    <Compile Include="Migrations\202002281956239_reset.cs" />
-    <Compile Include="Migrations\202002281956239_reset.Designer.cs">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Controllers\Private\CovidController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Characteristics.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolation.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationContact.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationCode.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationParcel.cs" />
+    <Compile Include="Models\Data\Private\Permits\EHSViolationEvent.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
@@ -248,6 +251,7 @@
     <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
     <Compile Include="Resources\InMemoryMultipartFormDataStreamProvider.cs" />
+    <Compile Include="Resources\Metadata.cs" />
     <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\Notifiers\HabSitesGeospatialFileNotifier.cs" />
     <Compile Include="Resources\Notifiers\PermitEventNotifier.cs" />
@@ -408,6 +412,11 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
     <Content Include="db-scripts\20200323_paluutChngCharacteristics.sql" />
+    <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
+    <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
+    <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
+    <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
+    <Content Include="db-scripts\20200318_COVID.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
@@ -459,11 +468,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202002281956239_reset.resx">
-      <DependentUpon>202002281956239_reset.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

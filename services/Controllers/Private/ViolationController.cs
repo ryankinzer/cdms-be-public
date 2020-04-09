@@ -20,13 +20,15 @@ using System.Web.Http;
 namespace services.Controllers.Private
 {
     [System.Web.Http.Authorize]
-    public class PermitController : CDMSController
+    public class ViolationController : CDMSController
     {
 
-        public static string ROLE_REQUIRED = "Permits";
+        public static string ROLE_REQUIRED = "Permits"; //shared auth with permits
+
+        
 
         [HttpGet]
-        public dynamic AllPermits()
+        public dynamic AllViolations()
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -34,10 +36,10 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            //return db.Permit().AsEnumerable(); <-- not as fast as a direct sql... 
+            //return db.Violation().AsEnumerable(); <-- not as fast as a direct sql... 
 
 
-            var sql = @"select * from Permits order by ApplicationDate desc";
+            var sql = @"select * from EHSViolations";
 
             DataTable requests = new DataTable();
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
@@ -55,47 +57,7 @@ namespace services.Controllers.Private
 
         }
 
-        [HttpGet]
-        public dynamic GetPermitByPermitNumber(string PermitNumber)
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.Permit().Where(o => o.PermitNumber == PermitNumber).FirstOrDefault();
-
-        }
-
-
-        [HttpGet]
-        public dynamic RoutingPermits()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.Permit().Where(o => o.PermitStatus == "Under Review" || o.PermitStatus == "New Application" && o.FileStatus != "Archived").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
-
-        }
-
-
-        [HttpGet]
-        public dynamic InspectionPermits()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.Permit().Where(o => o.PermitStatus == "Approved" || o.PermitStatus == "Conditionally Approved" && o.FileStatus != "Archived").OrderByDescending(o => o.ApplicationDate).AsEnumerable();
-
-        }
-
+        
 
         [HttpGet]
         public dynamic AllParcels()
@@ -110,8 +72,9 @@ namespace services.Controllers.Private
 
         }
 
+
         [HttpGet]
-        public dynamic GetPermitTypes()
+        public dynamic GetViolationContacts(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -119,26 +82,12 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.PermitType().OrderBy(o => o.Name).AsEnumerable();
-
-        }
-
-
-        [HttpGet]
-        public dynamic GetPermitContacts(int Id)
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.PermitContacts().Where(o => o.PermitId == Id).AsEnumerable();
+            return db.EHSViolationContacts().Where(o => o.EHSViolationId == Id).AsEnumerable();
 
         }
 
         [HttpGet]
-        public dynamic GetPermitParcels(int Id)
+        public dynamic GetViolationParcels(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -146,7 +95,7 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.PermitParcels().Where(o => o.PermitId == Id).AsEnumerable();
+            return db.EHSViolationParcels().Where(o => o.EHSViolationId == Id).AsEnumerable();
 
         }
 
@@ -159,151 +108,57 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            //permits with matching parcelids
-            List<int> parcels = db.PermitParcels().Where(o => o.ParcelId == ParcelId).Select(o => o.PermitId).ToList<int>();
-            return db.Permit().Where(o => parcels.Contains(o.Id)).AsEnumerable();
+            //Violations with matching parcelids
+            List<int> parcels = db.EHSViolationParcels().Where(o => o.ParcelId == ParcelId).Select(o => o.EHSViolationId).ToList<int>();
+            return db.EHSViolations().Where(o => parcels.Contains(o.Id)).AsEnumerable();
 
         }
 
-
-        [HttpGet]
-        public dynamic GetPermitEvents(int Id)
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.PermitEvents().Where(o => o.PermitId == Id).AsEnumerable();
-
-        }
-
-        [HttpGet]
-        public dynamic GetPermitRoutes()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.PermitRoute().AsEnumerable();
-
-        }
-
-        [HttpGet]
-        public dynamic GetAllPermitPersons()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            return db.PermitPerson().AsEnumerable();
-
-        }
-
-        [HttpGet]
-        public dynamic GetOutstandingRequests()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.EventType, pe.ItemType, pe.RequestDate 
-            from permits p
-            join permitevents pe on pe.PermitId = p.Id
-            where
-            pe.ResponseDate is null
-            and pe.EventType in ('Review', 'Inspection') and p.FileStatus != 'Archived'";
-
-            DataTable requests = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+        /*
+                [HttpGet]
+                public dynamic GetViolationEvents(int Id)
                 {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(requests);
+                    User me = AuthorizationManager.getCurrentUser();
+                    if (!me.hasRole(ROLE_REQUIRED))
+                        throw new Exception("Not Authorized.");
+
+                    var db = ServicesContext.Current;
+
+                    return db.ViolationEvents().Where(o => o.ViolationId == Id).AsEnumerable();
+
                 }
-            }
 
-            return requests;
-
-        }
-
-        
-        [HttpGet]
-        public dynamic GetPublicHearingPermits()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, pe.RequestDate
-            from permits p 
-	            join permitevents pe on p.Id = pe.PermitId
-            where pe.EventType = 'Public Hearing' and pe.ResponseDate is null and p.FileStatus != 'Archived'";
-
-            DataTable result = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+                [HttpGet]
+                public dynamic GetViolationRoutes()
                 {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(result);
+                    User me = AuthorizationManager.getCurrentUser();
+                    if (!me.hasRole(ROLE_REQUIRED))
+                        throw new Exception("Not Authorized.");
+
+                    var db = ServicesContext.Current;
+
+                    return db.ViolationRoute().AsEnumerable();
+
                 }
-            }
 
-            return result;
-
-        }
-
-
-
-        [HttpGet]
-        public dynamic GetExpiringPermits()
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            var db = ServicesContext.Current;
-
-            var sql = @"select p.Id, p.PermitNumber, p.ProjectName, p.ReviewedBy, p.ExpireDate, 
-            (select max(RequestDate) from PermitEvents where PermitId = p.Id) as RequestDate,
-            (select max(ResponseDate) from PermitEvents where PermitId = p.Id) as ResponseDate
-            from permits p
-            where p.ExpireDate < dateadd(dd,30,getDate()) and p.FileStatus != 'Archived'";
-
-            DataTable expires = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+                [HttpGet]
+                public dynamic GetAllViolationPersons()
                 {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(expires);
+                    User me = AuthorizationManager.getCurrentUser();
+                    if (!me.hasRole(ROLE_REQUIRED))
+                        throw new Exception("Not Authorized.");
+
+                    var db = ServicesContext.Current;
+
+                    return db.ViolationPerson().AsEnumerable();
+
                 }
-            }
 
-            return expires;
+        */
 
-        }
 
-        
         [HttpGet]
-        public dynamic GetPermitStatistics()
+        public dynamic GetViolationFiles(int ProjectId, int ViolationId)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -311,27 +166,30 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            var sql = @"select PermitStatus, count(*) as TotalCount from permits where FileStatus != 'Archived' group by PermitStatus";
+            return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == ViolationId).AsEnumerable();
 
-            DataTable stats = new DataTable();
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
-            {
-                //using (SqlCommand cmd = new SqlCommand(query, con))
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+        }
+
+        /*
+                [HttpGet]
+                public dynamic GetViolationRoutes(string ItemType)
                 {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    da.Fill(stats);
+                    User me = AuthorizationManager.getCurrentUser();
+                    if (!me.hasRole(ROLE_REQUIRED))
+                        throw new Exception("Not Authorized.");
+
+                    var db = ServicesContext.Current;
+                    //dynamic json = jsonData;
+
+                    //string in_itemtype = json["ItemType"];
+
+                    return db.ViolationRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
+
                 }
-            }
-
-            return stats;
-
-        }
-
+        */
 
         [HttpGet]
-        public dynamic GetPermitFiles(int ProjectId, int PermitId)
+        public dynamic GetViolationEvents(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -339,28 +197,25 @@ namespace services.Controllers.Private
 
             var db = ServicesContext.Current;
 
-            return db.Files.Where(o => o.ProjectId == ProjectId && o.Subproject_CrppId == PermitId).AsEnumerable();
+            return db.EHSViolationEvents().Where(o => o.EHSViolationId == Id).AsEnumerable();
 
         }
 
         [HttpGet]
-        public dynamic GetPermitRoutes(string ItemType)
+        public dynamic GetViolationCodes(int Id)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
                 throw new Exception("Not Authorized.");
 
             var db = ServicesContext.Current;
-            //dynamic json = jsonData;
 
-            //string in_itemtype = json["ItemType"];
-
-            return db.PermitRoute().Where(o => o.ItemType == ItemType).AsEnumerable();
+            return db.EHSViolationCodes().Where(o => o.EHSViolationId == Id).AsEnumerable();
 
         }
 
         [HttpPost]
-        public HttpResponseMessage SavePermit(JObject jsonData)
+        public HttpResponseMessage SaveViolationEvent(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -369,32 +224,49 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            Permit permit = json.Permit.ToObject<Permit>();
+            EHSViolationEvent incoming_event = json.ViolationEvent.ToObject<EHSViolationEvent>();
 
-            if(permit.Id == 0) {
-                //check and increment the permit number based on the PermitType
-                PermitType the_type = db.PermitType().Find(permit.PermitType);
-                the_type.CurrentPermitNumber++;
-                permit.PermitNumber = the_type.generatePermitNumber(); //ignore the incoming permitnumber
-                db.Entry(the_type).State = EntityState.Modified;
+            EHSViolationEvent existing = db.EHSViolationEvents().Find(incoming_event.Id);
 
-                //save the permit
-                db.Permit().Add(permit);
+            if (existing == null)
+            {
+                db.EHSViolationEvents().Add(incoming_event);
+                db.SaveChanges();
 
+/*
+                if (incoming_event.EventType == "Review" || incoming_event.EventType == "Inspection")
+                {
+                    Permit permit = db.Permit().Find(incoming_event.PermitId);
+                    Resources.PermitEventNotifier.notify(permit, incoming_event, json.PermitEvent); //only notify on "new" events
+                }
+*/
+            }
+            else
+            {
+                existing.ByUser = me.Id;
+                existing.Comments = incoming_event.Comments;
+                existing.EventDate = incoming_event.EventDate;
+                existing.EventType = incoming_event.EventType;
+                existing.Files = incoming_event.Files;
+                existing.EHSViolationId = incoming_event.EHSViolationId;
+
+                existing.ComplianceDate = incoming_event.ComplianceDate;
+                existing.CompletedDate = incoming_event.CompletedDate;
+                existing.Respondents = incoming_event.Respondents;
+                existing.Responder = incoming_event.Responder;
+                existing.Comments = incoming_event.Comments;
+                existing.OthersPresent = incoming_event.OthersPresent;
+
+                db.Entry(existing).State = EntityState.Modified;
                 db.SaveChanges();
             }
-            else{
-                db.Entry(permit).State = EntityState.Modified;
-                db.SaveChanges();
-            }
 
-            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, permit);
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
             return response;
         }
 
-
         [HttpPost]
-        public HttpResponseMessage SavePermitPerson(JObject jsonData)
+        public HttpResponseMessage SaveViolationCode(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -403,51 +275,35 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitPerson person = json.PermitPerson.ToObject<PermitPerson>();
+            EHSViolationCode incoming_code = json.ViolationCode.ToObject<EHSViolationCode>();
+            EHSViolationCode existing = db.EHSViolationCodes().Find(incoming_code.Id);
 
-            if (person.Id == 0)
+            if (existing == null)
             {
-                db.PermitPerson().Add(person);
+                db.EHSViolationCodes().Add(incoming_code);
                 db.SaveChanges();
             }
             else
             {
-                db.Entry(person).State = EntityState.Modified;
+                existing.ByUser = me.Id;
+                existing.Comments = incoming_code.Comments;
+                existing.Files = incoming_code.Files;
+                existing.EHSViolationId = incoming_code.EHSViolationId;
+                existing.CodeParagraph = incoming_code.CodeParagraph;
+                existing.CodeSubParagraph = incoming_code.CodeSubParagraph;
+                existing.Description = incoming_code.Description;
+                existing.Comments = incoming_code.Comments;
+                
+                db.Entry(existing).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
-            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, person);
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_code);
             return response;
         }
 
         [HttpPost]
-        public HttpResponseMessage DeletePermitPerson(JObject jsonData)
-        {
-            User me = AuthorizationManager.getCurrentUser();
-            if (!me.hasRole(ROLE_REQUIRED))
-                throw new Exception("Not Authorized.");
-
-            dynamic json = jsonData;
-            var db = ServicesContext.Current;
-
-            PermitPerson person = db.PermitPerson().Find(json.Id.ToObject<int>());
-
-            var num_permits_with_contact = db.PermitContacts().Where(o => o.PermitPersonId == person.Id).Count();
-            if(num_permits_with_contact > 0)
-            {
-                throw new Exception("There are " + num_permits_with_contact + " Permit records with this person as a contact. You cannot delete this person before removing them.");
-            }
-            
-            db.PermitPerson().Remove(person);
-            db.SaveChanges();
-
-            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
-
-        }
-
-        [HttpPost]
-        public HttpResponseMessage SavePermitContact(JObject jsonData)
+        public HttpResponseMessage SaveViolationContact(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -456,12 +312,12 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitContact incoming_contact = json.PermitContact.ToObject<PermitContact>();
+            EHSViolationContact incoming_contact = json.ViolationContact.ToObject<EHSViolationContact>();
 
-            PermitContact existing = db.PermitContacts().Find(incoming_contact.PermitId, incoming_contact.PermitPersonId);
+            EHSViolationContact existing = db.EHSViolationContacts().Find(incoming_contact.EHSViolationId, incoming_contact.PermitPersonId);
 
             if(existing == null) {
-                db.PermitContacts().Add(incoming_contact);
+                db.EHSViolationContacts().Add(incoming_contact);
                 db.SaveChanges();
             } else {
                 existing.IsPrimary = incoming_contact.IsPrimary;
@@ -477,7 +333,7 @@ namespace services.Controllers.Private
 
 
         [HttpPost]
-        public HttpResponseMessage RemovePermitContact(JObject jsonData)
+        public HttpResponseMessage RemoveViolationContact(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -486,13 +342,13 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitContact incoming_contact = json.PermitContact.ToObject<PermitContact>();
+            EHSViolationContact incoming_contact = json.ViolationContact.ToObject<EHSViolationContact>();
 
-            PermitContact existing = db.PermitContacts().Find(incoming_contact.PermitId, incoming_contact.PermitPersonId);
+            EHSViolationContact existing = db.EHSViolationContacts().Find(incoming_contact.EHSViolationId, incoming_contact.PermitPersonId);
 
             if (existing != null)
             {
-                db.PermitContacts().Remove(existing);
+                db.EHSViolationContacts().Remove(existing);
                 db.SaveChanges();
             }
             
@@ -501,7 +357,7 @@ namespace services.Controllers.Private
         }
 
         [HttpPost]
-        public HttpResponseMessage SavePermitParcel(JObject jsonData)
+        public HttpResponseMessage SaveViolationParcel(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -510,20 +366,20 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitParcel incoming_parcel = json.PermitParcel.ToObject<PermitParcel>();
+            EHSViolationParcel incoming_parcel = json.ViolationParcel.ToObject<EHSViolationParcel>();
 
-            incoming_parcel.PLSS = json.PermitParcel.PLSS_Label; // use the PLSS_Label instead of the PLSS field
+            incoming_parcel.PLSS = json.ViolationParcel.PLSS_Label; // use the PLSS_Label instead of the PLSS field
 
-            db.PermitParcels().Add(incoming_parcel);
+            db.EHSViolationParcels().Add(incoming_parcel);
             db.SaveChanges();
 
-            //update the legal description of the permit with the new list of parcels
+            //update the legal description of the Violation with the new list of parcels
 
             /*
             * Not maintaining this field anymore          
-            var permit = db.Permit().Find(incoming_parcel.PermitId);
-            permit.LegalDescription = (permit.LegalDescription != null) ? permit.LegalDescription + "," + incoming_parcel.ParcelId : incoming_parcel.ParcelId;
-            db.Entry(permit).State = EntityState.Modified;
+            var Violation = db.Violation().Find(incoming_parcel.ViolationId);
+            Violation.LegalDescription = (Violation.LegalDescription != null) ? Violation.LegalDescription + "," + incoming_parcel.ParcelId : incoming_parcel.ParcelId;
+            db.Entry(Violation).State = EntityState.Modified;
             db.SaveChanges();
             */
 
@@ -533,7 +389,7 @@ namespace services.Controllers.Private
 
 
         [HttpPost]
-        public HttpResponseMessage RemovePermitParcel(JObject jsonData)
+        public HttpResponseMessage RemoveViolationParcel(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -542,13 +398,13 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitParcel incoming_parcel = json.PermitParcel.ToObject<PermitParcel>();
+            EHSViolationParcel incoming_parcel = json.ViolationParcel.ToObject<EHSViolationParcel>();
 
-            PermitParcel existing = db.PermitParcels().Find(incoming_parcel.Id);
+            EHSViolationParcel existing = db.EHSViolationParcels().Find(incoming_parcel.Id);
 
             if (existing != null)
             {
-                db.PermitParcels().Remove(existing);
+                db.EHSViolationParcels().Remove(existing);
                 db.SaveChanges();
             }
 
@@ -556,9 +412,10 @@ namespace services.Controllers.Private
             return response;
         }
 
+/*
 
         [HttpPost]
-        public HttpResponseMessage SavePermitEvent(JObject jsonData)
+        public HttpResponseMessage SaveViolationEvent(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
             if (!me.hasRole(ROLE_REQUIRED))
@@ -567,19 +424,19 @@ namespace services.Controllers.Private
             var db = ServicesContext.Current;
             dynamic json = jsonData;
 
-            PermitEvent incoming_event = json.PermitEvent.ToObject<PermitEvent>();
+            ViolationEvent incoming_event = json.ViolationEvent.ToObject<ViolationEvent>();
 
-            PermitEvent existing = db.PermitEvents().Find(incoming_event.Id);
+            ViolationEvent existing = db.ViolationEvents().Find(incoming_event.Id);
 
             if (existing == null)
             {
-                db.PermitEvents().Add(incoming_event);
+                db.ViolationEvents().Add(incoming_event);
                 db.SaveChanges();
 
                 if (incoming_event.EventType == "Review" || incoming_event.EventType == "Inspection")
                 {
-                    Permit permit = db.Permit().Find(incoming_event.PermitId);
-                    Resources.PermitEventNotifier.notify(permit, incoming_event, json.PermitEvent); //only notify on "new" events
+                    Violation Violation = db.Violation().Find(incoming_event.ViolationId);
+                    Resources.ViolationEventNotifier.notify(Violation, incoming_event, json.ViolationEvent); //only notify on "new" events
                 }
             }
             else
@@ -590,7 +447,7 @@ namespace services.Controllers.Private
                 existing.EventType = incoming_event.EventType;
                 existing.Files = incoming_event.Files;
                 existing.ItemType = incoming_event.ItemType;
-                existing.PermitId = incoming_event.PermitId;
+                existing.ViolationId = incoming_event.ViolationId;
                 existing.Reference = incoming_event.Reference;
                 existing.RequestDate = incoming_event.RequestDate;
                 existing.ResponseDate = incoming_event.ResponseDate;
@@ -604,6 +461,7 @@ namespace services.Controllers.Private
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, incoming_event);
             return response;
         }
+*/
 
         // POST /api/v1/permit/UploadFile
         public Task<HttpResponseMessage> UploadFile()
@@ -751,7 +609,7 @@ namespace services.Controllers.Private
                             newFile.FileTypeId = FileType.getFileTypeFromFilename(info);
                             newFile.UserId = me.Id;
                             newFile.ProjectId = ProjectId;
-                            newFile.DatasetId = null; 
+                            newFile.DatasetId = null;
                             newFile.Subproject_CrppId = SubprojectId;
                             logger.Debug(" Adding file " + newFile.Name + " at " + newFile.Link);
 
@@ -798,9 +656,9 @@ namespace services.Controllers.Private
             return task;
         }
 
-        // POST /api/v1/permit/deletepermitfile
+        // POST /api/v1/permit/deleteviolationfile
         [HttpPost]
-        public HttpResponseMessage DeletePermitFile(JObject jsonData)
+        public HttpResponseMessage DeleteViolationFile(JObject jsonData)
         {
             var db = ServicesContext.Current;
             dynamic json = jsonData;
@@ -889,5 +747,44 @@ namespace services.Controllers.Private
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
+
+
+        [HttpPost]
+        public HttpResponseMessage SaveViolation(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            EHSViolation violation = json.Violation.ToObject<EHSViolation>();
+
+            if (violation.Id == 0)
+            {
+                //check and increment the permit number based on the PermitType
+                PermitType the_type = db.PermitType().Where(o => o.PermitNumberPrefix == "EHS").SingleOrDefault();
+                the_type.CurrentPermitNumber++;
+                violation.FileNumber = the_type.generatePermitNumber(); 
+                db.Entry(the_type).State = EntityState.Modified;
+
+                //save the permit
+                db.EHSViolations().Add(violation);
+
+                db.SaveChanges();
+            }
+            else
+            {
+                db.Entry(violation).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, violation);
+            return response;
+        }
+
     }
+
+
 }
