@@ -21,6 +21,7 @@ namespace services.Resources
 
             var tableName = datastore.TablePrefix;
 
+            //logger.Debug("datastore.TableType = " + datastore.TableType);
             if(datastore.TableType != "Single")
                 tableName += (in_field.FieldRoleId == 1) ? "_Header" : "_Detail";
 
