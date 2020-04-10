@@ -306,7 +306,7 @@ values(null, 'Characteristic Name', 'Name of characteristic', null, null, 'strin
 (null, 'Characteristic Active', 'Is the characteristic active?', null, null, 'int', null, null, 'CharacteristicActive', 'number', null, (select Id from dbo.Datastores where TablePrefix = 'Characteristics'), 2)
 
 update dbo.Fields
-set PossibleValues = null, ControlType = 'select-number', DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics'
+set PossibleValues = null, ControlType = 'select-number', DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics where CharacteristicActive = 1'
 where DatastoreId = 6 and DbColumnName = 'CharacteristicName'
 
 insert into dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, [Validation], SourceId, InstrumentId, OrderIndex, ControlType, [Rule], ColumnIndex)
