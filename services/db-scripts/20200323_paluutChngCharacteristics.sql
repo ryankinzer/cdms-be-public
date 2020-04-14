@@ -357,4 +357,4 @@ select * from dbo.DatasetFields where DatasetId in (1262, 1275, 1295)
 update dbo.Fields set ControlType = 'select-number' where [Id] = 2172
 */
 
-select * from dbo.Fields where DbColumnName = 'CharacteristicName'
+--select * from dbo.Fields where DbColumnName = 'CharacteristicName'
