@@ -308,6 +308,7 @@ values(null, 'Characteristic Name', 'Name of characteristic', null, null, 'strin
 update dbo.Fields
 set PossibleValues = null, ControlType = 'select-number', DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics where CharacteristicActive = 1'
 where DatastoreId = 6 and DbColumnName = 'CharacteristicName'
+--update dbo.Fields set ControlType = 'select-number' where [Id] = 2172
 
 insert into dbo.DatasetFields(DatasetId, FieldId, FieldRoleId, CreateDateTime, Label, DbColumnName, [Validation], SourceId, InstrumentId, OrderIndex, ControlType, [Rule], ColumnIndex)
 values ((select Id from dbo.Datasets where [Name] = 'WQ-Characteristics'), 
@@ -326,3 +327,34 @@ null, 1, null, null, 'text', null, null
 'CharacteristicActive',
 null, 1, null, null, 'text', null, null
 )
+
+--Code above here, since last posting, posted to Test on 4/9/2020
+
+update dbo.Fields set ControlType = 'select-number', PossibleValues = '{"0":"Active","1":"Inactive"}' where [Id] in (select Id from dbo.Fields where DbColumnName = 'CharacteristicActive' and DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'Characteristics'))
+
+update dbo.DatasetFields set ControlType = 'select-number' where [Id] in (select Id from dbo.DatasetFields where DatasetId in (select Id from dbo.Datasets where DatastoreId in (select Id from dbo.Datastores where TablePrefix = 'Characteristics')) and DbColumnName = 'CharacteristicActive')
+
+update dbo.Characteristics set CharacteristicActive = 0
+
+--Code above here, since last posting, posted to Test on 4/10/2020
+
+update dbo.Fields
+set DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics where CharacteristicActive = 0'
+where DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics where CharacteristicActive = 1'
+
+--Code above here, since last posting, posted to Test on 4/13/2020
+
+--select * from dbo.Fields where PossibleValues = '{"0":"Active","1":"Inactive"}' or [Id] = 2294
+
+/*
+select * from dbo.Datastores where Id in (24,27,42)
+
+select * from dbo.Datasets where DatastoreId in (24,27,42)
+
+select * from dbo.DatasetFields where DatasetId in (1262, 1275, 1295)
+
+--
+update dbo.Fields set ControlType = 'select-number' where [Id] = 2172
+*/
+
+--select * from dbo.Fields where DbColumnName = 'CharacteristicName'
