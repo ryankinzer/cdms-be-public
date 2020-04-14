@@ -247,6 +247,7 @@ namespace services.Controllers.Private
                 existing.Comments = incoming_event.Comments;
                 existing.EventDate = incoming_event.EventDate;
                 existing.EventType = incoming_event.EventType;
+                existing.EventTypeOther = incoming_event.EventTypeOther;
                 existing.Files = incoming_event.Files;
                 existing.EHSViolationId = incoming_event.EHSViolationId;
 
@@ -256,6 +257,10 @@ namespace services.Controllers.Private
                 existing.Responder = incoming_event.Responder;
                 existing.Comments = incoming_event.Comments;
                 existing.OthersPresent = incoming_event.OthersPresent;
+                existing.PropertyStreet = incoming_event.PropertyStreet;
+                existing.Notifications = incoming_event.Notifications;
+                existing.ViolationType = incoming_event.ViolationType;
+                existing.ViolationTypeOther = incoming_event.ViolationTypeOther;
 
                 db.Entry(existing).State = EntityState.Modified;
                 db.SaveChanges();
@@ -466,10 +471,11 @@ namespace services.Controllers.Private
         // POST /api/v1/permit/UploadFile
         public Task<HttpResponseMessage> UploadFile()
         {
-            logger.Debug("starting to process incoming permit files.");
+            logger.Debug("starting to process incoming violation files.");
 
             if (!Request.Content.IsMimeMultipartContent())
             {
+                logger.Debug("invalid content type: " + Request.Content.GetType());
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
 

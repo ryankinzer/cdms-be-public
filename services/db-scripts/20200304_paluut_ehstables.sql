@@ -57,12 +57,18 @@ CREATE TABLE [dbo].[EHSViolationEvents] (
     [CreateDate] [datetime] NOT NULL,
     [EventDate] [datetime] NOT NULL,
     [EventType] [nvarchar](max),
+    [EventTypeOther] [nvarchar](max),
+    [PropertyStreet] [nvarchar](max),
     [CompletedDate] [datetime],
     [ComplianceDate] [datetime],
     [Comments] [nvarchar](max),
+    [Notifications] [nvarchar](max),
+    [ViolationType] [nvarchar](max),
+	[ViolationTypeOther] [nvarchar](max),
     [Responder] [nvarchar](max),
     [Respondents] [nvarchar](max),
     [OthersPresent] [nvarchar](max),
+    [GISImportId] [nvarchar](max),
     [Files] [nvarchar](max),
     CONSTRAINT [PK_dbo.EHSViolationEvents] PRIMARY KEY ([Id])
 )
