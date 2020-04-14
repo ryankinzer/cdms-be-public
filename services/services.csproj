@@ -410,13 +410,13 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\archive\20200228_paluutWtAddProperties.sql" />
     <Content Include="db-scripts\20200323_paluutChngCharacteristics.sql" />
     <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
     <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
     <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
     <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
-    <Content Include="db-scripts\20200318_COVID.sql" />
+    <Content Include="db-scripts\archive\20200318_COVID.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
