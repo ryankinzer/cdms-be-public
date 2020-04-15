@@ -298,7 +298,9 @@ values ('Characteristics Lookup Fields', 'Characteristics', 'Characteristics Loo
 --set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1292}]}'
 --where [Name] = 'WRP Surface Water Monitoring'
 
-update dbo.Projects set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1295}],"ShowDelete":"false"}'
+--update dbo.Projects set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1295}],"ShowDelete":"false"}'
+--where [Name] = 'WRP Surface Water Monitoring'
+update dbo.Projects set Config = '{"Lookups":[{"Id":"3","Label":"Instruments"},{"Id":"5","Label":"Characteristics","DatasetId":1296}],"ShowDelete":"false"}'
 where [Name] = 'WRP Surface Water Monitoring'
 
 insert into dbo.Fields(TechnicalName, [Name], [Description], Units, Validation, DataType, PossibleValues, [Rule], DbColumnName, ControlType, DataSource, DatastoreId, FieldRoleId)
@@ -343,6 +345,8 @@ set DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristic
 where DataSource = 'select Id, CharacteristicName as Label from dbo.Characteristics where CharacteristicActive = 1'
 
 --Code above here, since last posting, posted to Test on 4/13/2020
+
+update dbo.Datastores set TableType = 'Single' where TablePrefix = 'Characteristics'
 
 --select * from dbo.Fields where PossibleValues = '{"0":"Active","1":"Inactive"}' or [Id] = 2294
 
