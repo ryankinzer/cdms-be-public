@@ -1,0 +1,1 @@
+﻿alter table EHSViolationEvents add GISImportId varchar(255)

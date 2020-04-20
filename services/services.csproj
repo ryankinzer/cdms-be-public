@@ -415,6 +415,8 @@
     <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
     <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
     <Content Include="db-scripts\20200318_COVID.sql" />
+    <Content Include="db-scripts\20200417_cdms_fieldinspection.sql" />
+    <Content Include="db-scripts\20200417_paluut_ehsupdates.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
     <Content Include="db-scripts\archive\20191205_paluut.sql" />
     <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
