@@ -4,7 +4,7 @@ using services.Models.Data;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace services.Resources
+namespace services.Resources.Notifiers.Helpers
 {
     class PermitRouteHelper
     {

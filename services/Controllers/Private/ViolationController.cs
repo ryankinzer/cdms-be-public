@@ -215,6 +215,38 @@ namespace services.Controllers.Private
         }
 
         [HttpPost]
+        public HttpResponseMessage SendNotification(JObject jsonData)
+        {
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            dynamic json = jsonData;
+
+            logger.Debug("Sending a notification");            
+
+            EHSViolation violation = db.EHSViolations().Find(json.EHSViolationId.ToObject<int>());
+
+            if (violation == null)
+                throw new Exception("An error occurred.");
+
+            List<string> routes = json.NotifyRoutes.ToObject<List<string>>();
+
+            if (routes.Count == 0)
+                throw new Exception("No routes defined.");
+
+            Resources.Notifiers.EHSViolationNotifier.notify(violation, routes);
+
+            logger.Debug("Done sending notification.");
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
+
+
+        }
+
+        [HttpPost]
         public HttpResponseMessage SaveViolationEvent(JObject jsonData)
         {
             User me = AuthorizationManager.getCurrentUser();
