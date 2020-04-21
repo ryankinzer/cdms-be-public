@@ -420,17 +420,6 @@
     <Content Include="db-scripts\archive\20200310_paluut_ehsevents.sql" />
     <Content Include="db-scripts\20200417_cdms_fieldinspection.sql" />
     <Content Include="db-scripts\20200417_paluut_ehsupdates.sql" />
-    <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
-    <Content Include="db-scripts\archive\20191205_paluut.sql" />
-    <Content Include="db-scripts\archive\20191118_paluut_biomMetricsUpdate.sql" />
-    <Content Include="db-scripts\archive\20191108_SfAddWaypoints_paluut.sql" />
-    <Content Include="db-scripts\archive\20191112_paluut.sql" />
-    <Content Include="db-scripts\archive\20191030_paluut.sql" />
-    <Content Include="db-scripts\archive\20191003_paluut.sql" />
-    <Content Include="db-scripts\archive\20191008_all.sql" />
-    <Content Include="db-scripts\archive\20191010_paluut.sql" />
-    <Content Include="db-scripts\archive\20191015_paluut.sql" />
-    <Content Include="db-scripts\archive\20191016_metstation_paluut.sql" />
     <Content Include="db-scripts\archive\20200318_COVID.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
