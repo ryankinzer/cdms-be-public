@@ -58,5 +58,7 @@ namespace services.Models.Data
         public decimal? ViolationHoursSpent { get; set; }
         public string ViolationComments { get; set; }
 
+        public string GISImportId { get; set; }
+
     }
 }

@@ -115,7 +115,20 @@ UNION ALL SELECT
         DataType = 'string',
         PossibleValues = '["Site Visit","Interview","Email","Phone Call","Document","Court Hearing","Abatement Plan","Other"]',
         DbColumnName = 'EventType',
-        ControlType = 'select',
+        ControlType = 'select-group',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Event Type (other)',
+        Description = 'Type of event if other (note)',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'EventTypeOther',
+        ControlType = 'text',
         DatastoreId = @datastoreid,
         [Rule] = NULL,
         FieldRoleId = 1
@@ -174,13 +187,65 @@ UNION ALL SELECT
         FieldRoleId = 1
 
 UNION ALL SELECT
-        Name = 'OthersPresent',
+        Name = 'Others Present',
         Description = 'Other people present',
         Units = NULL,
         Validation = NULL,
         DataType = 'string',
         PossibleValues = null,
         DbColumnName = 'OthersPresent',
+        ControlType = 'text',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Violation Type',
+        Description = 'Type of violation (note)',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'ViolationType',
+        ControlType = 'text',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Violation Type (other)',
+        Description = 'Type of violation if other (note)',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'ViolationTypeOther',
+        ControlType = 'text',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Property Street',
+        Description = 'Property Street (note)',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'PropertyStreet',
+        ControlType = 'text',
+        DatastoreId = @datastoreid,
+        [Rule] = NULL,
+        FieldRoleId = 1
+
+UNION ALL SELECT
+        Name = 'Notifications',
+        Description = 'Notifications to send (note)',
+        Units = NULL,
+        Validation = NULL,
+        DataType = 'string',
+        PossibleValues = null,
+        DbColumnName = 'Notifications',
         ControlType = 'text',
         DatastoreId = @datastoreid,
         [Rule] = NULL,

@@ -1,0 +1,21 @@
+﻿using services.ExtensionMethods;
+using services.Models;
+using services.Models.Data;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace services.Resources.Notifiers.Helpers
+{
+    class EHSViolationRouteHelper
+    {
+        public static List<string> getRecipientsForRoute(string in_eventtype, List<string> in_itemtypes ) {
+            var db = ServicesContext.Current;
+
+            List<string> retval = new List<string>();
+
+            retval = db.PermitRoute().Where(o => o.EventType == in_eventtype && in_itemtypes.Contains(o.ItemType)).Select(o => o.Email).ToList<string>();
+
+            return retval;
+        }
+    }
+}

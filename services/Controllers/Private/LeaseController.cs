@@ -45,6 +45,27 @@ namespace services.Controllers.Private
             return lease;
         }
 
+        //GET /api/v1/lease/getleasebyleasenumber/
+        [HttpGet]
+        public Lease GetLeaseByLeaseNumber(String LeaseNumber)
+        {
+
+            //user must be in the "Leasing" group in order to do anything here.
+            User me = AuthorizationManager.getCurrentUser();
+            if (!me.hasRole(ROLE_REQUIRED))
+                throw new Exception("Not Authorized.");
+
+            var db = ServicesContext.Current;
+            Lease lease = db.Lease().Where(o => o.LeaseNumber == LeaseNumber).SingleOrDefault();
+
+            if (lease == null)
+            {
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            }
+
+            return lease;
+        }
+
         //GET /api/v1/lease/getleasesbyfield/5
         [HttpGet]
         public IEnumerable<Lease> GetLeasesByField(int id)

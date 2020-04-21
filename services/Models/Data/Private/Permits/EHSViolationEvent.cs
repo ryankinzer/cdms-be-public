@@ -30,12 +30,18 @@ namespace services.Models.Data
         public DateTime CreateDate { get; set; }
         public DateTime EventDate { get; set; }
         public string EventType { get; set; }
+        public string EventTypeOther { get; set; }
+        public string PropertyStreet { get; set; }
         public DateTime? CompletedDate { get; set; }
         public DateTime? ComplianceDate { get; set; }
+        public string ViolationType { get; set; }
+        public string ViolationTypeOther { get; set; }
+        public string Notifications { get; set; }
         public string Comments { get; set; }
         public string Responder { get; set; }
         public string Respondents { get; set; }
         public string OthersPresent { get; set; }
+        public string GISImportId { get; set; }
         public string Files { get; set; }
 
         public EHSViolationEvent() {
