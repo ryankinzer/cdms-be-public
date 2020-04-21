@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using services.Resources.Notifiers.Helpers;
+using services.Models;
+using services.ExtensionMethods;
 
 namespace services.Resources.Notifiers
 {
@@ -37,25 +39,23 @@ namespace services.Resources.Notifiers
             logger.Debug("Sending to " + recipients.Count + " - " + subject);
 
             string body = "<h3>EHS " + in_violation.FileType + " notification</h3>";
+            body += "<p>The Environmental Health & Safety Program just created a new record and asked that you be notified, please review the below information and contact " + in_violation.Reviewer + " for any additional information or with your thoughts:</p>";
 
-            if (in_violation.FileType == "Complaint")
-            {
-                //body += "<p><b>Permit</b>: <a href='" + PermitURL + in_permit.Id + "'>" + in_permit.PermitNumber + "</a></p>"; //TODO: Phase 2 will provide a link to reviewers
-                body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
-                body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
-                body += "<p><b>Name</b>: " + in_violation.Name + "</p>";
-                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses.Replace("[", "").Replace("]", "") + "</p>";
-                body += "<p><b>Description</b>: " + in_violation.ViolationDescription + "</p>";
-                
-            }
-            
-            if(in_violation.FileType == "Violation"){
-                body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
-                body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
-                body += "<p><b>Name</b>: " + in_violation.Name + "</p>";
-                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses.Replace("[", "").Replace("]", "") + "</p>";
-                body += "<p><b>Description</b>: " + in_violation.ViolationDescription + "</p>";
-            }
+            var db = ServicesContext.Current;
+
+            List<string> parcels = db.EHSViolationParcels().Where(o => o.EHSViolationId == in_violation.Id).Select(o => o.ParcelId).ToList<string>();
+            List<string> parties = db.EHSViolationContacts().Where(o => o.EHSViolationId == in_violation.Id).Select(o => o.PermitPerson.FullName).ToList<string>();
+
+            body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
+            body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
+            body += "<p><b>Type of Record</b>: " + in_violation.FileType + "</p>";
+            body += "<p><b>Reviewer</b>: " + in_violation.Reviewer + "</p>";
+            body += "<p><b>Violation Offenses</b>: " + in_violation.ViolationOffenses.Replace("[", "").Replace("]", "") + "</p>";
+            body += "<p><b>Involved Parcels</b>: " + string.Join(",",parcels) + "</p>";
+            body += "<p><b>Involved Parties</b>: " + string.Join(",",parties) + "</p>";
+            body += "<p><b>Complaint Description</b>: " + in_violation.ComplaintDescription + "</p>";
+            body += "<p><b>Violation Description</b>: " + in_violation.ViolationDescription + "</p>";
+
 
             if (in_violation.Comments != null)
                 body += "<hr/><p><b>Comments</b>: "+ in_violation.Comments;
