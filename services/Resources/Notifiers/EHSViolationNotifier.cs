@@ -10,7 +10,7 @@ namespace services.Resources.Notifiers
 {
     public class EHSViolationNotifier
     {
-        private static string ROUTEEVENTTYPE = "EHSViolationInspection";
+        private static string ROUTEEVENTTYPE = "EHSInspectionViolation";
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -25,6 +25,8 @@ namespace services.Resources.Notifiers
 
             //recipients = in_recipients.Properties().Select(p => p.Name).ToList();
             recipients = EHSViolationRouteHelper.getRecipientsForRoute(ROUTEEVENTTYPE, routes);
+
+            logger.Debug("count of recipients = " + recipients.Count);
 
             //if no recipients, no notification needed
             if (recipients.Count == 0)
@@ -42,7 +44,7 @@ namespace services.Resources.Notifiers
                 body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
                 body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
                 body += "<p><b>Name</b>: " + in_violation.Name + "</p>";
-                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses + "</p>";
+                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses.Replace("[", "").Replace("]", "") + "</p>";
                 body += "<p><b>Description</b>: " + in_violation.ViolationDescription + "</p>";
                 
             }
@@ -51,7 +53,7 @@ namespace services.Resources.Notifiers
                 body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
                 body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
                 body += "<p><b>Name</b>: " + in_violation.Name + "</p>";
-                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses + "</p>";
+                body += "<p><b>Offenses</b>: " + in_violation.ViolationOffenses.Replace("[", "").Replace("]", "") + "</p>";
                 body += "<p><b>Description</b>: " + in_violation.ViolationDescription + "</p>";
             }
 
