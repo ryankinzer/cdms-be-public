@@ -192,6 +192,7 @@
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Controllers\Private\CovidController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Characteristics.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
     <Compile Include="Models\Data\MetStation_Detail.cs" />
     <Compile Include="Models\Data\MetStation_Header.cs" />
@@ -411,12 +412,12 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20200228_paluutWtAddProperties.sql" />
-    <Content Include="db-scripts\20200304_paluut_ehstables.sql" />
-    <Content Include="db-scripts\20200305_paluut_ehsfields.sql" />
-    <Content Include="db-scripts\20200324_paluut_ehscodes.sql" />
-    <Content Include="db-scripts\20200310_paluut_ehsevents.sql" />
-    <Content Include="db-scripts\20200318_COVID.sql" />
+    <Content Include="db-scripts\archive\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\archive\20200323_paluutChngCharacteristics.sql" />
+    <Content Include="db-scripts\archive\20200304_paluut_ehstables.sql" />
+    <Content Include="db-scripts\archive\20200305_paluut_ehsfields.sql" />
+    <Content Include="db-scripts\archive\20200324_paluut_ehscodes.sql" />
+    <Content Include="db-scripts\archive\20200310_paluut_ehsevents.sql" />
     <Content Include="db-scripts\20200417_cdms_fieldinspection.sql" />
     <Content Include="db-scripts\20200417_paluut_ehsupdates.sql" />
     <Content Include="db-scripts\archive\20200116_paluutSfUpdate.sql" />
@@ -430,6 +431,7 @@
     <Content Include="db-scripts\archive\20191010_paluut.sql" />
     <Content Include="db-scripts\archive\20191015_paluut.sql" />
     <Content Include="db-scripts\archive\20191016_metstation_paluut.sql" />
+    <Content Include="db-scripts\archive\20200318_COVID.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">

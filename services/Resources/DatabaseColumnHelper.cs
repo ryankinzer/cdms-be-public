@@ -14,6 +14,8 @@ namespace services.Resources
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static void addFieldToDatabase(Field in_field){
+            logger.Debug("Inside DatabaseColumnHelper.cs, addFieldToDatabase...");
+            //logger.Debug("in_field.DbColumnName = " + in_field.DbColumnName);
             
             var db = ServicesContext.Current;
 
@@ -21,13 +23,14 @@ namespace services.Resources
 
             var tableName = datastore.TablePrefix;
 
+            //logger.Debug("datastore.TableType = " + datastore.TableType);
             if(datastore.TableType != "Single")
                 tableName += (in_field.FieldRoleId == 1) ? "_Header" : "_Detail";
 
             var query = "ALTER TABLE " + tableName + " ADD " + in_field.DbColumnName + " ";
             query += getSQLFieldType(in_field.DataType, in_field.ControlType) + " NULL";
 
-            logger.Debug(query);
+            logger.Debug("query = " + query);
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
