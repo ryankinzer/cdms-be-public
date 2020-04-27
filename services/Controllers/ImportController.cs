@@ -187,11 +187,37 @@ namespace services.Controllers
                 if (extension == ".xls" || extension == ".xlsx")
                 {
                     logger.Debug("Looks like an excel file!");
-                    var reader = new ExcelReader(newFileName);
+                    //var reader = new ExcelReader(newFileName);
+                    //var reader = new ExcelReader2(newFileName);
+                    ExcelReader2 reader;
+                    //string strReaderErrorMessage = "";
+                    try
+                    {
+                        reader = new ExcelReader2(newFileName);
+                        data.columns = reader.getColumns();
+                        data.rows = reader.getData();
+
+                        if (reader.HasReadError())
+                        {
+                            throw new Exception("Parsing error:  " + reader.GetErrorMessage());
+                        }
+                    }
+                    catch (Exception readerException)
+                    {
+                        logger.Debug("readerException = " + readerException);
+                        //throw new Exception("Parsing error:  " + reader.GetErrorMessage());
+                        throw new Exception("Parsing error:  " + readerException);
+                    }
+
                     //ExcelReader doesn't support starting on a certain line for column names...  we always assume col 1
-                    data.columns = reader.getColumns();
-                    data.rows = reader.getData().First().Table;
-                    reader.close();
+                    //if (reader.HasReadError())
+                    //{
+                    //    throw new Exception("Parsing error:  " + reader.GetErrorMessage());
+                    //}
+                    //data.columns = reader.getColumns();
+                    ////data.rows = reader.getData().First().Table;
+                    //data.rows = reader.getData();
+                    ////reader.close(); // Unnecessary for ExcelReader2.
                 }
                 else if (extension == ".csv")
                 {
