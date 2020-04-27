@@ -97,6 +97,7 @@ namespace services.Models.Data
         public string Route_TERO { get; set; }
         public string Route_CRPP { get; set; }
         public string Route_Roads { get; set; }
+        public string Route_Fire { get; set; }
 
 
     }
