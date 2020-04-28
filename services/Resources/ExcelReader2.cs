@@ -24,6 +24,9 @@ namespace services.Resources
         public ExcelReader2(string path)
         {
             _path = path;
+            dataTable = null;
+            blnHasError = false;
+            strErrorMessage = "";
             dataTable = ReadExcelFile(_path, 0); // 0 = The first worksheet.
         }
 
