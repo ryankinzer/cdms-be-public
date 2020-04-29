@@ -412,7 +412,8 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20200421_cdms_covidupdate.sql" />
+    <Content Include="db-scripts\20200427_paluut_permitnewroute.sql" />
+    <Content Include="db-scripts\archive\20200421_cdms_covidupdate.sql" />
     <Content Include="db-scripts\archive\20200424_paluut_permitsupdate.sql" />
     <Content Include="db-scripts\archive\20200228_paluutWtAddProperties.sql" />
     <Content Include="db-scripts\archive\20200323_paluutChngCharacteristics.sql" />

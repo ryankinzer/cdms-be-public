@@ -78,6 +78,9 @@ namespace services.Models.Data
 
         public bool? IsVoid { get; set; }
         public bool? IsFloodHazardOverlay { get; set; }
+        public bool? MinimumSetbacksMet { get; set; }
+        public bool? UnresolvedViolations { get; set; }
+        public bool? LegalLotOfRecord { get; set; }
         public string OccupancyGroup { get; set; }
         public string ConstructionType { get; set; }
         public string BusinessName { get; set; }
