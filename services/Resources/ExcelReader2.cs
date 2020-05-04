@@ -110,20 +110,26 @@ namespace services.Resources
                                                     case CellType.Numeric:
                                                         if (HSSFDateUtil.IsCellDateFormatted(cell2))
                                                         {
+                                                            // Turned the following code off, for the following reason.
+                                                            // A date number value for 11/24/2014 is 41969.
+                                                            // A date/time number value for 11/24/2014 1:00 is 41969.01466666664
+                                                            // How to tell the difference between an incorrect fractional value,
+                                                            // and a legitimate date/time value?
+
                                                             // To initialize a Date time, it always needs at least one int.
                                                             // So, if our incoming value is a fractional value like 123456.12345,
                                                             // (a Northing or Easting), it will not go into a Date cell; it will cause 
                                                             // an error/crash.
-                                                            int intCellValue = (int)cell2.NumericCellValue;
-                                                            if (intCellValue != cell2.NumericCellValue)
-                                                            {
-                                                                logger.Debug("(zero based): rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
-                                                                blnHasError = true;
-                                                                strErrorMessage = "(zero based): rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.";
-                                                                logger.Debug("strErrorMessage = " + strErrorMessage);
+                                                            //int intCellValue = (int)cell2.NumericCellValue;
+                                                            //if (intCellValue != cell2.NumericCellValue)
+                                                            //{
+                                                            //    logger.Debug("(zero based): rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
+                                                            //    blnHasError = true;
+                                                            //    strErrorMessage = "(zero based): rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.";
+                                                            //    logger.Debug("strErrorMessage = " + strErrorMessage);
                                                                 //return dataTable;
-                                                                throw new System.ArgumentException("(zero based) rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
-                                                            }
+                                                            //    throw new System.ArgumentException("(zero based) rowIndex = " + intRowId + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
+                                                            //}
                                                             cellType2[i] = "System.DateTime";
                                                         }
                                                         else
@@ -218,15 +224,15 @@ namespace services.Resources
                                                 if (HSSFDateUtil.IsCellDateFormatted(cell))
                                                 {
                                                     //logger.Debug("cell.NumericCellValue = " + cell.NumericCellValue);
-                                                    int intCellValue = (int)cell.NumericCellValue;
-                                                    if (intCellValue != cell.NumericCellValue)
-                                                    {
-                                                        logger.Debug("(zero based) rowIndex = " + rowIndex + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
-                                                        blnHasError = true;
-                                                        strErrorMessage = "(zero based) rowIndex = " + rowIndex + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.";
-                                                        return dataTable;
-                                                        //throw new System.ArgumentException("Cannot convert fractional value to date.");
-                                                    }
+                                                    //int intCellValue = (int)cell.NumericCellValue;
+                                                    //if (intCellValue != cell.NumericCellValue)
+                                                    //{
+                                                    //    logger.Debug("(zero based) rowIndex = " + rowIndex + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.");
+                                                    //    blnHasError = true;
+                                                    //    strErrorMessage = "(zero based) rowIndex = " + rowIndex + ", colIndex = " + cell.ColumnIndex + ", Cannot convert fractional value to date.";
+                                                    //    return dataTable;
+                                                    //    //throw new System.ArgumentException("Cannot convert fractional value to date.");
+                                                    //}
                                                     cellValue = cell.DateCellValue;
                                                 }
                                                 else { cellValue = cell.NumericCellValue; }
