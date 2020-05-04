@@ -206,6 +206,10 @@
     <Compile Include="Controllers\Private\ViolationController.cs" />
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Controllers\Private\CovidController.cs" />
+    <Compile Include="Migrations\202005011557362_reset.cs" />
+    <Compile Include="Migrations\202005011557362_reset.Designer.cs">
+      <DependentUpon>202005011557362_reset.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Characteristics.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -480,6 +484,11 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202005011557362_reset.resx">
+      <DependentUpon>202005011557362_reset.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
