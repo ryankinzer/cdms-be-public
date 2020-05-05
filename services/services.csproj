@@ -210,10 +210,6 @@
     <Compile Include="Migrations\202005011557362_reset.Designer.cs">
       <DependentUpon>202005011557362_reset.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005051700196_AddWqCharDet.cs" />
-    <Compile Include="Migrations\202005051700196_AddWqCharDet.Designer.cs">
-      <DependentUpon>202005051700196_AddWqCharDet.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Characteristics.cs" />
     <Compile Include="Models\Data\MetStation.cs" />
@@ -493,9 +489,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202005011557362_reset.resx">
       <DependentUpon>202005011557362_reset.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005051700196_AddWqCharDet.resx">
-      <DependentUpon>202005051700196_AddWqCharDet.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
