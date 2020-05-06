@@ -64,7 +64,7 @@ go
 
 
 -- Down
-alter table dbo.WaterQuality_Detail drop column CharactDetected
+/*alter table dbo.WaterQuality_Detail drop column CharactDetected
 go
 
 Drop view dbo.WaterQuality_Detail_VW
@@ -79,3 +79,4 @@ WHERE        (EffDt =
                                FROM            dbo.WaterQuality_Detail AS dd
                                WHERE        (ActivityId = d.ActivityId) AND (RowId = d.RowId))) AND (RowStatusId = 0)
 go
+*/
