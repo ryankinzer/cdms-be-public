@@ -47,6 +47,7 @@ namespace services.Resources.Notifiers
             List<string> parties = db.EHSViolationContacts().Where(o => o.EHSViolationId == in_violation.Id).Select(o => o.PermitPerson.FullName).ToList<string>();
 
             body += "<p><b>Create Date</b>: " + in_violation.CreateDate.ToShortDateString() + "</p>";
+            body += "<p><b>Title</b>: " + in_violation.Name + "</p>";
             body += "<p><b>File Number</b>: " + in_violation.FileNumber + "</p>";
             body += "<p><b>Type of Record</b>: " + in_violation.FileType + "</p>";
             body += "<p><b>Reviewer</b>: " + in_violation.Reviewer + "</p>";
