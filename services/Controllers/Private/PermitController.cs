@@ -19,11 +19,55 @@ using System.Web.Http;
 
 namespace services.Controllers.Private
 {
-    [System.Web.Http.Authorize]
+/*
+    [AllowAnonymous]
+    public class PermitEmailController : CDMSController {
+
+        [AllowAnonymous]
+        [HttpGet] 
+        public dynamic Confirm(int Id){
+
+            var db = ServicesContext.Current;
+
+            PermitEvent incoming_event = db.PermitEvents().Find(Id);
+
+            if (incoming_event == null)
+                return null;
+
+            Permit permit = db.Permit().Find(incoming_event.PermitId);
+            Resources.PermitReceiptNotifier.notify(permit, incoming_event); 
+
+            //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, "Confirmation received");
+            return "Confirmation received. Thank you!";
+        }
+
+    }
+*/
+
+
     public class PermitController : CDMSController
     {
 
         public static string ROLE_REQUIRED = "Permits";
+
+        [AllowAnonymous]
+        [HttpGet]
+        public dynamic Confirm(int Id)
+        {
+
+            var db = ServicesContext.Current;
+
+            PermitEvent incoming_event = db.PermitEvents().Find(Id);
+
+            if (incoming_event == null)
+                return null;
+
+            Permit permit = db.Permit().Find(incoming_event.PermitId);
+            Resources.PermitReceiptNotifier.notify(permit, incoming_event);
+
+            //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, "Confirmation received");
+            return "Confirmation received. Thank you!";
+        }
 
         [HttpGet]
         public dynamic AllPermits()

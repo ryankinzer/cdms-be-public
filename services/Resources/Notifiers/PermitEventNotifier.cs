@@ -14,6 +14,7 @@ namespace services.Resources
         public static void notify(Permit in_permit, PermitEvent in_event, dynamic in_json){
 
             string PermitURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitURL"];
+            string PermitReceiptURL = System.Configuration.ConfigurationManager.AppSettings["EmailPermitReceiptURL"];
             string PermitProjectId = System.Configuration.ConfigurationManager.AppSettings["PermitProjectId"];
 
             List<string> recipients = null;
@@ -98,15 +99,15 @@ namespace services.Resources
                 }
             }
 
-            body += "<br/><br/> -- Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
+            body += "<br/><br/>Please click to: <a href='"+ PermitReceiptURL + in_event.Id + "'>Confirm receipt</a>";
+            body += "<br/><br/>-- Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
 
             string attachment = null;
 
             //if it is an inspection, attach the body as an attachment and let the body just be an introduction
             if(in_event.EventType == "Inspection")
             {
-                attachment = body;
-                body = "Inspection requested for " + in_permit.PermitNumber + ". See attachment for details.<br/>Please contact CTUIR Planning Office at 541-276-3099 with any questions.<br/>Thank you!";
+                attachment = body.ToString();
             }
 
 

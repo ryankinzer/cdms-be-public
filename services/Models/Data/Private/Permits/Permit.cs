@@ -32,6 +32,7 @@ namespace services.Models.Data
         public int? PermitType { get; set; }
         public DateTime? ApplicationDate { get; set; }
         public string ImprovementType { get; set; }
+        public string ImprovementTypeOther { get; set; }
         public DateTime? IssueDate { get; set; }
         public string IssuedBy { get; set; }
         public string ReviewedBy { get; set; }
