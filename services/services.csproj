@@ -429,9 +429,9 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="db-scripts\20200427_paluut_permitnewroute.sql" />
-    <Content Include="db-scripts\20200501_paluut_ehsnewroute.sql" />
-    <Content Include="db-scripts\20200505_paluutWqAddCharDet.sql" />
+    <Content Include="db-scripts\archive\20200427_paluut_permitnewroute.sql" />
+    <Content Include="db-scripts\archive\20200501_paluut_ehsnewroute.sql" />
+    <Content Include="db-scripts\archive\20200505_paluutWqAddCharDet.sql" />
     <Content Include="db-scripts\20200507_paluut_permitupdates.sql" />
     <Content Include="db-scripts\archive\20200421_cdms_covidupdate.sql" />
     <Content Include="db-scripts\archive\20200424_paluut_permitsupdate.sql" />
@@ -441,8 +441,8 @@
     <Content Include="db-scripts\archive\20200305_paluut_ehsfields.sql" />
     <Content Include="db-scripts\archive\20200324_paluut_ehscodes.sql" />
     <Content Include="db-scripts\archive\20200310_paluut_ehsevents.sql" />
-    <Content Include="db-scripts\20200417_cdms_fieldinspection.sql" />
-    <Content Include="db-scripts\20200417_paluut_ehsupdates.sql" />
+    <Content Include="db-scripts\archive\20200417_cdms_fieldinspection.sql" />
+    <Content Include="db-scripts\archive\20200417_paluut_ehsupdates.sql" />
     <Content Include="db-scripts\archive\20200318_COVID.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
