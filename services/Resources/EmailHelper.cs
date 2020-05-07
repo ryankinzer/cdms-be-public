@@ -88,14 +88,26 @@ namespace services.Resources
 
         private static NotificationLog buildLog(MailMessage message, string module){
             NotificationLog log = new NotificationLog();
-            User me = AuthorizationManager.getCurrentUser();
+
+            int UserId = 0;
+
+            try
+            {
+                User me = AuthorizationManager.getCurrentUser();
+                UserId = me.Id;
+            }
+            catch (Exception e) {
+                //anonymous user
+            }
+
+            
 
             log.Sender = message.From.ToString();
             log.Recipient = message.To.ToString();
             log.Subject = message.Subject;
             log.Body = message.Body;
             log.SentDate = DateTime.Now;
-            log.ByUser = me.Id;
+            log.ByUser = UserId;
             log.Module = module;
 
             return log;
