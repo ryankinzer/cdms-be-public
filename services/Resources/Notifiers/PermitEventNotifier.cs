@@ -39,6 +39,7 @@ namespace services.Resources
                 //body += "<p><b>Permit</b>: <a href='" + PermitURL + in_permit.Id + "'>" + in_permit.PermitNumber + "</a></p>"; //TODO: Phase 2 will provide a link to reviewers
                 body += "<p><b>Permit Number</b>: " + in_permit.PermitNumber + "</p>";
                 body += "<p><b>Project Name</b>: " + in_permit.ProjectName + "</p>";
+                body += "<p><b>Project Scope</b>: " + in_permit.ScopeOfWork+ "</p>";
                 body += "<p><b>TPO Reviewer</b>: " + in_permit.ReviewedBy + "</p>";
                 body += "<p><b>Request Date</b>: " + in_event.RequestDate + "</p>";
             }
@@ -47,6 +48,7 @@ namespace services.Resources
                 body += "<p><b>Permit Number</b>: " + in_permit.PermitNumber + "</p>";
                 body += "<p><b>Site Address</b>: " + in_permit.SiteAddress + " " + in_permit.SiteCity + "</p>";
                 body += "<p><b>Project Name</b>: " + in_permit.ProjectName + "</p>";
+                body += "<p><b>Project Scope</b>: " + in_permit.ScopeOfWork + "</p>";
                 body += "<p><b>Type of Inspection</b>: " + in_event.Reference + "</p>";
                 body += "<p><b>Date of Inspection Desired</b>: " + ((DateTime)in_event.RequestDate).ToShortDateString() + "</p>";
 
