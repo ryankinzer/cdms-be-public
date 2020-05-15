@@ -8,7 +8,8 @@ insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspecti
 insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','DCFS',0,'TonyBarnett@ctuir.org');
 insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Planning',0,'LoraElliott@ctuir.org');
 insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Public Safety',0,'utpd@ctuir.org');
---insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Yellowhawk',0,'Colee@ctuir.org');
+insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Yellowhawk',0,'jamesrinehart@yellowhawk.org');
+insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Yellowhawk',0,'mystiehaynie@yellowhawk.org');
 insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Water Resources',0,'CraigKvern@ctuir.org');
 insert into PermitRoutes (EventType, ItemType, Rank, Email) values ('EHSInspectionViolation','Water Resources',1,'RobinHarris@ctuir.org');
 
