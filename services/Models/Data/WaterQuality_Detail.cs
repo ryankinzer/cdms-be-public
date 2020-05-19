@@ -23,5 +23,6 @@ namespace services.Models.Data
         public string ContextID { get; set; }
         public string MethodID { get; set; }
         public string LabName { get; set; }
+        public string CharactDetected { get; set; }
     }
 }

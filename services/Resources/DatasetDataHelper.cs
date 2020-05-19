@@ -193,7 +193,7 @@ namespace services.Resources
 
             if (tableName == "WaterTemp")
                 query = "update Activities set Description = (select concat(convert(varchar,min(ReadingDateTime),111), ' - ', convert(varchar,max(ReadingDateTime),111)) from " + tableName + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
-            else if (tableName == "WaterQuality")
+            else if (tableName == "WaterQuality" || tableName == "MetStation")
                 query = "update Activities set Description = (select concat(convert(varchar,min(SampleDate),111), ' - ', convert(varchar,max(SampleDate),111)) from " + tableName + "_Detail_VW where ActivityId = " + newActivityId + ") where Id = " + newActivityId;
             else if (tableName == "Genetic")
                 query = @"update Activities set Description = (
