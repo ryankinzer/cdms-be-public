@@ -28,7 +28,10 @@ namespace services.Models
         public virtual ProjectType ProjectType { get; set; }
         public virtual List<Location> Locations { get; set; }
         public virtual Organization Organization { get; set; }
+
+        [JsonIgnore]
         public virtual List<File> Files { get; set; }
+
         public virtual User Owner { get; set; }
 
         [InverseProperty("ProjectEditor")]

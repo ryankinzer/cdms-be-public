@@ -302,7 +302,9 @@ namespace services.Controllers
 
             retval.Header.Activity = activity;
             retval.Header.ByUser = activity.User;
-            
+
+            var dt = new DataTable();
+
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand(detail_query, con))
