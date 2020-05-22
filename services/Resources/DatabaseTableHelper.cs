@@ -185,9 +185,24 @@ namespace services.Resources
             var tableName_header = in_datastore.TablePrefix + "_Header";
             var tableName_detail = in_datastore.TablePrefix + "_Detail";
 
-            var header_fields = "h." + String.Join(", h.", in_datastore.Fields.Where(o => o.FieldRoleId == 1).Select(m => m.DbColumnName).ToArray());
-            var detail_fields = "d." + String.Join(", d.", in_datastore.Fields.Where(o => o.FieldRoleId == 2).Select(m => m.DbColumnName).ToArray());
+            IEnumerable<Field> fieldList = in_datastore.Fields;
 
+            var header_fields = "";
+            var detail_fields = "";
+
+            if(fieldList.Where(o => o.FieldRoleId == 1).Count() > 0)
+                header_fields = "h." + String.Join(", h.", fieldList.Where(o => o.FieldRoleId == 1).Select(m => m.DbColumnName).ToArray());
+
+            if (fieldList.Where(o => o.FieldRoleId == 2).Count() > 0)
+                detail_fields = "d." + String.Join(", d.", fieldList.Where(o => o.FieldRoleId == 2).Select(m => m.DbColumnName).ToArray());
+
+            List<string> fieldStrings = new List<string>() ;
+            if (header_fields != "") fieldStrings.Add(header_fields);
+            if (detail_fields != "") fieldStrings.Add(detail_fields);
+
+            var fields_sql = String.Join(",", fieldStrings);
+            logger.Debug(fields_sql);
+            
             //note: we have to re-generate the detail and header views, too, to pick up the new column
             var header_view = @"
                 ALTER VIEW " + tableName_header + @"_VW AS 
@@ -216,7 +231,7 @@ namespace services.Resources
                 ALTER VIEW " + tableName + @"_VW AS 
                 SELECT        
                     a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
-                    " + header_fields + ", " + detail_fields + @", 
+                    " + fields_sql + @", 
                     d.Id AS " + tableName_detail + @"_Id, 
                     d.ByUserId AS " + tableName_detail + @"_ByUserId, 
                     d.EffDt AS " + tableName_detail + @"_EffDt
