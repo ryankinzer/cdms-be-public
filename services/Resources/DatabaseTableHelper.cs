@@ -17,6 +17,7 @@ namespace services.Resources
         {
             var db = ServicesContext.Current;
 
+            var tableName = in_datastore.TablePrefix;
             var tableName_header = in_datastore.TablePrefix + "_Header";
             var tableName_detail = in_datastore.TablePrefix + "_Detail";
 
@@ -55,6 +56,46 @@ namespace services.Resources
 
             logger.Debug(detail_query);
 
+            var header_view = @"
+                CREATE VIEW " + tableName_header + @"_VW AS 
+                    SELECT        *
+                    FROM            dbo." + tableName_header + @" AS h
+                    WHERE        (EffDt =
+                             (SELECT        MAX(EffDt) AS MaxEffDt
+                               FROM            dbo." + tableName_header + @" AS hh
+                               WHERE        (ActivityId = h.ActivityId))) ";
+
+            logger.Debug(header_view);
+
+            var detail_view = @"
+                CREATE VIEW " + tableName_detail + @"_VW AS 
+                    SELECT *
+                    FROM            dbo." + tableName_detail + @" AS d
+                    WHERE        (EffDt =
+                             (SELECT        MAX(EffDt) AS MaxEffDt
+                               FROM            dbo." + tableName_detail + @" AS dd
+                               WHERE        (ActivityId = d.ActivityId) AND (RowId = d.RowId))) AND (RowStatusId = 0) ";
+
+            logger.Debug(detail_view);
+
+            var main_view = @"
+                CREATE VIEW " + tableName + @"_VW AS 
+                SELECT        
+                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
+
+                    d.Id AS " + tableName_detail + @"_Id, 
+                    d.ByUserId AS " + tableName_detail + @"_ByUserId, 
+                    d.EffDt AS " + tableName_detail + @"_EffDt
+
+                FROM  dbo.Activities AS a INNER JOIN
+
+                         dbo." + tableName_header + @"_VW AS h ON a.Id = h.ActivityId INNER JOIN
+                         dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId INNER JOIN
+                         dbo.Locations AS l ON a.LocationId = l.Id LEFT OUTER JOIN
+                         dbo." + tableName_detail + @"_VW AS d ON h.ActivityId = d.ActivityId ";
+
+            logger.Debug(main_view);
+
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
                 con.Open();
@@ -75,6 +116,35 @@ namespace services.Resources
                         throw new Exception("Failed to execute header table create query!");
                     }
                 }
+
+                using (SqlCommand cmd = new SqlCommand(header_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + header_view);
+                        throw new Exception("Failed to execute header view create query!");
+                    }
+                }
+
+                using (SqlCommand cmd = new SqlCommand(detail_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + detail_view);
+                        throw new Exception("Failed to execute detail view create query!");
+                    }
+                }
+
+                using (SqlCommand cmd = new SqlCommand(main_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + main_view);
+                        throw new Exception("Failed to execute main view create query!");
+                    }
+                }
+
+
             }
         }
 
@@ -107,6 +177,90 @@ namespace services.Resources
             }
         }
 
+        internal static void regenerateViews(Datastore in_datastore)
+        {
+            var db = ServicesContext.Current;
 
+            var tableName = in_datastore.TablePrefix;
+            var tableName_header = in_datastore.TablePrefix + "_Header";
+            var tableName_detail = in_datastore.TablePrefix + "_Detail";
+
+            var header_fields = "h." + String.Join(", h.", in_datastore.Fields.Where(o => o.FieldRoleId == 1).Select(m => m.DbColumnName).ToArray());
+            var detail_fields = "d." + String.Join(", d.", in_datastore.Fields.Where(o => o.FieldRoleId == 2).Select(m => m.DbColumnName).ToArray());
+
+            //note: we have to re-generate the detail and header views, too, to pick up the new column
+            var header_view = @"
+                ALTER VIEW " + tableName_header + @"_VW AS 
+                    SELECT        *
+                    FROM            dbo." + tableName_header + @" AS h
+                    WHERE        (EffDt =
+                             (SELECT        MAX(EffDt) AS MaxEffDt
+                               FROM            dbo." + tableName_header + @" AS hh
+                               WHERE        (ActivityId = h.ActivityId))) ";
+
+            logger.Debug(header_view);
+
+            var detail_view = @"
+                ALTER VIEW " + tableName_detail + @"_VW AS 
+                    SELECT *
+                    FROM            dbo." + tableName_detail + @" AS d
+                    WHERE        (EffDt =
+                             (SELECT        MAX(EffDt) AS MaxEffDt
+                               FROM            dbo." + tableName_detail + @" AS dd
+                               WHERE        (ActivityId = d.ActivityId) AND (RowId = d.RowId))) AND (RowStatusId = 0) ";
+
+            logger.Debug(detail_view);
+
+            //now we can do the main view!
+            var main_view = @"
+                ALTER VIEW " + tableName + @"_VW AS 
+                SELECT        
+                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
+                    " + header_fields + ", " + detail_fields + @", 
+                    d.Id AS " + tableName_detail + @"_Id, 
+                    d.ByUserId AS " + tableName_detail + @"_ByUserId, 
+                    d.EffDt AS " + tableName_detail + @"_EffDt
+
+                FROM  dbo.Activities AS a INNER JOIN
+
+                         dbo." + tableName_header + @"_VW AS h ON a.Id = h.ActivityId INNER JOIN
+                         dbo.ActivityQAs_VW AS aq ON a.Id = aq.ActivityId INNER JOIN
+                         dbo.Locations AS l ON a.LocationId = l.Id LEFT OUTER JOIN
+                         dbo." + tableName_detail + @"_VW AS d ON h.ActivityId = d.ActivityId ";
+
+            logger.Debug(main_view);
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(header_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + header_view);
+                        throw new Exception("Failed to execute header view query!");
+                    }
+                }
+
+                using (SqlCommand cmd = new SqlCommand(detail_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + detail_view);
+                        throw new Exception("Failed to execute detail view query!");
+                    }
+                }
+
+                using (SqlCommand cmd = new SqlCommand(main_view, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + main_view);
+                        throw new Exception("Failed to execute main view query!");
+                    }
+                }
+            }
+        }
     }
 }

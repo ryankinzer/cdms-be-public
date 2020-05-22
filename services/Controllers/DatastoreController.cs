@@ -199,6 +199,8 @@ namespace services.Controllers
 
             User me = AuthorizationManager.getCurrentUser();
 
+            Datastore datastore = db.Datastores.Find(json.DatastoreId.ToObject<int>());
+
             Field df = null;
 
             if (json["Id"] == null)
@@ -209,7 +211,7 @@ namespace services.Controllers
             if (df == null || me == null)
                 throw new System.Exception("Configuration error. Please try again.");
 
-            df.DatastoreId = json.DatastoreId;
+            df.DatastoreId = datastore.Id;
             df.Name = json.Name;
             df.Validation = json.Validation;
             df.Rule = json.Rule;
@@ -234,9 +236,13 @@ namespace services.Controllers
                 db.Entry(df).State = EntityState.Modified;
             }
 
-            //logger.Debug("About to save...");
+            logger.Debug("About to save...");
             db.SaveChanges();
-            //logger.Debug("Done saving...");
+            logger.Debug("Done saving... Creating view.");
+
+            DatabaseTableHelper.regenerateViews(datastore);
+
+            logger.Debug("done!");
 
             return Request.CreateResponse(HttpStatusCode.Created, df);
         }
