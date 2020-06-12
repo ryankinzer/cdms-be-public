@@ -13,8 +13,41 @@ namespace services.Resources
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+        public static void removeFieldFromDatabase(Field in_field){
+            logger.Debug("Inside DatabaseColumnHelper.cs, removeFieldToDatabase...");
+            logger.Debug("in_field.DbColumnName = " + in_field.DbColumnName);
+
+            var db = ServicesContext.Current;
+
+            Datastore datastore = db.Datastores.Find(in_field.DatastoreId);
+
+            var tableName = datastore.TablePrefix;
+
+            //logger.Debug("datastore.TableType = " + datastore.TableType);
+            if (datastore.TableType != "Single")
+                tableName += (in_field.FieldRoleId == 1) ? "_Header" : "_Detail";
+
+            var query = "ALTER TABLE " + tableName + " DROP COLUMN " + in_field.DbColumnName;
+
+            logger.Debug("query = " + query);
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        logger.Debug("Problem executing: " + query);
+                        throw new Exception("Failed to execute column drop query!");
+                    }
+                }
+            }
+
+        }
+
         public static void addFieldToDatabase(Field in_field){
-            logger.Debug("Inside DatabaseColumnHelper.cs, addFieldToDatabase...");
+            //logger.Debug("Inside DatabaseColumnHelper.cs, addFieldToDatabase...");
             //logger.Debug("in_field.DbColumnName = " + in_field.DbColumnName);
             
             var db = ServicesContext.Current;

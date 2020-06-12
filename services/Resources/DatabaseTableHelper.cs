@@ -57,7 +57,7 @@ namespace services.Resources
             logger.Debug(detail_query);
 
             var header_view = @"
-                CREATE VIEW " + tableName_header + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName_header + @"_VW AS 
                     SELECT        *
                     FROM            dbo." + tableName_header + @" AS h
                     WHERE        (EffDt =
@@ -68,7 +68,7 @@ namespace services.Resources
             logger.Debug(header_view);
 
             var detail_view = @"
-                CREATE VIEW " + tableName_detail + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName_detail + @"_VW AS 
                     SELECT *
                     FROM            dbo." + tableName_detail + @" AS d
                     WHERE        (EffDt =
@@ -79,7 +79,7 @@ namespace services.Resources
             logger.Debug(detail_view);
 
             var main_view = @"
-                CREATE VIEW " + tableName + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName + @"_VW AS 
                 SELECT        
                     a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
 
@@ -205,7 +205,7 @@ namespace services.Resources
             
             //note: we have to re-generate the detail and header views, too, to pick up the new column
             var header_view = @"
-                ALTER VIEW " + tableName_header + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName_header + @"_VW AS 
                     SELECT        *
                     FROM            dbo." + tableName_header + @" AS h
                     WHERE        (EffDt =
@@ -216,7 +216,7 @@ namespace services.Resources
             logger.Debug(header_view);
 
             var detail_view = @"
-                ALTER VIEW " + tableName_detail + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName_detail + @"_VW AS 
                     SELECT *
                     FROM            dbo." + tableName_detail + @" AS d
                     WHERE        (EffDt =
@@ -228,7 +228,7 @@ namespace services.Resources
 
             //now we can do the main view!
             var main_view = @"
-                ALTER VIEW " + tableName + @"_VW AS 
+                CREATE OR ALTER VIEW " + tableName + @"_VW AS 
                 SELECT        
                     a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
                     " + fields_sql + @", 

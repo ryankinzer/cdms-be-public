@@ -211,6 +211,10 @@ namespace services.Controllers
             if (df == null || me == null)
                 throw new System.Exception("Configuration error. Please try again.");
 
+            if(json["DbColumnName"]==null || json["Name"]==null){
+                throw new System.Exception("Name and DbColumnName are required fields.");
+            }
+
             df.DatastoreId = datastore.Id;
             df.Name = json.Name;
             df.Validation = json.Validation;
@@ -246,6 +250,38 @@ namespace services.Controllers
 
             return Request.CreateResponse(HttpStatusCode.Created, df);
         }
+
+        [HttpPost]
+        public HttpResponseMessage RemoveMasterField(JObject jsonData){
+            var db = ServicesContext.Current;
+
+            dynamic json = jsonData;
+
+            User me = AuthorizationManager.getCurrentUser();
+
+            Datastore datastore = db.Datastores.Find(json.DatastoreId.ToObject<int>());
+
+            Field df = null;
+
+            if (json["FieldId"] == null)
+                df = new Field();
+            else
+                df = db.Fields.Find(json.FieldId.ToObject<int>());
+
+            if (df == null || me == null)
+                throw new System.Exception("Configuration error. Please try again.");
+
+            DatabaseColumnHelper.removeFieldFromDatabase(df);
+
+            db.Fields.Remove(df);
+            db.SaveChanges();
+
+            DatabaseTableHelper.regenerateViews(datastore);
+
+            return Request.CreateResponse(HttpStatusCode.Created, df);
+
+        }
+
 
         // POST /api/v1/datastore/savemasterfield
         [HttpPost]
