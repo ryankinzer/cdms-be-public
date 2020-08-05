@@ -38,5 +38,7 @@ namespace services.Models.Data
         public decimal? GPSEasting { get; set; }
         [DecimalPrecision(18, 8)]
         public decimal? GPSNorthing { get; set; }
+
+        public int? WaypointNumber { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace services.Controllers
     /**
      * ActivityController - Handles any api requests dealing with activities.
      * 
-     * Any data in a dataset will have belong to an "activity".
+     * Any data in a dataset will belong to an "activity".
      * 
 * **************
 *                NOTE: we have an active feature toggle to switch between EF and SQL versions of saving: Toggle_EFSQL_SaveMode
@@ -302,7 +302,9 @@ namespace services.Controllers
 
             retval.Header.Activity = activity;
             retval.Header.ByUser = activity.User;
-            
+
+            var dt = new DataTable();
+
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand(detail_query, con))
@@ -891,7 +893,7 @@ namespace services.Controllers
         [HttpPost]
         public HttpResponseMessage SaveDatasetActivitiesConnector(JObject jsonData)
         {
-            return SaveDatasetActivities(jsonData);
+            return SaveDatasetActivities_SQL(jsonData);
         }
 
         //kb 9/19 - new sql version of saving activities - not dependent on EF 
@@ -1024,7 +1026,7 @@ namespace services.Controllers
                     }//foreach detail
 
                     //some special cases to set the activity description to be a more user friendly date range for this activity.
-                    if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic")) 
+                    if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterTemp" || dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "Genetic" || dataset.Datastore.TablePrefix == "MetStation")) 
                     {
                         var query = DatasetDataHelper.getPostDetailInsertQuerySQL(dataset.Datastore.TablePrefix, newActivityId);
                         using (SqlCommand cmd = new SqlCommand(query, con, trans))
@@ -1264,7 +1266,7 @@ namespace services.Controllers
                     }
                 }
             }
-            else if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterQuality")) // others with readingdatetime?
+            else if (newActivityId != 0 && (dataset.Datastore.TablePrefix == "WaterQuality" || dataset.Datastore.TablePrefix == "MetStation")) // others with readingdatetime?
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
                 {

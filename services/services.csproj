@@ -71,6 +71,9 @@
     <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.0.6\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.0.999, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Edm, Version=5.8.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.8.3\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -91,11 +94,26 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="Npoi.Mapper, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npoi.Mapper.3.4.0\lib\net45\Npoi.Mapper.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
@@ -185,12 +203,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Connectors\StreamnetController.cs" />
-    <Compile Include="Models\Feedback.cs" />
-    <Compile Include="Models\NotificationLog.cs" />
+    <Compile Include="Controllers\TableController.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Characteristics.cs" />
+    <Compile Include="Models\Data\MetStation.cs" />
+    <Compile Include="Models\Data\MetStation_Detail.cs" />
+    <Compile Include="Models\Data\MetStation_Header.cs" />
     <Compile Include="Resources\DatabaseColumnHelper.cs" />
     <Compile Include="Resources\DatabaseTableHelper.cs" />
     <Compile Include="Resources\DatasetDataDetailHelper.cs" />
-    <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FishermenController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
@@ -207,12 +228,18 @@
     <Compile Include="Controllers\ActivityController.cs" />
     <Compile Include="Controllers\DatasetController.cs" />
     <Compile Include="Controllers\DatastoreController.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Data\CreelPhone.cs" />
     <Compile Include="Models\Data\CreelPhone_Detail.cs" />
     <Compile Include="Models\Data\CreelPhone_Header.cs" />
     <Compile Include="Resources\DatasetDataHelper.cs" />
+    <Compile Include="Models\NotificationLog.cs" />
+    <Compile Include="Resources\DatasetDataHeaderHelper.cs" />
+    <Compile Include="Resources\ExcelReader2.cs" />
+    <Compile Include="Resources\InMemoryMultipartFormDataStreamProvider.cs" />
+    <Compile Include="Resources\Metadata.cs" />
+    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
+    <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\PitagisData.cs" />
     <Compile Include="Models\LookupTable.cs" />
     <Compile Include="Models\Seasons.cs" />
@@ -326,11 +353,11 @@
     <Compile Include="Resources\EmailHelper.cs" />
     <Compile Include="Resources\LookupFieldHelper.cs" />
     <Compile Include="Resources\MD5Util.cs" />
-    <Compile Include="Resources\Notifiers\FeedbackNotifier.cs" />
     <Compile Include="Resources\PitagisReader.cs" />
     <Compile Include="Resources\QueryHelper.cs" />
     <Compile Include="Resources\StringHelper.cs" />
     <Compile Include="Resources\SubprojectFileHelper.cs" />
+    <Compile Include="Resources\TableDataHelper.cs" />
     <Compile Include="Resources\TSVReader.cs" />
     <Compile Include="Resources\CSVReader.cs" />
     <Compile Include="Resources\EFFileRepository.cs" />
@@ -345,12 +372,28 @@
     <Content Include="App_Readme\Elmah.SqlServer.sql" />
     <Content Include="App_Readme\Elmah.SqlServer.txt" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="db-scripts\archive\20200228_paluutWtAddProperties.sql" />
+    <Content Include="db-scripts\archive\20200323_paluutChngCharacteristics.sql" />
+    <Content Include="db-scripts\archive\20200505_paluutWqAddCharDet.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\uploads\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ControllerClassDiagram.cd" />
+    <None Include="Properties\PublishProfiles\cdms-local.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
