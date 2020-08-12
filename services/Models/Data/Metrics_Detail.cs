@@ -16,5 +16,6 @@ namespace services.Models.Data
         public string Comments { get; set; }
         public string RVTouchstone { get; set; }
         public string ReportingLevel  { get; set; }
+        public string ReportingMetric { get; set; }
     }
 }

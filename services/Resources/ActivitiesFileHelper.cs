@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -92,7 +93,10 @@ namespace services.Resources
             }
 
             //delete files from each detail row
-            foreach (var detail in data.Details)
+
+            var detailsCollection = (data.Details is DataTable) ? data.Details.Rows : data.Details;
+
+            foreach (var detail in detailsCollection)
             {
                 foreach(var file in files)
                 {

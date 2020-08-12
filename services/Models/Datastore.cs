@@ -20,7 +20,7 @@ namespace services.Models
             public string LocationTypeId { get; set; } 
             public string DefaultConfig { get; set; }
             public int OwnerUserId { get; set; }
-            //public int? FieldCategoryId { get; set; }  
+            public string TableType { get; set; }
 
             private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -64,8 +64,7 @@ namespace services.Models
                 {
                     var db = ServicesContext.Current;
 
-                    return db.Fields.SqlQuery("select * from Fields where d.DatastoreId =" +
-                        this.Id + " ORDER BY ff.Name ASC");
+                    return db.Fields.SqlQuery("select * from Fields f where f.DatastoreId =" + this.Id + " ORDER BY f.Name ASC");
                 }
             }
 
