@@ -443,9 +443,9 @@ join datastores ds on d.DatastoreId = ds.Id
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
 
-            /* string query = "SELECT * FROM " + datastore.TablePrefix + "_VW"; */
+            /* string query = "SELECT * FROM " + datastore.TablePrefix + "_kus"; */
 
-            var sb = new System.Text.StringBuilder("SELECT * FROM " + datastore.TablePrefix + "_VW WHERE 1=1");
+            var sb = new System.Text.StringBuilder("SELECT * FROM " + datastore.TablePrefix + "_kus WHERE 1=1");
 
             if (Species != null)
             {
