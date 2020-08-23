@@ -55,7 +55,8 @@ namespace services.Resources
                         // Read Row by row from the first
                         for (int rowIndex = 0; rowIndex <= worksheet.LastRowNum; rowIndex++)
                         {
-                            DataRow NewRow = null;
+							logger.Debug("The last row number is: " + worksheet.LastRowNum);
+							DataRow NewRow = null;
                             IRow row = worksheet.GetRow(rowIndex);
                             IRow row2 = null;
                             IRow row3 = null;
@@ -64,9 +65,20 @@ namespace services.Resources
                             {
                                 row2 = worksheet.GetRow(rowIndex + 1); //If it is the first row, I also get the second to know the data type
                                 row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
-                            }
 
-                            if (row != null) //null is when the row only contains empty cells 
+								//Tribal CDMS proposed fix
+								//if (worksheet.LastRowNum > 1)
+								//{
+								//	row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
+								//}
+								//else
+								//{
+								//	row3 = row2;
+								//}
+
+							}
+
+							if (row != null) //null is when the row only contains empty cells 
                             {
                                 if (rowIndex > 0) NewRow = dataTable.NewRow();
 
