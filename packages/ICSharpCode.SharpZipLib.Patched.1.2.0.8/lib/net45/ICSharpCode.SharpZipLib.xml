@@ -2026,12 +2026,6 @@
             and closes it.
             </summary>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.GZip.GZipOutputStream.Flush">
-            <summary>
-            Flushes the stream by ensuring the header is written, and then calling <see cref="M:ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream.Flush">Flush</see>
-            on the deflater.
-            </summary>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.GZip.GZipOutputStream.Finish">
             <summary>
             Finish compression and write any footer information required to stream
@@ -2306,19 +2300,6 @@
             <param name="message">Message describing the problem.</param>
             <param name="exception">The exception that is the cause of the current exception.</param>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.InvalidHeaderException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the InvalidHeaderException class with serialized data.
-            </summary>
-            <param name="info">
-            The System.Runtime.Serialization.SerializationInfo that holds the serialized
-            object data about the exception being thrown.
-            </param>
-            <param name="context">
-            The System.Runtime.Serialization.StreamingContext that contains contextual information
-            about the source or destination.
-            </param>
-        </member>
         <member name="T:ICSharpCode.SharpZipLib.Tar.ProgressMessageHandler">
             <summary>
             Used to advise clients of 'events' while processing archives
@@ -2386,17 +2367,6 @@
             <param name="inputStream">The stream to retrieve archive data from.</param>
             <returns>Returns a new <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for reading from.</returns>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateInputTarArchive(System.IO.Stream,System.Text.Encoding)">
-            <summary>
-            The InputStream based constructors create a TarArchive for the
-            purposes of extracting or listing a tar archive. Thus, use
-            these constructors when you wish to extract files from or list
-            the contents of an existing tar archive.
-            </summary>
-            <param name="inputStream">The stream to retrieve archive data from.</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-            <returns>Returns a new <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for reading from.</returns>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateInputTarArchive(System.IO.Stream,System.Int32)">
             <summary>
             Create TarArchive for reading setting block factor
@@ -2404,23 +2374,6 @@
             <param name="inputStream">A stream containing the tar archive contents</param>
             <param name="blockFactor">The blocking factor to apply</param>
             <returns>Returns a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for reading.</returns>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateInputTarArchive(System.IO.Stream,System.Int32,System.Text.Encoding)">
-            <summary>
-            Create TarArchive for reading setting block factor
-            </summary>
-            <param name="inputStream">A stream containing the tar archive contents</param>
-            <param name="blockFactor">The blocking factor to apply</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-            <returns>Returns a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for reading.</returns>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateOutputTarArchive(System.IO.Stream,System.Text.Encoding)">
-            <summary>
-            Create a TarArchive for writing to, using the default blocking factor
-            </summary>
-            <param name="outputStream">The <see cref="T:System.IO.Stream"/> to write to</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-            <returns>Returns a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for writing.</returns>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateOutputTarArchive(System.IO.Stream)">
             <summary>
@@ -2435,15 +2388,6 @@
             </summary>
             <param name="outputStream">The stream to write to</param>
             <param name="blockFactor">The blocking factor to use for buffering.</param>
-            <returns>Returns a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for writing.</returns>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.CreateOutputTarArchive(System.IO.Stream,System.Int32,System.Text.Encoding)">
-            <summary>
-            Create a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive">tar archive</see> for writing.
-            </summary>
-            <param name="outputStream">The stream to write to</param>
-            <param name="blockFactor">The blocking factor to use for buffering.</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
             <returns>Returns a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarArchive"/> suitable for writing.</returns>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarArchive.SetKeepOldFiles(System.Boolean)">
@@ -2926,18 +2870,6 @@
             The header bytes from a tar archive entry.
             </param>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.#ctor(System.Byte[],System.Text.Encoding)">
-            <summary>
-            Construct an entry from an archive's header bytes. File is set
-            to null.
-            </summary>
-            <param name = "headerBuffer">
-            The header bytes from a tar archive entry.
-            </param>
-            <param name = "nameEncoding">
-            The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only
-            </param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.#ctor(ICSharpCode.SharpZipLib.Tar.TarHeader)">
             <summary>
             Construct a TarEntry using the <paramref name="header">header</paramref> provided
@@ -3104,17 +3036,6 @@
             The tar entry header buffer to fill in.
             </param>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.WriteEntryHeader(System.Byte[],System.Text.Encoding)">
-            <summary>
-            Write an entry's header information to a header buffer.
-            </summary>
-            <param name = "outBuffer">
-            The tar entry header buffer to fill in.
-            </param>
-            <param name = "nameEncoding">
-            The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only
-            </param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.AdjustEntryName(System.Byte[],System.String)">
             <summary>
             Convenience method that will modify an entry's name directly
@@ -3125,21 +3046,6 @@
             </param>
             <param name="newName">
             The new name to place into the header buffer.
-            </param>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.AdjustEntryName(System.Byte[],System.String,System.Text.Encoding)">
-            <summary>
-            Convenience method that will modify an entry's name directly
-            in place in an entry header buffer byte array.
-            </summary>
-            <param name="buffer">
-            The buffer containing the entry header to modify.
-            </param>
-            <param name="newName">
-            The new name to place into the header buffer.
-            </param>
-            <param name="nameEncoding">
-            The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only
             </param>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarEntry.NameTarHeader(ICSharpCode.SharpZipLib.Tar.TarHeader,System.String)">
@@ -3562,17 +3468,6 @@
             </summary>
             <returns>A new <see cref="T:System.Object"/> that is a copy of the current instance.</returns>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.ParseBuffer(System.Byte[],System.Text.Encoding)">
-            <summary>
-            Parse TarHeader information from a header buffer.
-            </summary>
-            <param name = "header">
-            The tar entry header buffer to get information from.
-            </param>
-            <param name = "nameEncoding">
-            The <see cref="T:System.Text.Encoding"/> used for the Name field, or null for ASCII only
-            </param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.ParseBuffer(System.Byte[])">
             <summary>
             Parse TarHeader information from a header buffer.
@@ -3586,13 +3481,6 @@
             'Write' header information to buffer provided, updating the <see cref="P:ICSharpCode.SharpZipLib.Tar.TarHeader.Checksum">check sum</see>.
             </summary>
             <param name="outBuffer">output buffer for header information</param>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.WriteHeader(System.Byte[],System.Text.Encoding)">
-            <summary>
-            'Write' header information to buffer provided, updating the <see cref="P:ICSharpCode.SharpZipLib.Tar.TarHeader.Checksum">check sum</see>.
-            </summary>
-            <param name="outBuffer">output buffer for header information</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name field, or null for ASCII only</param>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetHashCode">
             <summary>
@@ -3642,26 +3530,6 @@
             The name parsed.
             </returns>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.ParseName(System.Byte[],System.Int32,System.Int32,System.Text.Encoding)">
-            <summary>
-            Parse a name from a header buffer.
-            </summary>
-            <param name="header">
-            The header buffer from which to parse.
-            </param>
-            <param name="offset">
-            The offset into the buffer from which to parse.
-            </param>
-            <param name="length">
-            The number of header bytes to parse.
-            </param>
-            <param name="encoding">
-            name encoding, or null for ASCII only
-            </param>
-            <returns>
-            The name parsed.
-            </returns>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.Text.StringBuilder,System.Int32,System.Byte[],System.Int32,System.Int32)">
             <summary>
             Add <paramref name="name">name</paramref> to the buffer as a collection of bytes
@@ -3684,18 +3552,6 @@
             <param name="length">The number of characters/bytes to add</param>
             <returns>The next free index in the <paramref name="buffer"/></returns>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.String,System.Int32,System.Byte[],System.Int32,System.Int32,System.Text.Encoding)">
-            <summary>
-            Add <paramref name="name">name</paramref> to the buffer as a collection of bytes
-            </summary>
-            <param name="name">The name to add</param>
-            <param name="nameOffset">The offset of the first character</param>
-            <param name="buffer">The buffer to add to</param>
-            <param name="bufferOffset">The index of the first byte to add</param>
-            <param name="length">The number of characters/bytes to add</param>
-            <param name="encoding">name encoding, or null for ASCII only</param>
-            <returns>The next free index in the <paramref name="buffer"/></returns>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.Text.StringBuilder,System.Byte[],System.Int32,System.Int32)">
             <summary>
             Add an entry name to the buffer
@@ -3715,29 +3571,6 @@
             <returns>
             The index of the next free byte in the buffer
             </returns>
-            TODO: what should be default behavior?(omit upper byte or UTF8?)
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.Text.StringBuilder,System.Byte[],System.Int32,System.Int32,System.Text.Encoding)">
-            <summary>
-            Add an entry name to the buffer
-            </summary>
-            <param name="name">
-            The name to add
-            </param>
-            <param name="buffer">
-            The buffer to add to
-            </param>
-            <param name="offset">
-            The offset into the buffer from which to start adding
-            </param>
-            <param name="length">
-            The number of header bytes to add
-            </param>
-            <param name="encoding">
-            </param>
-            <returns>
-            The index of the next free byte in the buffer
-            </returns>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.String,System.Byte[],System.Int32,System.Int32)">
             <summary>
@@ -3747,18 +3580,6 @@
             <param name="buffer">The buffer to add to</param>
             <param name="offset">The offset into the buffer from which to start adding</param>
             <param name="length">The number of header bytes to add</param>
-            <returns>The index of the next free byte in the buffer</returns>
-            TODO: what should be default behavior?(omit upper byte or UTF8?)
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetNameBytes(System.String,System.Byte[],System.Int32,System.Int32,System.Text.Encoding)">
-            <summary>
-            Add an entry name to the buffer
-            </summary>
-            <param name="name">The name to add</param>
-            <param name="buffer">The buffer to add to</param>
-            <param name="offset">The offset into the buffer from which to start adding</param>
-            <param name="length">The number of header bytes to add</param>
-            <param name="encoding"></param>
             <returns>The index of the next free byte in the buffer</returns>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetAsciiBytes(System.String,System.Int32,System.Byte[],System.Int32,System.Int32)">
@@ -3770,18 +3591,6 @@
             <param name="buffer">The buffer to add to.</param>
             <param name="bufferOffset">The offset to start adding at.</param>
             <param name="length">The number of ascii characters to add.</param>
-            <returns>The next free index in the buffer.</returns>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetAsciiBytes(System.String,System.Int32,System.Byte[],System.Int32,System.Int32,System.Text.Encoding)">
-            <summary>
-            Add a string to a buffer as a collection of ascii bytes.
-            </summary>
-            <param name="toAdd">The string to add</param>
-            <param name="nameOffset">The offset of the first character to add.</param>
-            <param name="buffer">The buffer to add to.</param>
-            <param name="bufferOffset">The offset to start adding at.</param>
-            <param name="length">The number of ascii characters to add.</param>
-            <param name="encoding">String encoding, or null for ASCII only</param>
             <returns>The next free index in the buffer.</returns>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarHeader.GetOctalBytes(System.Int64,System.Byte[],System.Int32,System.Int32)">
@@ -3857,27 +3666,12 @@
             </summary>
             <param name="inputStream">stream to source data from</param>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.#ctor(System.IO.Stream,System.Text.Encoding)">
-            <summary>
-            Construct a TarInputStream with default block factor
-            </summary>
-            <param name="inputStream">stream to source data from</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.#ctor(System.IO.Stream,System.Int32)">
             <summary>
             Construct a TarInputStream with user specified block factor
             </summary>
             <param name="inputStream">stream to source data from</param>
             <param name="blockFactor">block factor to apply to archive</param>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.#ctor(System.IO.Stream,System.Int32,System.Text.Encoding)">
-            <summary>
-            Construct a TarInputStream with user specified block factor
-            </summary>
-            <param name="inputStream">stream to source data from</param>
-            <param name="blockFactor">block factor to apply to archive</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
         </member>
         <member name="P:ICSharpCode.SharpZipLib.Tar.TarInputStream.IsStreamOwner">
             <summary>
@@ -4115,17 +3909,6 @@
             Standard entry factory class creating instances of the class TarEntry
             </summary>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.EntryFactoryAdapter.#ctor">
-            <summary>
-            Construct standard entry factory class with ASCII name encoding
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.EntryFactoryAdapter.#ctor(System.Text.Encoding)">
-            <summary>
-            Construct standard entry factory with name encoding
-            </summary>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarInputStream.EntryFactoryAdapter.CreateEntry(System.String)">
             <summary>
             Create a <see cref="T:ICSharpCode.SharpZipLib.Tar.TarEntry"/> based on named
@@ -4201,27 +3984,12 @@
             </summary>
             <param name="outputStream">stream to write to</param>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarOutputStream.#ctor(System.IO.Stream,System.Text.Encoding)">
-            <summary>
-            Construct TarOutputStream using default block factor
-            </summary>
-            <param name="outputStream">stream to write to</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
-        </member>
         <member name="M:ICSharpCode.SharpZipLib.Tar.TarOutputStream.#ctor(System.IO.Stream,System.Int32)">
             <summary>
             Construct TarOutputStream with user specified block factor
             </summary>
             <param name="outputStream">stream to write to</param>
             <param name="blockFactor">blocking factor</param>
-        </member>
-        <member name="M:ICSharpCode.SharpZipLib.Tar.TarOutputStream.#ctor(System.IO.Stream,System.Int32,System.Text.Encoding)">
-            <summary>
-            Construct TarOutputStream with user specified block factor
-            </summary>
-            <param name="outputStream">stream to write to</param>
-            <param name="blockFactor">blocking factor</param>
-            <param name="nameEncoding">The <see cref="T:System.Text.Encoding"/> used for the Name fields, or null for ASCII only</param>
         </member>
         <member name="P:ICSharpCode.SharpZipLib.Tar.TarOutputStream.IsStreamOwner">
             <summary>
@@ -4422,11 +4190,6 @@
         <member name="F:ICSharpCode.SharpZipLib.Tar.TarOutputStream.outputStream">
             <summary>
             the destination stream for the archive contents
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.SharpZipLib.Tar.TarOutputStream.nameEncoding">
-            <summary>
-            name encoding
             </summary>
         </member>
         <member name="T:ICSharpCode.SharpZipLib.Zip.Compression.Deflater">
@@ -10147,7 +9910,7 @@
             <returns>
             The number of bytes read (this may be less than the length requested, even before the end of stream), or 0 on end of stream.
             </returns>
-            <exception cref="T:System.IO.IOException">
+            <exception name="IOException">
             An i/o error occured.
             </exception>
             <exception cref="T:ICSharpCode.SharpZipLib.Zip.ZipException">
@@ -10315,7 +10078,7 @@
             <param name="comment">
             The comment text for the entire archive.
             </param>
-            <exception cref="T:System.ArgumentOutOfRangeException">
+            <exception name ="ArgumentOutOfRangeException">
             The converted comment is longer than 0xffff bytes.
             </exception>
         </member>
@@ -10384,9 +10147,6 @@
             Too many entries in the Zip file<br/>
             Entry name is too long<br/>
             Finish has already been called<br/>
-            </exception>
-            <exception cref="T:System.NotImplementedException">
-            The Compression method specified for the entry is unsupported.
             </exception>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Zip.ZipOutputStream.CloseEntry">
