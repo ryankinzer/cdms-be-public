@@ -63,18 +63,20 @@ namespace services.Resources
 
                             if (rowIndex == 0)
                             {
-                                row2 = worksheet.GetRow(rowIndex + 1); //If it is the first row, I also get the second to know the data type
-                                row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
+								//Tribal CDMS Edits
+								//Resolves error when only one data row exists in import file
 
-								////Tribal CDMS proposed fix
-								//if (worksheet.LastRowNum > 1)
-								//{
-								//	row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
-								//}
-								//else
-								//{
-								//	row3 = row2;
-								//}
+								row2 = worksheet.GetRow(rowIndex + 1); //If it is the first row, I also get the second to know the data type
+								//row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
+
+								if (worksheet.LastRowNum > 1)
+								{
+									row3 = worksheet.GetRow(rowIndex + 2); //And the third also for the doubts
+								}
+								else
+								{
+									row3 = row2;
+								}
 
 							}
 
