@@ -302,7 +302,9 @@ namespace services.Controllers
             datastore.Description = json.Datastore.Description;
             datastore.TablePrefix = UppercaseFirst(json.Datastore.TablePrefix.ToString().Replace(" ", ""));
             datastore.OwnerUserId = me.Id;
-            datastore.DefaultConfig = "{}";
+			//datastore.DefaultConfig = "{}";
+			//Tribal CDMS Edit
+			datastore.DefaultConfig = "{\"AllowSaveWithErrors\":false}";
             datastore.TableType = json.Datastore.TableType;
 
             LocationType loctype = new LocationType();
