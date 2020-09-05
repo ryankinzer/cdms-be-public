@@ -61,9 +61,10 @@ namespace services.Resources
                             IRow row2 = null;
                             IRow row3 = null;
 
-                            if (rowIndex == 0)
-                            {
-								//Tribal CDMS Edits
+
+							if (rowIndex == 0)
+							{
+								//Tribal CDMS Edit
 								//Resolves error when only one data row exists in import file
 
 								row2 = worksheet.GetRow(rowIndex + 1); //If it is the first row, I also get the second to know the data type
@@ -213,7 +214,7 @@ namespace services.Resources
                                         //Verify that the Column Name is NOT repeated
                                         foreach (DataColumn col in dataTable.Columns)
                                         {
-                                            if (col.ColumnName == colName) colName = string.Format("{0}_{1}", colName, colIndex);
+                                            if (col.ColumnName == colName) colName = string.Format("{0}_{1}", colName + "_DuplicateColumnName", colIndex);
                                         }
 
                                         //Add the fields of the table:

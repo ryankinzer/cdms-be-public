@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using CsvHelper;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace services.Resources
 {
@@ -13,7 +14,8 @@ namespace services.Resources
      */ 
     public class CSVReader
     {
-        private string fileName;
+		public static Logger logger = LogManager.GetCurrentClassLogger();
+		private string fileName;
 
         public CSVReader(string a_fileName)
         {
@@ -39,14 +41,26 @@ namespace services.Resources
 
                 CsvParser csvParser = new CsvParser(reader);
                 string[] headers = csvParser.Read();
+				int h = 0;
                 foreach (string header in headers)
                 {
                     string header_val = header;
 
-                    if (header == "" || header == null)
+
+					if (columns.Contains(header))
+					{
+						logger.Debug(">>>>Renaming duplicate column name!!: " + header);
+						header_val = header_val + "_DuplicateColumnName_" + h;
+					}
+					else {
+						logger.Debug(">>>>Header: " + header);
+					}
+						
+					if (header == "" || header == null)
                         header_val = "-blank-";
 
                     columns.Add(header_val);
+					++h;
                 }
 
                 dataresult.columns = columns;
