@@ -97,18 +97,18 @@ namespace services.Resources
             //this element is optional. if not included, we'll default to "6" and "initial import"
             dynamic activityqastatus = activity_json.ActivityQAStatus;
 
-            var newQA_query = "INSERT INTO ActivityQAs (ActivityId, QAStatusId, Comments, EffDt, UserId) VALUES (";
+            var newQA_query = "INSERT INTO ActivityQAs (ActivityId, QAStatusId, QAComments, EffDt, UserId) VALUES (";
 
             ActivityQA newQA = new ActivityQA();
             newQA.ActivityId = new_activityid;
             newQA.QAStatusId = (activityqastatus != null) ? activityqastatus.QAStatusId : 6; //6=readyforqa
-            newQA.Comments = (activityqastatus != null && activityqastatus.Comments != null) ? activityqastatus.Comments : "";
+            newQA.QAComments = (activityqastatus != null && activityqastatus.QAComments != null) ? activityqastatus.QAComments : "";
             newQA.EffDt = DateTime.Now;
             newQA.UserId = user_id;
 
             newQA_query += newQA.ActivityId + "," +
                 newQA.QAStatusId + "," +
-                "'" + newQA.Comments + "','" +
+                "'" + newQA.QAComments + "','" +
                 newQA.EffDt + "'," +
                 newQA.UserId + ");";
 
@@ -162,7 +162,7 @@ namespace services.Resources
             //now check our activity status -- update it if we've changed.
             dynamic activityqastatus = activity_json.ActivityQAStatus;
 
-            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.Comments != activityqastatus.Comments.ToString())
+            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.QAComments != activityqastatus.QAComments.ToString())
             {
                 QAStatus new_qastatus = db.QAStatuses.Find(activityqastatus.QAStatusId.ToObject<int>());
 
@@ -172,7 +172,7 @@ namespace services.Resources
                 ActivityQA newQA = new ActivityQA();
                 newQA.ActivityId = activity.Id;
                 newQA.QAStatusId = activityqastatus.QAStatusId.ToObject<int>();
-                newQA.Comments = (activityqastatus.Comments != null) ? activityqastatus.Comments.ToString() : null;
+                newQA.QAComments = (activityqastatus.QAComments != null) ? activityqastatus.QAComments.ToString() : null;
                 newQA.EffDt = DateTime.Now;
                 newQA.UserId = activity.UserId;
                 newQA.QAStatusName = new_qastatus.Name;
