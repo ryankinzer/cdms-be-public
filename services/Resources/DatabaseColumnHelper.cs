@@ -27,7 +27,7 @@ namespace services.Resources
             if (datastore.TableType != "Single")
                 tableName += (in_field.FieldRoleId == 1) ? "_Header" : "_Detail";
 
-            var query = "ALTER TABLE " + tableName + " DROP COLUMN " + in_field.DbColumnName;
+            var query = "ALTER TABLE " + tableName + " DROP COLUMN IF EXISTS " + in_field.DbColumnName;
 
             logger.Debug("query = " + query);
 
