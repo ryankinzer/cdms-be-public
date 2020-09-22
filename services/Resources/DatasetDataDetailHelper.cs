@@ -23,20 +23,17 @@ namespace services.Resources
         public DatasetDataDetailHelper(Dataset dataset, string table_prefix, JObject detail_row){
             targetTable = table_prefix + "_Detail";
             detailFields = new List<string> { "ActivityId", "ByUserId", "EffDt","RowStatusId","RowId","QAStatusId" };
-            
-            IList<string> propertyNames = detail_row.Properties().Select(p => p.Name).ToList();
-            foreach (var prop_field in propertyNames)
-            {
-                if (detailFields.Contains(prop_field))
-                    continue;
 
-                DatasetField the_field = dataset.Fields.Where(o => o.Field.DbColumnName == prop_field && o.FieldRoleId == 2).SingleOrDefault();
-                if (the_field != null)
-                {
-                    detailFields.Add(prop_field);
-                    detailDatasetFields.Add(the_field);
-                }
-            }
+			//IList<string> propertyNames = detail_row.Properties().Select(p => p.Name).ToList();
+			foreach (var field in dataset.Fields.Where(o => o.FieldRoleId == 2)) {
+				if (!detailFields.Contains(field.DbColumnName)) {
+					detailFields.Add(field.DbColumnName);
+					detailDatasetFields.Add(field);
+				}
+			}	
+		
+
+			
         }
 
         //get an SQL query for inserting a detail record with the incoming values for the row.
@@ -58,7 +55,8 @@ namespace services.Resources
             //now populate detail values 
             foreach (DatasetField prop_field in detailDatasetFields)
             {
-                if (prop_field.DbColumnName != "QAStatusId" && prop_field.DbColumnName != "ActivityId" && prop_field.DbColumnName != "ByUserId" && prop_field.DbColumnName != "EffDt" && prop_field.DbColumnName != "RowId" && prop_field.DbColumnName != "RowStatusId") //these are already done.
+				logger.Debug(">>>>Detail values: " + prop_field.DbColumnName);
+				if (prop_field.DbColumnName != "QAStatusId" && prop_field.DbColumnName != "ActivityId" && prop_field.DbColumnName != "ByUserId" && prop_field.DbColumnName != "EffDt" && prop_field.DbColumnName != "RowId" && prop_field.DbColumnName != "RowStatusId") //these are already done.
                 {                   
                     var objVal = detail.GetValue(prop_field.DbColumnName);
 
