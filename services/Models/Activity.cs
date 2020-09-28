@@ -77,7 +77,7 @@ namespace services.Models
         public int QAStatusId { get; set; }
         public int UserId { get; set; }
         public DateTime EffDt { get; set; }
-        public string Comments { get; set; }
+        public string QAComments { get; set; }
         public string QAStatusName { get; set; }
         public string QAStatusDescription { get; set; }
 

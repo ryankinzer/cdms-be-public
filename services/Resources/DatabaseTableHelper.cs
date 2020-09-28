@@ -81,7 +81,7 @@ namespace services.Resources
             var main_view = @"
                 CREATE OR ALTER VIEW " + tableName + @"_VW AS 
                 SELECT        
-                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
+                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.QAComments, aq.QAStatusName, l.Label AS LocationLabel,
 
                     d.Id AS " + tableName_detail + @"_Id, 
                     d.ByUserId AS " + tableName_detail + @"_ByUserId, 
@@ -230,7 +230,7 @@ namespace services.Resources
             var main_view = @"
                 CREATE OR ALTER VIEW " + tableName + @"_VW AS 
                 SELECT        
-                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.Comments, aq.QAStatusName, l.Label AS LocationLabel,
+                    a.Id AS ActivityId, a.DatasetId, a.SourceId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, h.Id, h.ByUserId, h.EffDt, d.RowId, d.QAStatusId, aq.QAStatusId AS ActivityQAStatusId, aq.UserId AS ActivityQAUserId, aq.QAComments, aq.QAStatusName, l.Label AS LocationLabel,
                     " + fields_sql + @", 
                     d.Id AS " + tableName_detail + @"_Id, 
                     d.ByUserId AS " + tableName_detail + @"_ByUserId, 

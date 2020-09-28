@@ -54,7 +54,7 @@ namespace services.Controllers
             var aq = new ActivityQA();
             aq.ActivityId = activity.Id;
             aq.EffDt = DateTime.Now;
-            aq.Comments = json.Comments;
+            aq.QAComments = json.QAComments;
             aq.UserId = me.Id; //current user.
             aq.QAStatusId = json.QAStatusId;
 
@@ -106,7 +106,7 @@ namespace services.Controllers
                 SELECT a.Id, a.Description, a.DatasetId, a.LocationId, a.UserId, a.ActivityTypeId, a.CreateDate, a.ActivityDate, 
                 a.InstrumentId, a.AccuracyCheckId, a.PostAccuracyCheckId,
                 h.*, 
-                qv.QAStatusId, qv.Comments as QAComments,
+                qv.QAStatusId, qv.QAComments,
                 loc.Label as LocationLabel, loc.LocationTypeId, loc.OtherAgencyId,
                 wb.Name as WaterBodyName,
                 u.Fullname as UserFullname
@@ -667,7 +667,7 @@ namespace services.Controllers
             //now check our activity status -- update it if we've changed.
             dynamic activityqastatus = activity_json.ActivityQAStatus;
 
-            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.Comments != activityqastatus.Comments.ToString())
+            if (activity.ActivityQAStatus.QAStatusId != activityqastatus.QAStatusId.ToObject<int>() || activity.ActivityQAStatus.QAComments != activityqastatus.QAComments.ToString())
             {
                 QAStatus new_qastatus = db.QAStatuses.Find(activityqastatus.QAStatusId.ToObject<int>());
 
@@ -677,7 +677,7 @@ namespace services.Controllers
                 ActivityQA newQA = new ActivityQA();
                 newQA.ActivityId = activity.Id;
                 newQA.QAStatusId = activityqastatus.QAStatusId.ToObject<int>();
-                newQA.Comments = (activityqastatus.Comments != null) ? activityqastatus.Comments.ToString() : null;
+                newQA.QAComments = (activityqastatus.QAComments != null) ? activityqastatus.QAComments.ToString() : null;
                 newQA.EffDt = DateTime.Now;
                 newQA.UserId = activity.UserId;
                 newQA.QAStatusName = new_qastatus.Name;
@@ -1156,7 +1156,7 @@ namespace services.Controllers
                 ActivityQA newQA = new ActivityQA();
                 newQA.ActivityId = activity.Id;
                 newQA.QAStatusId = activityqastatus.QAStatusId.ToObject<int>();
-                newQA.Comments = activityqastatus.Comments;
+                newQA.QAComments = activityqastatus.QAComments;
                 newQA.EffDt = DateTime.Now;
                 newQA.UserId = activity.UserId;
                 newQA.QAStatusName = new_qastatus.Name;

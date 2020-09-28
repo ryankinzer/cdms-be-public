@@ -271,7 +271,27 @@ namespace services.Controllers
             if (df == null || me == null)
                 throw new System.Exception("Configuration error. Please try again.");
 
-            DatabaseColumnHelper.removeFieldFromDatabase(df);
+			using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["ServicesContext"].ConnectionString))
+			{
+				con.Open();
+				var query = "";
+				query = "DELETE FROM DatasetFields where FieldId = " + json.FieldId;
+				logger.Debug("SQL command = " + query);
+				using (SqlCommand cmd = new SqlCommand(query, con))
+				{
+					try
+					{
+						cmd.ExecuteNonQuery();
+						logger.Debug("Delete action done...");
+					}
+					catch (System.Exception e)
+					{
+						logger.Debug("Delete action failed:  " + e.Message);
+					}
+				}
+			}
+
+			DatabaseColumnHelper.removeFieldFromDatabase(df);
 
             db.Fields.Remove(df);
             db.SaveChanges();
