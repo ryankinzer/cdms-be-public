@@ -537,8 +537,16 @@ namespace services.Controllers
                         var row_query = DatasetDataHelper.getMaxRowIdSQL(dataset.Datastore.TablePrefix, activity.Id);
                         using (SqlCommand cmd = new SqlCommand(row_query, con, trans))
                         {
-                            nextRowId = (int)cmd.ExecuteScalar() + 1;
-                        }
+							if (cmd.ExecuteScalar() is DBNull || cmd.ExecuteScalar() == null)
+							{
+								nextRowId = 1;
+							}
+							else
+							{
+
+								nextRowId = (int)cmd.ExecuteScalar() + 1;
+							}
+						}
 
                     }
 
